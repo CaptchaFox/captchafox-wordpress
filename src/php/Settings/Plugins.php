@@ -162,11 +162,12 @@ class Plugins {
         $allowed_html = [
             'div'   => [],
             'input' => [
-                'value'   => [],
-                'name'    => [],
-                'type'    => [],
-                'id'      => [],
-                'checked' => [],
+                'value'    => [],
+                'name'     => [],
+                'type'     => [],
+                'id'       => [],
+                'checked'  => [],
+                'disabled' => [],
             ],
             'label' => [
                 'for' => [],
