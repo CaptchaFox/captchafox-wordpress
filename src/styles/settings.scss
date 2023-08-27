@@ -1,0 +1,150 @@
+.header {
+  padding: 35px 20px 20px 20px;
+  display: grid;
+  grid-auto-flow: column;
+  justify-content: space-between;
+  align-items: center;
+
+  @media (max-width: 768px) {
+    grid-auto-flow: row;
+    gap: 32px;
+  }
+}
+
+.container {
+  background: #fff;
+  margin: 0 -20px 0;
+}
+
+.cf-admin {
+  margin: 0 20px 0 0;
+
+  input[type='checkbox']:checked::before {
+    filter: hue-rotate(155deg);
+  }
+}
+
+#cf-admin-nav {
+  padding: 0 20px;
+
+  .nav-tab {
+    box-shadow: inset 0 -2px #fff;
+    font-weight: 600;
+    background: none;
+    border: none;
+    margin: 0;
+    padding: 15px;
+    transition: box-shadow 0.1s ease;
+
+    &.nav-tab-active,
+    &.nav-tab-active:hover {
+      box-shadow: inset 0 -2px #ff9b21;
+    }
+
+    &:hover {
+      box-shadow: inset 0 -2px #dfdfdf;
+    }
+  }
+}
+
+.cf-row {
+  display: flex;
+  gap: 16px;
+
+  input[type='text'],
+  input[type='password'] {
+    min-width: 300px;
+  }
+}
+
+.cf-plugins table tbody {
+  display: grid;
+  gap: 24px;
+  grid-template-columns: repeat(4, minmax(200px, 1fr));
+
+  @media (max-width: 1200px) {
+    grid-template-columns: repeat(3, minmax(200px, 1fr));
+  }
+
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(2, minmax(200px, 1fr));
+  }
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.cf-plugin-item {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  gap: 24px;
+  background: white;
+  padding: 24px;
+  border-radius: 4px;
+
+  th,
+  td {
+    padding: 0;
+  }
+}
+
+.cf-input-plugin {
+  display: grid;
+  gap: 16px;
+
+  div {
+    display: flex;
+    align-items: center;
+  }
+
+  input {
+    margin-top: 0;
+  }
+
+  label {
+    margin-left: 8px;
+  }
+}
+
+.cf-admin .button-primary,
+.cf-button {
+  min-height: 35px;
+  line-height: 35px;
+  font-size: 0.875rem;
+  color: #fff;
+  height: 39px;
+  position: relative;
+  border-color: #ff9b21;
+  border: 1px solid #ff9b21;
+  border-radius: 4px;
+  font-weight: 700;
+  display: grid;
+  grid-auto-flow: column;
+  grid-gap: 5px;
+  gap: 5px;
+  justify-content: center;
+  align-items: center;
+  text-decoration: none;
+  text-align: center;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  padding: 0 1rem;
+  pointer-events: all;
+  background: #ff9b21;
+
+  &:hover {
+    background: #df7e2a;
+    color: #fff;
+    border-color: #ff9b21;
+  }
+
+  &:focus {
+    background: #df7e2a;
+  }
+}
+
+.cf-plugins-text {
+  margin-bottom: 32px;
+}

@@ -1,0 +1,26 @@
+{
+  "name": "captchafox-wordpress",
+  "version": "1.0.0",
+  "description": "CaptchaFox plugin for WordPress",
+  "scripts": {
+    "build": "concurrently npm:build:js npm:build:styles",
+    "build:js": "esbuild ./src/ts/**/*.ts --minify --target=es2015 --outdir=assets/js",
+    "build:styles": "sass ./src/styles:./assets/css/ --style compressed --no-source-map"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CaptchaFox/captchafox-wordpress.git"
+  },
+  "license": "GPL V2",
+  "bugs": {
+    "url": "https://github.com/CaptchaFox/captchafox-wordpress/issues"
+  },
+  "homepage": "https://github.com/CaptchaFox/captchafox-wordpress#readme",
+  "devDependencies": {
+    "@captchafox/types": "^1.1.0",
+    "concurrently": "^8.2.1",
+    "esbuild": "^0.19.2",
+    "sass": "^1.66.1",
+    "typescript": "^5.2.2"
+  }
+}

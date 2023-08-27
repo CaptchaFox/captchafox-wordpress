@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<ruleset name="WordPress Plugin Coding Standards">
+    <!-- See https://github.com/squizlabs/PHP_CodeSniffer/wiki/Annotated-ruleset.xml -->
+
+    <!--
+    Prevent errors caused by WordPress Coding Standards not supporting PHP 8.0+.
+    See https://github.com/WordPress/WordPress-Coding-Standards/issues/2035
+    -->
+    <ini name="error_reporting" value="E_ALL &#38; ~E_DEPRECATED" />
+
+    <description>Wordpress plugin rules</description>
+
+    <file>.</file>
+    <!-- Exclude paths -->
+    <exclude-pattern>*/\.github/*</exclude-pattern>
+    <exclude-pattern>*/\.wordpress-org/*</exclude-pattern>
+    <exclude-pattern>*/dist/*</exclude-pattern>
+    <exclude-pattern>*/tests/*</exclude-pattern>
+    <exclude-pattern>*/node_modules/*</exclude-pattern>
+    <exclude-pattern>*/vendor/*</exclude-pattern>
+    <exclude-pattern>*/ts/*</exclude-pattern>
+    <exclude-pattern>*/styles/*</exclude-pattern>
+
+    <config name="minimum_supported_wp_version" value="5.9.3" />
+
+    <!-- @see https://github.com/PHPCompatibility/PHPCompatibility#using-a-custom-ruleset -->
+    <config name="testVersion" value="8.0-" />
+    <!-- @see https://github.com/PHPCompatibility/PHPCompatibilityWP#how-to-use -->
+    <rule ref="PHPCompatibilityWP" />
+
+    <rule ref="WordPress">
+
+        <exclude name="Generic.Arrays.DisallowShortArraySyntax.Found" />
+        <exclude name="Generic.Formatting.MultipleStatementAlignment.NotSameWarning" />
+        <exclude name="Generic.WhiteSpace.DisallowSpaceIndent.SpacesUsed" />
+
+        <exclude name="PEAR.Functions.FunctionCallSignature.CloseBracketLine" />
+        <exclude name="PEAR.Functions.FunctionCallSignature.ContentAfterOpenBracket" />
+        <exclude name="PEAR.Functions.FunctionCallSignature.Indent" />
+        <exclude name="PEAR.Functions.FunctionCallSignature.MultipleArguments" />
+        <exclude name="PEAR.Functions.FunctionCallSignature.OpeningIndent" />
+        <exclude name="Squiz.Commenting.FileComment.Missing" />
+        <exclude name="Squiz.Commenting.ClassComment.Missing" />
+    </rule>
+
+    <rule ref="WordPress.Files.FileName.InvalidClassFileName">
+        <severity>0</severity>
+    </rule>
+    <rule ref="WordPress.Files.FileName.NotHyphenatedLowercase">
+        <severity>0</severity>
+    </rule>
+</ruleset>

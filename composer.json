@@ -1,0 +1,25 @@
+{
+    "name": "captchafox/captchafox-wordpress",
+    "type": "wordpress-plugin",
+    "require-dev": {
+        "wp-coding-standards/wpcs": "^2.3",
+        "phpcompatibility/phpcompatibility-wp": "*",
+        "dealerdirect/phpcodesniffer-composer-installer": "^0.7"
+    },
+    "autoload": {
+        "psr-4": {
+            "CaptchaFox\\": "src/php"
+        }
+    },
+    "authors": [
+        {
+            "name": "CaptchaFox",
+            "homepage": "https://captchafox.com"
+        }
+    ],
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
+    }
+}
