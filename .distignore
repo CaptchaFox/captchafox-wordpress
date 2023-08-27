@@ -3,6 +3,12 @@
 /.github
 /node_modules
 
-.distignore
-.gitignore
-README.md
+/.distignore
+/.gitignore
+/composer.json
+/composer.lock
+/package.json
+/package-lock.json
+/README.md
+/phpcs.xml
+/tsconfig.json
