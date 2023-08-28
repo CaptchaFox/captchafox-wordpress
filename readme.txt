@@ -17,7 +17,7 @@ CaptchaFox defends and safeguards your website against automated attacks such as
 It utilizes a variety of data signals and proof of work to verify the authenticity of the user without the use of cookies or trackers.
 The challenges have low friction and are easily solvable for humans, but difficult for bots. With our one-click challenge, legitimate users don't even know they're being challenged.
 
-This plugin comes with out-of-the-box support for a variety of form plugins, such as Contact Forms 7, WPForms, Woocommerce, Mailchimp, and more. Therefore, no developer experience is required.
+This plugin comes with out-of-the-box support for popular form plugins, such as Contact Forms 7, WPForms, Woocommerce, Mailchimp, and more. Therefore, no developer experience is required.
 
 To get started, login or create an account at [captchafox.com](https://captchafox.com/) and locate your keys. 
 If you need additional support or are interested in our enterprise plans, you can contact us at hello@captchafox.com.
