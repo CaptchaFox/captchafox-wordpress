@@ -7,7 +7,7 @@ env:
 
 jobs:
   build:
-    name: Build release zip
+    name: Build zip
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -25,11 +25,9 @@ jobs:
         run: |
           rsync -rc --exclude-from="${GITHUB_WORKSPACE}/.distignore" "${GITHUB_WORKSPACE}/" trunk/ --delete --delete-excluded
           cd trunk/
-          zip -r "${GITHUB_WORKSPACE}/${{ env.SLUG }}.zip" .
-          echo "zip-path=${GITHUB_WORKSPACE}/${{ env.SLUG }}.zip" >> "${GITHUB_OUTPUT}"
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
         with:
           name: ${{ env.SLUG }}
-          path: ${{ github.workspace }}/${{ env.SLUG }}.zip
+          path: ${{ github.workspace }}/trunk
           retention-days: 1
