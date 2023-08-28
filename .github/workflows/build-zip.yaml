@@ -1,0 +1,35 @@
+name: Build zip
+
+on: workflow_dispatch
+
+env:
+  SLUG: captchafox
+
+jobs:
+  build:
+    name: Build release zip
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - name: Build plugin
+        run: |
+          composer install --no-dev --optimize-autoloader
+          npm ci
+          npm run build
+      - name: Generate zip
+        run: |
+          rsync -rc --exclude-from="${GITHUB_WORKSPACE}/.distignore" "${GITHUB_WORKSPACE}/" trunk/ --delete --delete-excluded
+          cd trunk/
+          zip -r "${GITHUB_WORKSPACE}/${{ env.SLUG }}.zip" .
+          echo "zip-path=${GITHUB_WORKSPACE}/${{ env.SLUG }}.zip" >> "${GITHUB_OUTPUT}"
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ env.SLUG }}
+          path: ${{ github.workspace }}/${{ env.SLUG }}.zip
+          retention-days: 1
