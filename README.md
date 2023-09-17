@@ -19,6 +19,7 @@ This WordPress Plugin integrates CaptchaFox with WordPress forms and popular plu
 - WordPress Comments
 - WP Forms Lite
 - Contact Form 7
+- Ninja Forms
 - Woocommerce Checkout
 - Woocommerce Login
 - Woocommerce Registration

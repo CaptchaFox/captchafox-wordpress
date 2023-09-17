@@ -83,6 +83,15 @@ class Plugins {
                 'form' => __( 'Forms', 'captchafox' ),
             ],
         ]);
+        add_settings_field('ninja-forms', $this->get_plugin_logo( 'ninja-forms' ), [ $this, 'render_plugin_field' ], $setting_plugins, $setting_plugins, [
+            'label_for' => 'ninja-forms',
+            'class'     => 'cf-plugin-item',
+            'group'     => $setting_plugins,
+            'available' => is_plugin_active( 'ninja-forms/ninja-forms.php' ),
+            'options'   => [
+                'form' => __( 'Forms', 'captchafox' ),
+            ],
+        ]);
     }
 
     /**

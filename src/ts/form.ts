@@ -8,6 +8,8 @@ declare global {
 }
 
 (() => {
+  let executeListener: (event: Event) => void;
+
   function resetFormWidget(formSelector: string) {
     const element = document.querySelector<HTMLFormElement>(formSelector);
     if (!element) return;
@@ -49,11 +51,9 @@ declare global {
       }
 
       if (submitButton) {
-        submitButton.addEventListener(
-          'click',
-          (event) => executeCaptcha(event, form, widgetId, submitButton),
-          true
-        );
+        executeListener = (event: Event) =>
+          executeCaptcha(event, form, widgetId, submitButton);
+        submitButton.addEventListener('click', executeListener, true);
       }
     });
   }
@@ -70,6 +70,13 @@ declare global {
     if (!form || !window.captchafox) return;
 
     await window.captchafox.execute(widgetId);
+
+    // handle ninja forms
+    if (submitButton.classList.contains('ninja-forms-field')) {
+      submitButton.removeEventListener('click', executeListener, true);
+      submitButton.click();
+      return;
+    }
 
     if (form.requestSubmit) {
       form.requestSubmit(submitButton);
