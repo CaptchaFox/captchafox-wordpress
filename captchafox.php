@@ -6,7 +6,7 @@
  *
  * Plugin Name:           CaptchaFox for Forms
  * Description:           CaptchaFox plugin for WordPress Forms
- * Version:               1.0.1
+ * Version:               1.1.0
  * Requires at least:     5.0
  * Requires PHP:          7.0
  * Author:                CaptchaFox
