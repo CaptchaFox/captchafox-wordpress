@@ -118,6 +118,12 @@ class Initializer {
 				'plugins' => [ 'contact-form-7/wp-contact-form-7.php' ],
 				'class'   => Plugins\ContactForm7\Forms::class,
 			],
+			[
+				'group'   => 'ninja-forms',
+				'action'  => 'form',
+				'plugins' => [ 'ninja-forms/ninja-forms.php' ],
+				'class'   => Plugins\NinjaForms\Forms::class,
+			],
 		];
 
 		foreach ( $plugins as $data ) {

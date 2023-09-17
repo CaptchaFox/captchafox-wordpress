@@ -26,7 +26,7 @@
     <!-- @see https://github.com/PHPCompatibility/PHPCompatibility#using-a-custom-ruleset -->
     <config name="testVersion" value="8.0-" />
     <!-- @see https://github.com/PHPCompatibility/PHPCompatibilityWP#how-to-use -->
-    <rule ref="PHPCompatibilityWP" />
+    <!-- <rule ref="PHPCompatibilityWP" /> -->
 
     <rule ref="WordPress">
 

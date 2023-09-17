@@ -4,10 +4,9 @@
  *
  * @package captchafox
  *
- * Plugin Name:           CaptchaFox for WordPress
- * Plugin URI:            https://captchafox.com/
- * Description:           CaptchaFox plugin for WordPress
- * Version:               1.0
+ * Plugin Name:           CaptchaFox for Forms
+ * Description:           CaptchaFox plugin for WordPress Forms
+ * Version:               1.0.1
  * Requires at least:     5.0
  * Requires PHP:          7.0
  * Author:                CaptchaFox
