@@ -62,7 +62,20 @@ Visit our [website](https://captcha.com/) to find more information about Captcha
 4. General Settings
 5. Manage Plugins
 
+== Privacy Notices ==
+
+CaptchaFox is compliant with various privacy laws, such as GDPR, CCPA, and others.
+
+This plugin does **not** use cookies, track users, store personal data or communicate with external services that are not required for verification.
+
+Once the plugin is activated, the CaptchaFox service may receive the user's IP address and browser vendor data while protecting enabled pages. However, CaptchaFox is designed to reduce the use of data and to dispose of it as soon as the verification request is processed.
+
+To learn more, please read the privacy policy at [captchafox.com/privacy](https://captchafox.com/privacy).
+
 == Changelog ==
+
+= 1.1.0 =
+* Add support for NinjaForms
 
 = 1.0.0 =
 * Plugin Created
