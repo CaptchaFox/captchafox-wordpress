@@ -3,6 +3,7 @@
 /.github
 /node_modules
 
+/.DS_Store
 /.distignore
 /.gitignore
 /composer.json
