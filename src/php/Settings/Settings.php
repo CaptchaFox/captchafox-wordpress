@@ -27,6 +27,8 @@ class Settings {
 		add_action( 'admin_init', [ $this, 'init_admin_settings' ] );
         add_action( 'admin_menu', [ $this, 'add_to_admin_menu' ] );
         add_action( 'admin_enqueue_scripts', [ $this, 'add_styles_to_admin_head' ] );
+        add_filter( 'admin_footer_text', [ $this, 'admin_footer_text' ] );
+        add_filter( 'update_footer', [ $this, 'update_footer' ], PHP_INT_MAX );
         add_filter(
             'plugin_action_links_' . plugin_basename( constant( 'CAPTCHAFOX_BASE_FILE' ) ),
             [ $this, 'add_settings_link' ]
@@ -49,7 +51,7 @@ class Settings {
      * @return void
      */
     public function add_styles_to_admin_head() {
-		wp_enqueue_style( 'admin', constant( 'CAPTCHAFOX_BASE_URL' ) . '/assets/css/settings.css', [], '1.0', false );
+		wp_enqueue_style( 'admin', constant( 'CAPTCHAFOX_BASE_URL' ) . '/assets/css/settings.css', [], PLUGIN_VERSION, false );
     }
 
     /**
@@ -142,7 +144,7 @@ class Settings {
     public function add_meta_links( $plugin_meta, $plugin_file, $plugin_data, $status ) {
         if ( strpos( $plugin_file, plugin_basename( constant( 'CAPTCHAFOX_BASE_FILE' ) ) ) !== false ) {
             $new_links = array(
-                'doc' => sprintf( '<a href="https://docs.captchafox.com" target="_blank">%s</a>', esc_attr( __( 'Documentation', 'captchafox' ) ) ),
+                'doc' => sprintf( '<a href="https://docs.captchafox.com" target="_blank">%s</a>', esc_attr( __( 'Documentation', 'captchafox-for-forms' ) ) ),
             );
 
             $plugin_meta = array_merge( $plugin_meta, $new_links );
@@ -162,11 +164,52 @@ class Settings {
         $new_actions = [
             'settings' =>
             '<a href="' . admin_url( 'options-general.php?page=captchafox' ) .
-                '" aria-label="' . esc_attr( __( 'Settings', 'captchafox' ) ) . '">' .
-                esc_html( __( 'Settings', 'captchafox' ) ) . '</a>',
+                '" aria-label="' . esc_attr( __( 'Settings', 'captchafox-for-forms' ) ) . '">' .
+                esc_html( __( 'Settings', 'captchafox-for-forms' ) ) . '</a>',
         ];
 
         return array_merge( $new_actions, $actions );
     }
 
+    /**
+     * Check if settings page is visible
+     *
+     * @return boolean
+     */
+    private function is_visible() {
+        $current_screen = get_current_screen()->id;
+        return 'settings_page_captchafox' === $current_screen;
+    }
+
+    /**
+     * Update footer text
+     *
+     * @param  string $content Content.
+     * @return string
+     */
+    public function update_footer( $content ) {
+        if ( ! $this->is_visible() ) {
+            return $content;
+        }
+
+        return sprintf(
+        /* translators: 1: plugin version. */
+        __( 'Version %s', 'captchafox-for-forms' ),
+        PLUGIN_VERSION
+        );
+	}
+
+    /**
+     * Update admin footer text
+     *
+     * @param  string $text Text.
+     * @return string
+     */
+    public function admin_footer_text( $text ) {
+        if ( ! $this->is_visible() ) {
+            return $text;
+        }
+
+        return '';
+    }
 }

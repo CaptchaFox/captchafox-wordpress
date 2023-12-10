@@ -29,7 +29,7 @@ class LostPassword extends Plugin {
         $verified = Request::validate_post();
 
         if ( ! $verified ) {
-            $error = new WP_Error( 'invalid_captcha', __( 'Invalid Captcha', 'captchafox' ), 400 );
+            $error = new WP_Error( 'invalid_captcha', __( 'Invalid Captcha', 'captchafox-for-forms' ), 400 );
         }
 
         return $error;

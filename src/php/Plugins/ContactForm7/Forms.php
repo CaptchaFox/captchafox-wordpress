@@ -53,7 +53,7 @@ class Forms extends Plugin {
 			$spam = true;
 			$submission->add_spam_log(array(
 				'agent'  => 'captchafox',
-				'reason' => __( 'Invalid Captcha', 'captchafox' ),
+				'reason' => __( 'Invalid Captcha', 'captchafox-for-forms' ),
 			));
 		}
 
@@ -70,7 +70,7 @@ class Forms extends Plugin {
             'captchafox-cf7',
             constant( 'CAPTCHAFOX_BASE_URL' ) . '/assets/js/contactForm7.js',
             [],
-            '1.0',
+            PLUGIN_VERSION,
             true
         );
     }

@@ -12,55 +12,55 @@ class General {
     public function setup() {
         $setting_general = 'captchafox_options';
         register_setting( 'captchafox', $setting_general );
-        add_settings_section( $setting_general, __( 'General settings', 'captchafox' ), [ $this, 'init_settings_section' ], 'captchafox' );
-        add_settings_field('field_sitekey', __( 'Site key', 'captchafox' ), [ $this, 'render_text_field' ], 'captchafox', $setting_general, [
+        add_settings_section( $setting_general, __( 'General settings', 'captchafox-for-forms' ), [ $this, 'init_settings_section' ], 'captchafox' );
+        add_settings_field('field_sitekey', __( 'Site key', 'captchafox-for-forms' ), [ $this, 'render_text_field' ], 'captchafox', $setting_general, [
             'label_for' => 'field_sitekey',
             'class'     => 'cf-row',
             'group'     => $setting_general,
         ]);
-        add_settings_field('field_secret', __( 'Secret key', 'captchafox' ), [ $this, 'render_text_field' ], 'captchafox', $setting_general, [
+        add_settings_field('field_secret', __( 'Secret key', 'captchafox-for-forms' ), [ $this, 'render_text_field' ], 'captchafox', $setting_general, [
             'label_for' => 'field_secret',
             'class'     => 'cf-row',
             'group'     => $setting_general,
             'type'      => 'password',
         ]);
-        add_settings_field('field_display_mode', __( 'Display Mode', 'captchafox' ), [ $this, 'render_select_field' ], 'captchafox', $setting_general, [
+        add_settings_field('field_display_mode', __( 'Display Mode', 'captchafox-for-forms' ), [ $this, 'render_select_field' ], 'captchafox', $setting_general, [
             'label_for' => 'field_display_mode',
             'class'     => 'cf-row',
             'group'     => $setting_general,
             'options'   => [
-                'inline' => __( 'Inline (Default)', 'captchafox' ),
-                'popup'  => __( 'Popup', 'captchafox' ),
-                'hidden' => __( 'Hidden', 'captchafox' ),
+                'inline' => __( 'Inline (Default)', 'captchafox-for-forms' ),
+                'popup'  => __( 'Popup', 'captchafox-for-forms' ),
+                'hidden' => __( 'Hidden', 'captchafox-for-forms' ),
             ],
         ]);
-        add_settings_field('field_lang', __( 'Language', 'captchafox' ), [ $this, 'render_select_field' ], 'captchafox', $setting_general, [
+        add_settings_field('field_lang', __( 'Language', 'captchafox-for-forms' ), [ $this, 'render_select_field' ], 'captchafox', $setting_general, [
             'label_for' => 'field_lang',
             'class'     => 'cf-row',
             'group'     => $setting_general,
             'options'   => [
-                'auto'  => __( 'Auto-Detect (Default)', 'captchafox' ),
-                'cs'    => __( 'Czech', 'captchafox' ),
-                'zh-cn' => __( 'Chinese (simplified)', 'captchafox' ),
-                'zh-tw' => __( 'Chinese (traditional)', 'captchafox' ),
-                'da'    => __( 'Danish', 'captchafox' ),
-                'nl'    => __( 'Dutch', 'captchafox' ),
-                'de'    => __( 'German', 'captchafox' ),
-                'en'    => __( 'English', 'captchafox' ),
-                'fi'    => __( 'Finnish', 'captchafox' ),
-                'fr'    => __( 'French', 'captchafox' ),
-                'it'    => __( 'Italian', 'captchafox' ),
-                'ja'    => __( 'Japanese', 'captchafox' ),
-                'ko'    => __( 'Korean', 'captchafox' ),
-                'no'    => __( 'Norwegian', 'captchafox' ),
-                'pt'    => __( 'Portuguese', 'captchafox' ),
-                'pl'    => __( 'Polish', 'captchafox' ),
-                'ru'    => __( 'Russian', 'captchafox' ),
-                'es'    => __( 'Spanish', 'captchafox' ),
-                'sv'    => __( 'Swedish', 'captchafox' ),
-                'tr'    => __( 'Turkish', 'captchafox' ),
-                'uk'    => __( 'Ukrainian', 'captchafox' ),
-                'id'    => __( 'Indonesian', 'captchafox' ),
+                'auto'  => __( 'Auto-Detect (Default)', 'captchafox-for-forms' ),
+                'cs'    => __( 'Czech', 'captchafox-for-forms' ),
+                'zh-cn' => __( 'Chinese (simplified)', 'captchafox-for-forms' ),
+                'zh-tw' => __( 'Chinese (traditional)', 'captchafox-for-forms' ),
+                'da'    => __( 'Danish', 'captchafox-for-forms' ),
+                'nl'    => __( 'Dutch', 'captchafox-for-forms' ),
+                'de'    => __( 'German', 'captchafox-for-forms' ),
+                'en'    => __( 'English', 'captchafox-for-forms' ),
+                'fi'    => __( 'Finnish', 'captchafox-for-forms' ),
+                'fr'    => __( 'French', 'captchafox-for-forms' ),
+                'it'    => __( 'Italian', 'captchafox-for-forms' ),
+                'ja'    => __( 'Japanese', 'captchafox-for-forms' ),
+                'ko'    => __( 'Korean', 'captchafox-for-forms' ),
+                'no'    => __( 'Norwegian', 'captchafox-for-forms' ),
+                'pt'    => __( 'Portuguese', 'captchafox-for-forms' ),
+                'pl'    => __( 'Polish', 'captchafox-for-forms' ),
+                'ru'    => __( 'Russian', 'captchafox-for-forms' ),
+                'es'    => __( 'Spanish', 'captchafox-for-forms' ),
+                'sv'    => __( 'Swedish', 'captchafox-for-forms' ),
+                'tr'    => __( 'Turkish', 'captchafox-for-forms' ),
+                'uk'    => __( 'Ukrainian', 'captchafox-for-forms' ),
+                'id'    => __( 'Indonesian', 'captchafox-for-forms' ),
             ],
         ]);
     }
@@ -71,7 +71,7 @@ class General {
      * @return void
      */
     public function init_settings_section() {                      ?>
-        <p><?php esc_html_e( 'Configure the settings for the CaptchaFox widget.', 'captchafox' ); ?> <?php esc_html_e( 'Don\'t have a site key?', 'captchafox' ); ?> <a href="https://portal.captchafox.com/register" target="_blank"><?php esc_html_e( 'Click here to create an account', 'captchafox' ); ?></a></p>
+        <p><?php esc_html_e( 'Configure the settings for the CaptchaFox widget.', 'captchafox-for-forms' ); ?> <?php esc_html_e( 'Don\'t have a site key?', 'captchafox-for-forms' ); ?> <a href="https://portal.captchafox.com/register" target="_blank"><?php esc_html_e( 'Click here to create an account', 'captchafox-for-forms' ); ?></a></p>
 		<?php
     }
 
@@ -86,7 +86,7 @@ class General {
             <?php
             settings_fields( 'captchafox' );
             do_settings_sections( 'captchafox' );
-            submit_button( __( 'Save Settings', 'captchafox' ) );
+            submit_button( __( 'Save Settings', 'captchafox-for-forms' ) );
             ?>
         </form>
 		<?php

@@ -28,7 +28,7 @@ class Checkout extends Plugin {
 		$verified = Request::validate_post();
 
         if ( ! $verified ) {
-            wc_add_notice( __( 'Invalid Captcha', 'captchafox' ), 'error' );
+            wc_add_notice( __( 'Invalid Captcha', 'captchafox-for-forms' ), 'error' );
         }
     }
 
@@ -42,7 +42,7 @@ class Checkout extends Plugin {
             'captchafox-woocommerce',
             constant( 'CAPTCHAFOX_BASE_URL' ) . '/assets/js/woocommerce.js',
             [ 'jquery' ],
-            '1.0',
+            PLUGIN_VERSION,
             true
         );
     }

@@ -4,18 +4,18 @@
  *
  * @package captchafox
  *
- * Plugin Name:           CaptchaFox for Forms
- * Description:           CaptchaFox plugin for WordPress Forms
- * Version:               1.1.0
+ * Plugin Name:           CaptchaFox for WordPress
+ * Description:           GDPR compliant bot and spam protection with CaptchaFox.
+ * Version:               1.2.0
  * Requires at least:     5.0
  * Requires PHP:          7.0
  * Author:                CaptchaFox
  * Author URI:            https://captchafox.com/
- * Text Domain:           captchafox
+ * Text Domain:           captchafox-for-forms
  * Domain Path:           /languages/
  *
  * WC requires at least:  3.0
- * WC tested up to:       8.0
+ * WC tested up to:       8.3
  */
 
 use CaptchaFox\Initializer;
@@ -27,6 +27,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 define( 'CAPTCHAFOX_BASE_URL', untrailingslashit( plugin_dir_url( __FILE__ ) ) );
 
 const CAPTCHAFOX_BASE_FILE = __FILE__;
+const PLUGIN_VERSION = '1.2.0';
 
 require 'vendor/autoload.php';
 

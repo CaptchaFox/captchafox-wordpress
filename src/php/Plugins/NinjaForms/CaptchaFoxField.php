@@ -42,7 +42,7 @@ class CaptchaFoxField extends NF_Fields_Recaptcha {
      */
     public function __construct() {
         parent::__construct();
-        $this->_nicename = __( 'CaptchaFox', 'captchafox' );
+        $this->_nicename = __( 'CaptchaFox', 'captchafox-for-forms' );
     }
 
     /**
@@ -57,12 +57,12 @@ class CaptchaFoxField extends NF_Fields_Recaptcha {
 		$value = $field['value'] ?? '';
 
         if ( empty( $value ) ) {
-            return __( 'Please complete the captcha', 'captchafox' );
+            return __( 'Please complete the captcha', 'captchafox-for-forms' );
         }
 
         $verified = Request::validate( $value );
         if ( ! $verified ) {
-            return __( 'Invalid Captcha', 'captchafox' );
+            return __( 'Invalid Captcha', 'captchafox-for-forms' );
         }
 	}
 }

@@ -124,6 +124,12 @@ class Initializer {
 				'plugins' => [ 'ninja-forms/ninja-forms.php' ],
 				'class'   => Plugins\NinjaForms\Forms::class,
 			],
+			[
+				'group'   => 'otter-blocks',
+				'action'  => 'form',
+				'plugins' => [ 'otter-blocks/otter-blocks.php' ],
+				'class'   => Plugins\OtterBlocks\Forms::class,
+			],
 		];
 
 		foreach ( $plugins as $data ) {
@@ -167,6 +173,6 @@ class Initializer {
 	 * @return void
 	 */
 	public function init() {
-        load_plugin_textdomain( 'captchafox', false, constant( 'CAPTCHAFOX_BASE_URL' ) . '/languages' );
+        load_plugin_textdomain( 'captchafox-for-forms', false, constant( 'CAPTCHAFOX_BASE_URL' ) . '/languages' );
 	}
 }

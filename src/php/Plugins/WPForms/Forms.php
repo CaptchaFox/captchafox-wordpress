@@ -32,7 +32,7 @@ class Forms extends Plugin {
         $verified = Request::validate_post();
 
         if ( ! $verified ) {
-            wpforms()->get( 'process' )->errors[ $form_data['id'] ]['footer'] = __( 'Invalid Captcha', 'captchafox' );
+            wpforms()->get( 'process' )->errors[ $form_data['id'] ]['footer'] = __( 'Invalid Captcha', 'captchafox-for-forms' );
         }
     }
 }

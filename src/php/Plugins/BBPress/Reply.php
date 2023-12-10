@@ -28,7 +28,7 @@ class Reply extends Plugin {
 		$verified = Request::validate_post();
 
         if ( ! $verified ) {
-            bbp_add_error( 'captchafox_error', __( 'Invalid Captcha', 'captchafox' ) );
+            bbp_add_error( 'captchafox_error', __( 'Invalid Captcha', 'captchafox-for-forms' ) );
 
             return false;
         }

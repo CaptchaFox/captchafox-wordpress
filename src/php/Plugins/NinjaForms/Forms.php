@@ -79,7 +79,7 @@ class Forms extends Plugin {
             'captchafox-ninjaforms',
             constant( 'CAPTCHAFOX_BASE_URL' ) . '/assets/js/ninjaforms.js',
             [ 'nf-front-end' ],
-            '1.0',
+            PLUGIN_VERSION,
             true
         );
     }

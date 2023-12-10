@@ -12,17 +12,17 @@ class Plugins {
     public function setup() {
         $setting_plugins = 'captchafox_plugins';
         register_setting( $setting_plugins, $setting_plugins );
-        add_settings_section( $setting_plugins, __( 'Manage plugins', 'captchafox' ), [ $this, 'init_plugins_section' ], $setting_plugins );
+        add_settings_section( $setting_plugins, __( 'Manage plugins', 'captchafox-for-forms' ), [ $this, 'init_plugins_section' ], $setting_plugins );
         add_settings_field('WordPress', $this->get_plugin_logo( 'wp' ), [ $this, 'render_plugin_field' ], $setting_plugins, $setting_plugins, [
             'label_for' => 'wordpress',
             'class'     => 'cf-plugin-item',
             'group'     => $setting_plugins,
             'available' => true,
             'options'   => [
-                'login'         => __( 'Login Form', 'captchafox' ),
-                'register'      => __( 'Register Form', 'captchafox' ),
-                'lost_password' => __( 'Lost Password Form', 'captchafox' ),
-                'comment'       => __( 'Comment Form', 'captchafox' ),
+                'login'         => __( 'Login Form', 'captchafox-for-forms' ),
+                'register'      => __( 'Register Form', 'captchafox-for-forms' ),
+                'lost_password' => __( 'Lost Password Form', 'captchafox-for-forms' ),
+                'comment'       => __( 'Comment Form', 'captchafox-for-forms' ),
             ],
         ]);
         add_settings_field('wpforms', $this->get_plugin_logo( 'wpforms' ), [ $this, 'render_plugin_field' ], $setting_plugins, $setting_plugins, [
@@ -31,7 +31,7 @@ class Plugins {
             'group'     => $setting_plugins,
             'available' => is_plugin_active( 'wpforms-lite/wpforms.php' ),
             'options'   => [
-                'form' => __( 'Forms', 'captchafox' ),
+                'form' => __( 'Forms', 'captchafox-for-forms' ),
             ],
         ]);
         add_settings_field('mailchimp', $this->get_plugin_logo( 'mailchimp' ), [ $this, 'render_plugin_field' ], $setting_plugins, $setting_plugins, [
@@ -40,7 +40,7 @@ class Plugins {
             'group'     => $setting_plugins,
             'available' => is_plugin_active( 'mailchimp-for-wp/mailchimp-for-wp.php' ),
             'options'   => [
-                'form' => __( 'Forms', 'captchafox' ),
+                'form' => __( 'Forms', 'captchafox-for-forms' ),
             ],
         ]);
         add_settings_field('woocommerce', $this->get_plugin_logo( 'woocommerce' ), [ $this, 'render_plugin_field' ], $setting_plugins, $setting_plugins, [
@@ -49,10 +49,10 @@ class Plugins {
             'group'     => $setting_plugins,
             'available' => is_plugin_active( 'woocommerce/woocommerce.php' ),
             'options'   => [
-                'login'         => __( 'Login Form', 'captchafox' ),
-                'register'      => __( 'Register Form', 'captchafox' ),
-                'lost_password' => __( 'Lost Password Form', 'captchafox' ),
-                'checkout'      => __( 'Checkout', 'captchafox' ),
+                'login'         => __( 'Login Form', 'captchafox-for-forms' ),
+                'register'      => __( 'Register Form', 'captchafox-for-forms' ),
+                'lost_password' => __( 'Lost Password Form', 'captchafox-for-forms' ),
+                'checkout'      => __( 'Checkout', 'captchafox-for-forms' ),
             ],
         ]);
         add_settings_field('forminator', $this->get_plugin_logo( 'forminator' ), [ $this, 'render_plugin_field' ], $setting_plugins, $setting_plugins, [
@@ -61,7 +61,7 @@ class Plugins {
             'group'     => $setting_plugins,
             'available' => is_plugin_active( 'forminator/forminator.php' ),
             'options'   => [
-                'form' => __( 'Forms', 'captchafox' ),
+                'form' => __( 'Forms', 'captchafox-for-forms' ),
             ],
         ]);
         add_settings_field('bbpress', $this->get_plugin_logo( 'bbpress' ), [ $this, 'render_plugin_field' ], $setting_plugins, $setting_plugins, [
@@ -70,8 +70,8 @@ class Plugins {
             'group'     => $setting_plugins,
             'available' => is_plugin_active( 'bbpress/bbpress.php' ),
             'options'   => [
-                'reply'     => __( 'Reply Form', 'captchafox' ),
-                'new_topic' => __( 'New Topic Form', 'captchafox' ),
+                'reply'     => __( 'Reply Form', 'captchafox-for-forms' ),
+                'new_topic' => __( 'New Topic Form', 'captchafox-for-forms' ),
             ],
         ]);
         add_settings_field('cf7', $this->get_plugin_logo( 'cf7' ), [ $this, 'render_plugin_field' ], $setting_plugins, $setting_plugins, [
@@ -80,7 +80,7 @@ class Plugins {
             'group'     => $setting_plugins,
             'available' => is_plugin_active( 'contact-form-7/wp-contact-form-7.php' ),
             'options'   => [
-                'form' => __( 'Forms', 'captchafox' ),
+                'form' => __( 'Forms', 'captchafox-for-forms' ),
             ],
         ]);
         add_settings_field('ninja-forms', $this->get_plugin_logo( 'ninja-forms' ), [ $this, 'render_plugin_field' ], $setting_plugins, $setting_plugins, [
@@ -89,7 +89,16 @@ class Plugins {
             'group'     => $setting_plugins,
             'available' => is_plugin_active( 'ninja-forms/ninja-forms.php' ),
             'options'   => [
-                'form' => __( 'Forms', 'captchafox' ),
+                'form' => __( 'Forms', 'captchafox-for-forms' ),
+            ],
+        ]);
+        add_settings_field('otter-blocks', $this->get_plugin_logo( 'otter-blocks' ), [ $this, 'render_plugin_field' ], $setting_plugins, $setting_plugins, [
+            'label_for' => 'otter-blocks',
+            'class'     => 'cf-plugin-item',
+            'group'     => $setting_plugins,
+            'available' => is_plugin_active( 'otter-blocks/otter-blocks.php' ),
+            'options'   => [
+                'form' => __( 'Forms', 'captchafox-for-forms' ),
             ],
         ]);
     }
@@ -101,7 +110,7 @@ class Plugins {
      */
     public function init_plugins_section() {
 		?>
-        <p class="cf-plugins-text"><?php esc_html_e( 'Activate CaptchaFox for third-party plugins.', 'captchafox' ); ?> <?php esc_html_e( 'Is your plugin not listed below?', 'captchafox' ); ?> <a href="https://github.com/captchafox/captchafox-wordpress/issues/new" target="_blank"><?php esc_html_e( 'Request it here', 'captchafox' ); ?></a></p>
+        <p class="cf-plugins-text"><?php esc_html_e( 'Activate CaptchaFox for third-party plugins.', 'captchafox-for-forms' ); ?> <?php esc_html_e( 'Is your plugin not listed below?', 'captchafox-for-forms' ); ?> <a href="https://github.com/captchafox/captchafox-wordpress/issues/new" target="_blank"><?php esc_html_e( 'Request it here', 'captchafox-for-forms' ); ?></a></p>
 		<?php
     }
 
@@ -116,7 +125,7 @@ class Plugins {
             <?php
             settings_fields( 'captchafox_plugins' );
             do_settings_sections( 'captchafox_plugins' );
-            submit_button( __( 'Save Changes', 'captchafox' ) );
+            submit_button( __( 'Save Changes', 'captchafox-for-forms' ) );
             ?>
         </form>
 		<?php

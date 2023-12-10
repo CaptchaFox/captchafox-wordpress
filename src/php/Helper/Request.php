@@ -3,16 +3,17 @@
 namespace CaptchaFox\Helper;
 
 class Request {
-
     /**
      * Validate POST request
      *
      * @return bool
      */
     public static function validate_post() {
-		$response = isset( $_POST['cf-captcha-response'] ) ?
-            filter_var( wp_unslash( $_POST['cf-captcha-response'] ), FILTER_SANITIZE_FULL_SPECIAL_CHARS ) :
-            '';
+        if ( ! isset( $_POST['cf-captcha-response'] ) ) {
+            return false;
+        }
+
+		$response = filter_var( wp_unslash( $_POST['cf-captcha-response'] ), FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 
         return self::validate( $response );
     }
@@ -26,8 +27,7 @@ class Request {
      */
     public static function validate( string $response ) {
         $response = sanitize_text_field( $response );
-        $options = get_option( 'captchafox_options' );
-        $secret = isset( $options['field_secret'] ) ? $options['field_secret'] : '';
+        $secret = CaptchaFox::get_secret();
         $url = 'https://api.captchafox.com/siteverify';
         $data = [
             'secret'   => $secret,

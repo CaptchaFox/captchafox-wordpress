@@ -48,7 +48,7 @@ class Forms extends Plugin {
         if ( ! $verified ) {
             return [
                 'can_submit' => false,
-                'error'      => __( 'Invalid Captcha', 'captchafox' ),
+                'error'      => __( 'Invalid Captcha', 'captchafox-for-forms' ),
             ];
         }
 
