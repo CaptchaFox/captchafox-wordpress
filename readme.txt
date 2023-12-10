@@ -1,4 +1,4 @@
-=== CaptchaFox for Forms ===
+=== CaptchaFox for WordPress ===
 Contributors: scorialabs
 Tags: captcha, abuse, recaptcha, spam, anti-spam, captchafox, gdpr, comments, block bots
 Requires at least: 5.0
