@@ -24,7 +24,7 @@ See the available [plans and pricing](https://captchafox.com/pricing) for more a
 
 == Installation ==
 
-1. Install the plugin via the WordPress.org plugin repository or upload the `captchafox` folder to the `/wp-content/plugins/` directory.
+1. Install the plugin via the WordPress.org plugin repository or upload the `captchafox-for-forms` folder to the `/wp-content/plugins/` directory.
 2. Activate the plugin on the **Plugins** page (**Plugins > Installed Plugins**).
 3. Enter your Site Key and Secret Key in the **General** settings tab (**Settings > CaptchaFox**)  
 4. Enable CaptchaFox for your installed form plugins (**Settings > CaptchaFox > Plugins**)  
