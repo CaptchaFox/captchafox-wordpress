@@ -51,10 +51,10 @@ See the available [plans and pricing](https://captchafox.com/pricing) for more a
 == Frequently Asked Questions ==
 
 = Where do I find my keys? =
-You can find your site key and secret key in the [Portal](https://portal.captcha.com).
+You can find your site key and secret key in the [Portal](https://portal.captchafox.com).
 
 = Where can I learn more about CaptchaFox? =
-Visit the [website](https://captcha.com/) to find more information about CaptchaFox.
+Visit the [website](https://captchafox.com/) to find more information about CaptchaFox.
 
 == Screenshots ==
 1. WordPress Login
