@@ -88,6 +88,7 @@ class CaptchaFox {
         return [
             'sitekey' => $options['sitekey'],
             'mode'    => $options['mode'],
+            'theme'   => $options['theme'],
             'lang'    => $options['lang'],
         ];
     }
@@ -103,11 +104,13 @@ class CaptchaFox {
         $lang = 'auto' !== $field_lang ? $field_lang : null;
         $sitekey = isset( $options['field_sitekey'] ) ? $options['field_sitekey'] : '';
         $mode = isset( $options['field_display_mode'] ) ? $options['field_display_mode'] : 'inline';
+        $theme = isset( $options['field_theme'] ) ? $options['field_theme'] : 'light';
         $secret = isset( $options['field_secret'] ) ? $options['field_secret'] : '';
 
         return [
             'sitekey' => $sitekey,
             'mode'    => $mode,
+            'theme'   => $theme,
             'lang'    => $lang,
             'secret'  => $secret,
         ];

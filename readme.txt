@@ -4,7 +4,7 @@ Tags: captcha, abuse, recaptcha, spam, anti-spam, captchafox, gdpr, comments, bl
 Requires at least: 5.0
 Tested up to: 6.4
 Requires PHP: 7.0
-Stable tag: 1.2.0
+Stable tag: 1.3.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -38,6 +38,7 @@ See the available [plans and pricing](https://captchafox.com/pricing) for more a
 * WP Forms Lite
 * Contact Form 7
 * Ninja Forms
+* Ninja Forms Multi Step
 * Woocommerce Checkout
 * Woocommerce Login
 * Woocommerce Registration
@@ -74,6 +75,11 @@ Once the plugin is activated, the CaptchaFox service may receive the user's IP a
 To learn more, please read the privacy policy at [captchafox.com/privacy](https://captchafox.com/privacy).
 
 == Changelog ==
+
+= 1.3.0 =
+* Tested on WooCommerce 8.5
+* Support Ninja Forms Multi Step
+* Add theme option
 
 = 1.2.0 =
 * Add support for Otter Blocks

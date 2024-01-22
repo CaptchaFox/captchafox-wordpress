@@ -14,6 +14,17 @@ const CaptchaFoxFieldController = Marionette.Object.extend({
       'change:modelValue',
       this.updateField
     );
+
+    this.listenTo(
+      // @ts-expect-error nfRadio is globally available
+      nfRadio.channel('nfMP'),
+      'change:part',
+      this.changePart,
+      this
+    );
+  },
+  changePart() {
+    window.captchaFoxOnLoad();
   },
   updateField(model: any) {
     if ('captchafox' !== model.get('type')) {

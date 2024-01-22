@@ -35,12 +35,14 @@ declare global {
 
       const mode = captchaSlot.dataset.mode as WidgetDisplayMode;
       const sitekey = captchaSlot.dataset.sitekey;
+      const theme = captchaSlot.dataset.theme;
       const lang = captchaSlot.dataset.lang;
 
       const widgetId = await window.captchafox.render(captchaSlot, {
         sitekey: sitekey ?? '',
         ...(mode && { mode }),
         ...(lang && { lang }),
+        ...(theme && { theme }),
         onError: (error) => console.error(error),
       });
 

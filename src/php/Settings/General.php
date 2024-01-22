@@ -34,6 +34,15 @@ class General {
                 'hidden' => __( 'Hidden', 'captchafox-for-forms' ),
             ],
         ]);
+        add_settings_field('field_theme', __( 'Theme', 'captchafox-for-forms' ), [ $this, 'render_select_field' ], 'captchafox', $setting_general, [
+            'label_for' => 'field_theme',
+            'class'     => 'cf-row',
+            'group'     => $setting_general,
+            'options'   => [
+                'light' => __( 'Light (Default)', 'captchafox-for-forms' ),
+                'dark'  => __( 'Dark', 'captchafox-for-forms' ),
+            ],
+        ]);
         add_settings_field('field_lang', __( 'Language', 'captchafox-for-forms' ), [ $this, 'render_select_field' ], 'captchafox', $setting_general, [
             'label_for' => 'field_lang',
             'class'     => 'cf-row',
