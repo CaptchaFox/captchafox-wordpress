@@ -2,9 +2,9 @@
 Contributors: scorialabs
 Tags: captcha, abuse, recaptcha, spam, anti-spam, captchafox, gdpr, comments, block bots
 Requires at least: 5.0
-Tested up to: 6.4
+Tested up to: 6.5
 Requires PHP: 7.0
-Stable tag: 1.3.0
+Stable tag: 1.4.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -75,6 +75,10 @@ Once the plugin is activated, the CaptchaFox service may receive the user's IP a
 To learn more, please read the privacy policy at [captchafox.com/privacy](https://captchafox.com/privacy).
 
 == Changelog ==
+
+= 1.4.0 =
+* Tested on WooCommerce 8.6
+* Tested on WordPress 6.5
 
 = 1.3.0 =
 * Tested on WooCommerce 8.5

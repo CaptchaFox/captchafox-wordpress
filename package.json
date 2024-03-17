@@ -1,9 +1,10 @@
 {
   "name": "captchafox-wordpress",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "CaptchaFox plugin for WordPress",
   "scripts": {
     "build": "concurrently npm:build:js npm:build:styles",
+    "build:watch": "concurrently -P 'npm:build:js -- {@}' 'npm:build:styles -- {@}' -- --watch",
     "build:js": "esbuild ./src/ts/**/*.ts --minify --target=es2015 --outdir=assets/js",
     "build:styles": "sass ./src/styles:./assets/css/ --style compressed --no-source-map"
   },

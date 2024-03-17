@@ -19,10 +19,10 @@ interface Window {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-  if (
-    !window.themeisleGutenbergForm?.reRecaptchaSitekey ||
-    !window.hasOwnProperty('captchafox')
-  ) {
+  if (!window.themeisleGutenbergForm?.reRecaptchaSitekey) {
+    console.warn(
+      'Open the Otter Blocks settings to set the sitekey for CaptchaFox'
+    );
     return;
   }
 
@@ -48,6 +48,13 @@ const renderCaptchaFoxOnOtterForm = async (form: HTMLDivElement) => {
 
   const captchaNode = document.createElement('div');
   const container = form.querySelector('.otter-form__container');
+  const existingNode = container?.querySelector(`#${id}`);
+
+  if (existingNode) {
+    return;
+  }
+
+  captchaNode.id = id;
   container?.insertBefore(captchaNode, container.lastChild);
 
   const captchaId = await window.captchafox?.render(captchaNode, {
