@@ -130,6 +130,12 @@ class Initializer {
 				'plugins' => [ 'otter-blocks/otter-blocks.php' ],
 				'class'   => Plugins\OtterBlocks\Forms::class,
 			],
+			[
+				'group'   => 'fluent-forms',
+				'action'  => 'form',
+				'plugins' => [ 'fluentform/fluentform.php' ],
+				'class'   => Plugins\FluentForms\Forms::class,
+			],
 		];
 
 		foreach ( $plugins as $data ) {

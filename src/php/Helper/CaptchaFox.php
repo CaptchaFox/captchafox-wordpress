@@ -56,12 +56,25 @@ class CaptchaFox {
     }
 
     /**
-     * Create HTML for widget
+     * Print HTML for widget
      *
-     * @return void
+     * @return mixed
      */
     public static function get_html() {
-        $data = self::get_widget_options();
+        print( wp_kses_post( self::build_html() ) );
+    }
+
+    /**
+     * Create HTML for widget
+     *
+     * @param array $data Widget data.
+     *
+     * @return string
+     */
+    public static function build_html( $data = null ) {
+        if ( ! $data ) {
+            $data = self::get_widget_options();
+        }
 
         $attrs = '';
         foreach ( $data as $attr => $value ) {
@@ -72,9 +85,10 @@ class CaptchaFox {
         }
         $attrs = rtrim( $attrs );
 
-        printf( '<div class="captchafox" %s></div>', wp_kses( $attrs, [
+        return sprintf( '<div class="captchafox" %s></div>', wp_kses( $attrs, [
             'data',
         ]) );
+
     }
 
     /**

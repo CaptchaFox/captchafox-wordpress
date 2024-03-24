@@ -9,13 +9,15 @@ class Request {
      * @return bool
      */
     public static function validate_post() {
+        // phpcs:disable WordPress.Security.NonceVerification.Missing
         if ( ! isset( $_POST['cf-captcha-response'] ) ) {
             return false;
         }
 
 		$response = filter_var( wp_unslash( $_POST['cf-captcha-response'] ), FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+        // phpcs:enable WordPress.Security.NonceVerification.Missing
 
-        return self::validate( $response );
+        return self::validate( $response )->success;
     }
 
     /**
@@ -23,7 +25,7 @@ class Request {
      *
      * @param string $response Response.
      *
-     * @return bool
+     * @return object
      */
     public static function validate( string $response ) {
         $response = sanitize_text_field( $response );
@@ -45,8 +47,14 @@ class Request {
         $body = wp_remote_retrieve_body( $post_response );
         $captcha_success = json_decode( $body );
         if ( $captcha_success->success ) {
-            return true;
+            return (object) [
+                'success' => true,
+                'errors'  => [],
+            ];
         }
-        return false;
+        return (object) [
+            'success' => false,
+            'errors'  => $captcha_success->{'error-codes'},
+        ];
     }
 }

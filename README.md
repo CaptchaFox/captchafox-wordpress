@@ -29,6 +29,8 @@ This WordPress Plugin integrates CaptchaFox with WordPress forms and popular plu
 - Forminator
 - BBPress New Topic
 - BBPress Reply
+- Otter Blocks
+- Fluent Forms
 
 ## Contribute
 
