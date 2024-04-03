@@ -136,6 +136,12 @@ class Initializer {
 				'plugins' => [ 'fluentform/fluentform.php' ],
 				'class'   => Plugins\FluentForms\Forms::class,
 			],
+			[
+				'group'   => 'avada-forms',
+				'action'  => 'form',
+				'plugins' => [ 'Avada' ],
+				'class'   => Plugins\AvadaForms\Forms::class,
+			],
 		];
 
 		foreach ( $plugins as $data ) {
@@ -167,6 +173,10 @@ class Initializer {
 
 		foreach ( $plugins as $plugin ) {
 			if ( is_plugin_active( $plugin ) ) {
+				return true;
+			}
+
+			if ( get_template() === $plugin ) {
 				return true;
 			}
 		}

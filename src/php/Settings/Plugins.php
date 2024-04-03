@@ -110,6 +110,15 @@ class Plugins {
                 'form' => __( 'Forms', 'captchafox-for-forms' ),
             ],
         ]);
+        add_settings_field('avada-forms', $this->get_plugin_logo( 'avada' ), [ $this, 'render_plugin_field' ], $setting_plugins, $setting_plugins, [
+            'label_for' => 'avada-forms',
+            'class'     => 'cf-plugin-item',
+            'group'     => $setting_plugins,
+            'available' => get_template() === 'Avada',
+            'options'   => [
+                'form' => __( 'Forms', 'captchafox-for-forms' ),
+            ],
+        ]);
     }
 
     /**
