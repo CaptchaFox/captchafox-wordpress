@@ -1,10 +1,10 @@
 === CaptchaFox for WordPress ===
 Contributors: scorialabs
-Tags: captcha, abuse, recaptcha, spam, anti-spam, captchafox, gdpr, block bots, form
+Tags: captcha, recaptcha, spam, anti-spam, gdpr
 Requires at least: 5.0
-Tested up to: 6.5
+Tested up to: 6.6
 Requires PHP: 7.0
-Stable tag: 1.6.0
+Stable tag: 1.7.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -77,6 +77,11 @@ Once the plugin is activated, the CaptchaFox service may receive the user's IP a
 To learn more, please read the privacy policy at [captchafox.com/privacy](https://captchafox.com/privacy).
 
 == Changelog ==
+
+= 1.7.0 =
+* Tested on WooCommerce 9.0
+* Tested on WordPress 6.6
+* Fix widget not appearing on WordPress register page
 
 = 1.6.0 =
 * Tested on WooCommerce 8.7

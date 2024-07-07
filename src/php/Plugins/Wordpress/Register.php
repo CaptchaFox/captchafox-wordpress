@@ -16,7 +16,7 @@ class Register extends Plugin {
      */
     public function setup() {
 		add_action( 'register_form', [ CaptchaFox::class, 'get_html' ] );
-        add_action( 'register_head', [ CaptchaFox::class, 'load_head' ] );
+        add_action( 'login_head', [ CaptchaFox::class, 'load_head' ] );
         add_filter( 'registration_errors', [ $this, 'verify' ], 10, 3 );
     }
 
