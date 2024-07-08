@@ -142,6 +142,12 @@ class Initializer {
 				'plugins' => [ 'Avada' ],
 				'class'   => Plugins\AvadaForms\Forms::class,
 			],
+			[
+				'group'   => 'elementor',
+				'action'  => 'form',
+				'plugins' => [ 'elementor-pro/elementor-pro.php' ],
+				'class'   => Plugins\Elementor\Forms::class,
+			],
 		];
 
 		foreach ( $plugins as $data ) {

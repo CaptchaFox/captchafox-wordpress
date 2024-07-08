@@ -19,7 +19,9 @@ interface Window {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-  if (!window.themeisleGutenbergForm?.reRecaptchaSitekey) {
+  if (!window.themeisleGutenbergForm) return;
+
+  if (!window.themeisleGutenbergForm.reRecaptchaSitekey) {
     console.warn(
       'Open the Otter Blocks settings to set the sitekey for CaptchaFox'
     );
