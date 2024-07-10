@@ -25,6 +25,27 @@ class Plugins {
                 'comment'       => __( 'Comment Form', 'captchafox-for-forms' ),
             ],
         ]);
+        add_settings_field('woocommerce', $this->get_plugin_logo( 'woocommerce' ), [ $this, 'render_plugin_field' ], $setting_plugins, $setting_plugins, [
+            'label_for' => 'woocommerce',
+            'class'     => 'cf-plugin-item',
+            'group'     => $setting_plugins,
+            'available' => is_plugin_active( 'woocommerce/woocommerce.php' ),
+            'options'   => [
+                'login'         => __( 'Login Form', 'captchafox-for-forms' ),
+                'register'      => __( 'Register Form', 'captchafox-for-forms' ),
+                'lost_password' => __( 'Lost Password Form', 'captchafox-for-forms' ),
+                'checkout'      => __( 'Checkout', 'captchafox-for-forms' ),
+            ],
+        ]);
+        add_settings_field('elementor', $this->get_plugin_logo( 'elementor' ), [ $this, 'render_plugin_field' ], $setting_plugins, $setting_plugins, [
+            'label_for' => 'elementor',
+            'class'     => 'cf-plugin-item',
+            'group'     => $setting_plugins,
+            'available' => is_plugin_active( 'elementor-pro/elementor-pro.php' ),
+            'options'   => [
+                'form' => __( 'Forms', 'captchafox-for-forms' ),
+            ],
+        ]);
         add_settings_field('wpforms', $this->get_plugin_logo( 'wpforms' ), [ $this, 'render_plugin_field' ], $setting_plugins, $setting_plugins, [
             'label_for' => 'wpforms',
             'class'     => 'cf-plugin-item',
@@ -41,18 +62,6 @@ class Plugins {
             'available' => is_plugin_active( 'mailchimp-for-wp/mailchimp-for-wp.php' ),
             'options'   => [
                 'form' => __( 'Forms', 'captchafox-for-forms' ),
-            ],
-        ]);
-        add_settings_field('woocommerce', $this->get_plugin_logo( 'woocommerce' ), [ $this, 'render_plugin_field' ], $setting_plugins, $setting_plugins, [
-            'label_for' => 'woocommerce',
-            'class'     => 'cf-plugin-item',
-            'group'     => $setting_plugins,
-            'available' => is_plugin_active( 'woocommerce/woocommerce.php' ),
-            'options'   => [
-                'login'         => __( 'Login Form', 'captchafox-for-forms' ),
-                'register'      => __( 'Register Form', 'captchafox-for-forms' ),
-                'lost_password' => __( 'Lost Password Form', 'captchafox-for-forms' ),
-                'checkout'      => __( 'Checkout', 'captchafox-for-forms' ),
             ],
         ]);
         add_settings_field('forminator', $this->get_plugin_logo( 'forminator' ), [ $this, 'render_plugin_field' ], $setting_plugins, $setting_plugins, [

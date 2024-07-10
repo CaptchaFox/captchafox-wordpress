@@ -56,12 +56,10 @@ const CaptchaFoxFieldController = Marionette.Object.extend({
   },
 });
 
-// @ts-expect-error jquery is globally available
 jQuery(document).ready(() => {
   new CaptchaFoxFieldController();
 });
 
-// @ts-expect-error jquery is globally available
 jQuery(document).on('nfFormReady', () => {
   window.captchaFoxOnLoad();
 });

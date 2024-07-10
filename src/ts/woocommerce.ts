@@ -11,5 +11,4 @@ const setupWoocommerceEvents = function ($: any) {
   });
 };
 
-// @ts-expect-error jquery is globally available
 jQuery(document).ready(setupWoocommerceEvents);

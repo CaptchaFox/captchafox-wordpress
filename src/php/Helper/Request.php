@@ -45,8 +45,8 @@ class Request {
         }
 
         $body = wp_remote_retrieve_body( $post_response );
-        $captcha_success = json_decode( $body );
-        if ( $captcha_success->success ) {
+        $result = json_decode( $body );
+        if ( $result->success ) {
             return (object) [
                 'success' => true,
                 'errors'  => [],
@@ -54,7 +54,7 @@ class Request {
         }
         return (object) [
             'success' => false,
-            'errors'  => $captcha_success->{'error-codes'},
+            'errors'  => $result->{'error-codes'},
         ];
     }
 }

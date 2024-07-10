@@ -1,12 +1,5 @@
 import type { WidgetDisplayMode } from '@captchafox/types';
 
-declare global {
-  interface Window {
-    captchaFoxOnLoad: () => void;
-    captchaFoxWPReset: (selector: string) => void;
-  }
-}
-
 (() => {
   let executeListener: (event: Event) => void;
 
