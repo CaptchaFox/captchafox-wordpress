@@ -4,7 +4,7 @@ Tags: captcha, recaptcha, spam, anti-spam, gdpr
 Requires at least: 5.0
 Tested up to: 6.6
 Requires PHP: 7.0
-Stable tag: 1.8.0
+Stable tag: 1.9.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -57,8 +57,30 @@ See the available [plans and pricing](https://captchafox.com/pricing) for more a
 = Where do I find my keys? =
 You can find your site key and secret key in the [Portal](https://portal.captchafox.com).
 
+= How to set the widget options programmatically? =
+
+You can use the following filters to override the language, theme and mode:
+- capf_language
+- capf_theme
+- capf_mode
+
+__Example__
+`
+/**
+* Filters the CaptchaFox language setting.
+*
+* @param string $language Language.
+*/
+function set_custom_language( $language ) {
+  return 'YOUR_LANGUAGE_CODE'; // see https://docs.captchafox.com/language-codes for available codes
+}
+
+add_filter( 'capf_language', 'set_custom_language' );
+`
+
 = Where can I learn more about CaptchaFox? =
 Visit the [website](https://captchafox.com/) to find more information about CaptchaFox.
+
 
 == Screenshots ==
 1. WordPress Login
@@ -78,6 +100,9 @@ Once the plugin is activated, the CaptchaFox service may receive the user's IP a
 To learn more, please read the privacy policy at [captchafox.com/privacy](https://captchafox.com/privacy).
 
 == Changelog ==
+
+= 1.9.0 =
+* Add filters to override options programmatically
 
 = 1.8.0 =
 * Support Elementor Forms

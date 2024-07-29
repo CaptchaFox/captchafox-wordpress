@@ -114,18 +114,23 @@ class CaptchaFox {
      */
     public static function get_options() {
         $options = get_option( 'captchafox_options' );
-        $field_lang = isset( $options['field_lang'] ) ? $options['field_lang'] : null;
-        $lang = 'auto' !== $field_lang ? $field_lang : null;
-        $sitekey = isset( $options['field_sitekey'] ) ? $options['field_sitekey'] : '';
-        $mode = isset( $options['field_display_mode'] ) ? $options['field_display_mode'] : 'inline';
-        $theme = isset( $options['field_theme'] ) ? $options['field_theme'] : 'light';
         $secret = isset( $options['field_secret'] ) ? $options['field_secret'] : '';
+        $sitekey = isset( $options['field_sitekey'] ) ? $options['field_sitekey'] : '';
+        $lang_option = isset( $options['field_lang'] ) ? $options['field_lang'] : null;
+        $lang_option = 'auto' !== $lang_option ? $lang_option : null;
+
+        $mode_option = isset( $options['field_display_mode'] ) ? $options['field_display_mode'] : 'inline';
+        $theme_option = isset( $options['field_theme'] ) ? $options['field_theme'] : 'light';
+
+        $theme = apply_filters( 'capf_theme', $theme_option );
+        $mode = apply_filters( 'capf_mode', $mode_option );
+        $lang = apply_filters( 'capf_language', $lang_option );
 
         return [
-            'sitekey' => $sitekey,
             'mode'    => $mode,
             'theme'   => $theme,
             'lang'    => $lang,
+            'sitekey' => $sitekey,
             'secret'  => $secret,
         ];
     }
