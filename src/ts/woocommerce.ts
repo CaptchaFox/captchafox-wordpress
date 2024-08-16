@@ -1,4 +1,4 @@
-const setupWoocommerceEvents = function ($: any) {
+const setupWoocommerceEvents = ($: any) => {
   function reset() {
     window.captchaFoxWPReset('form.woocommerce-checkout');
   }

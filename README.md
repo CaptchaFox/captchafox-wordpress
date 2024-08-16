@@ -18,6 +18,7 @@ This WordPress Plugin integrates CaptchaFox with WordPress forms and popular plu
 - WordPress Password Reset
 - WordPress Comments
 - Elementor Forms
+- Gravity Forms
 - WP Forms
 - Contact Form 7
 - Ninja Forms

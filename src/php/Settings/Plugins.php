@@ -101,6 +101,15 @@ class Plugins {
                 'form' => __( 'Forms', 'captchafox-for-forms' ),
             ],
         ]);
+        add_settings_field('gravityforms', $this->get_plugin_logo( 'gravityforms' ), [ $this, 'render_plugin_field' ], $setting_plugins, $setting_plugins, [
+            'label_for' => 'gravityforms',
+            'class'     => 'cf-plugin-item',
+            'group'     => $setting_plugins,
+            'available' => is_plugin_active( 'gravityforms/gravityforms.php' ),
+            'options'   => [
+                'form' => __( 'Forms', 'captchafox-for-forms' ),
+            ],
+        ]);
         add_settings_field('otter-blocks', $this->get_plugin_logo( 'otter-blocks' ), [ $this, 'render_plugin_field' ], $setting_plugins, $setting_plugins, [
             'label_for' => 'otter-blocks',
             'class'     => 'cf-plugin-item',

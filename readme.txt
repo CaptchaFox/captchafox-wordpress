@@ -4,7 +4,7 @@ Tags: captcha, recaptcha, spam, anti-spam, gdpr
 Requires at least: 5.0
 Tested up to: 6.6
 Requires PHP: 7.0
-Stable tag: 1.9.0
+Stable tag: 1.10.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -36,6 +36,7 @@ See the available [plans and pricing](https://captchafox.com/pricing) for more a
 * WordPress Password Reset
 * WordPress Comments
 * Elementor Forms
+* Gravity Forms
 * WP Forms Lite
 * Contact Form 7
 * Ninja Forms
@@ -100,6 +101,9 @@ Once the plugin is activated, the CaptchaFox service may receive the user's IP a
 To learn more, please read the privacy policy at [captchafox.com/privacy](https://captchafox.com/privacy).
 
 == Changelog ==
+
+= 1.10.0 =
+* Support Gravity Forms
 
 = 1.9.0 =
 * Add filters to override options programmatically
