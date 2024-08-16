@@ -148,6 +148,12 @@ class Initializer {
 				'plugins' => [ 'elementor-pro/elementor-pro.php' ],
 				'class'   => Plugins\Elementor\Forms::class,
 			],
+			[
+				'group'   => 'gravityforms',
+				'action'  => 'form',
+				'plugins' => [ 'gravityforms/gravityforms.php' ],
+				'class'   => Plugins\GravityForms\Forms::class,
+			],
 		];
 
 		foreach ( $plugins as $data ) {
