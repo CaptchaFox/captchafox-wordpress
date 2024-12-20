@@ -50,7 +50,7 @@ class Plugins {
             'label_for' => 'wpforms',
             'class'     => 'cf-plugin-item',
             'group'     => $setting_plugins,
-            'available' => is_plugin_active( 'wpforms-lite/wpforms.php' ),
+            'available' => is_plugin_active( 'wpforms-lite/wpforms.php' ) || is_plugin_active( 'wpforms/wpforms.php' ),
             'options'   => [
                 'form' => __( 'Forms', 'captchafox-for-forms' ),
             ],
