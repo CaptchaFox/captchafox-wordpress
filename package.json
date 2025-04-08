@@ -1,6 +1,6 @@
 {
   "name": "captchafox-wordpress",
-  "version": "1.10.1",
+  "version": "1.11.0",
   "description": "CaptchaFox plugin for WordPress",
   "scripts": {
     "build": "concurrently npm:build:js npm:build:styles",
