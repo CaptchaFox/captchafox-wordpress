@@ -160,5 +160,4 @@ class CaptchaFoxField extends GF_Field {
         wp_enqueue_script( 'captchafox-admin', constant( 'CAPTCHAFOX_BASE_URL' ) . '/assets/js/gravityFormsAdmin.js', [], PLUGIN_VERSION, true );
         wp_enqueue_script( 'captchafox', CaptchaFox::get_script(), [], PLUGIN_VERSION, true );
 	}
-
 }
