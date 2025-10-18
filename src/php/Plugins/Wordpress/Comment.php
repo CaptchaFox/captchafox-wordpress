@@ -42,6 +42,12 @@ class Comment extends Plugin {
             return $approved;
         }
 
+        static $already_checked = false;
+		if ( $already_checked ) {
+			return $approved;
+		}
+		$already_checked = true;
+
         $verified = Request::validate_post();
 
         if ( ! $verified ) {

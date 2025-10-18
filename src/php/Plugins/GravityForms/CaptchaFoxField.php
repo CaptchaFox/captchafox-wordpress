@@ -109,7 +109,7 @@ class CaptchaFoxField extends GF_Field {
 	 * @return string
 	 */
 	public function get_form_editor_field_icon() {
-		return CAPTCHAFOX_BASE_URL . '/assets/img/captchafox-icon.svg';
+		return CAPTCHAFOX_BASE_URL . '/assets/img/captchafox-icon-dark.svg';
 	}
 
 	/**
