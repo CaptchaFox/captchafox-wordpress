@@ -42,7 +42,33 @@ class Settings {
      * @return void
      */
     public function add_to_admin_menu() {
-        add_options_page( 'CaptchaFox', 'CaptchaFox', 'manage_options', 'captchafox', [ $this, 'init_admin_page' ] );
+            add_menu_page(
+            'CaptchaFox',
+            'CaptchaFox',
+            'manage_options',
+            'captchafox',
+            [ $this, 'init_admin_page' ],
+            constant( 'CAPTCHAFOX_BASE_URL' ) . '/assets/img/captchafox-icon.svg',
+            58.89
+        );
+
+        add_submenu_page(
+            'captchafox',
+            'CaptchaFox',
+            'Plugins',
+            'manage_options',
+            'captchafox-plugins',
+            [ $this, 'show_plugins' ]
+        );
+    }
+
+    /**
+     * Show plugins menu page
+     *
+     * @return void
+     */
+    public function show_plugins() {
+        $this->render_settings( 'plugins' );
     }
 
     /**
@@ -86,13 +112,15 @@ class Settings {
     /**
      * Render Settings Content
      *
+     * @param string $default_page Tab to render.
+     *
      * @return void
      */
-    public function render_settings() {
-		$default_tab = 'general';
+    public function render_settings( $default_page = 'general' ) {
         // phpcs:disable WordPress.Security.NonceVerification.Recommended
-        $tab = filter_input( INPUT_GET, 'tab', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
-        $tab = isset( $tab ) ? $tab : $default_tab;
+        $page = filter_input( INPUT_GET, 'page', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+        $page = explode( $page, '-' )[0];
+        $page = isset( $default_page ) ? $default_page : $page;
         // phpcs:enable WordPress.Security.NonceVerification.Recommended
 		?>
         <div class="cf-admin">
@@ -106,24 +134,24 @@ class Settings {
             <nav id="cf-admin-nav" class="container nav-tab-wrapper">
                 <a href="?page=captchafox" class="nav-tab 
                 <?php
-                if ( $tab === $default_tab ) :
+                if ( 'general' === $page ) :
 					?>
                     nav-tab-active<?php endif; ?>">General</a>
-                <a href="?page=captchafox&tab=plugins" class="nav-tab 
+                <a href="?page=captchafox-plugins" class="nav-tab 
                 <?php
-                if ( 'plugins' === $tab ) :
+                if ( 'plugins' === $page ) :
 					?>
                     nav-tab-active<?php endif; ?>">Plugins</a>
             </nav>
 
             <div class="wrap tab-content">
                 <?php
-                switch ( $tab ) :
-                    case $default_tab:
-                        echo esc_html( $this->general_tab->get_tab_content() );
-                        break;
+                switch ( $page ) :
                     case 'plugins':
                         echo esc_html( $this->plugins_tab->get_tab_content() );
+                        break;
+					default:
+                        echo esc_html( $this->general_tab->get_tab_content() );
                         break;
                 endswitch;
                 ?>

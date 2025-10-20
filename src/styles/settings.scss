@@ -112,7 +112,7 @@
   min-height: 35px;
   line-height: 35px;
   font-size: 0.875rem;
-  color: #fff;
+  color: #000;
   height: 39px;
   position: relative;
   border-color: #ff9b21;
@@ -136,7 +136,7 @@
 
   &:hover {
     background: #df7e2a;
-    color: #fff;
+    color: #000;
     border-color: #ff9b21;
   }
 
@@ -147,4 +147,21 @@
 
 .cf-plugins-text {
   margin-bottom: 32px;
+}
+
+#toplevel_page_captchafox {
+  .wp-menu-image img {
+    padding-top: 7.5px;
+  }
+
+  &.wp-menu-open {
+    img {
+      filter: grayscale(0);
+    }
+  }
+
+  img {
+    width: 20px;
+    filter: grayscale(1);
+  }
 }

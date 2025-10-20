@@ -79,7 +79,8 @@ class General {
      *
      * @return void
      */
-    public function init_settings_section() {                      ?>
+    public function init_settings_section() {
+        ?>
         <p><?php esc_html_e( 'Configure the settings for the CaptchaFox widget.', 'captchafox-for-forms' ); ?> <?php esc_html_e( 'Don\'t have a site key?', 'captchafox-for-forms' ); ?> <a href="https://portal.captchafox.com/register" target="_blank"><?php esc_html_e( 'Click here to create an account', 'captchafox-for-forms' ); ?></a></p>
 		<?php
     }
@@ -162,5 +163,4 @@ class General {
             wp_kses( $select_options, $allowed_html )
         );
     }
-
 }

@@ -88,7 +88,6 @@ class CaptchaFox {
         return sprintf( '<div class="captchafox" %s></div>', wp_kses( $attrs, [
             'data',
         ]) );
-
     }
 
     /**
