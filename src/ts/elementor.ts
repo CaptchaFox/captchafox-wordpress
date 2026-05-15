@@ -16,16 +16,17 @@ jQuery(document).on(
 
     const formId = params.get('form_id');
     window.captchaFoxWPReset(`div[data-id="${formId}"] form`);
-  }
+  },
 );
 
 jQuery(document).ready(() => {
   window.elementorFrontend?.hooks?.addAction(
     'frontend/element_ready/widget',
     function (scope) {
-      if (scope[0].classList.contains('elementor-widget-form')) {
+      const isAdmin = (window as any).elementor;
+      if (isAdmin && scope[0].classList.contains('elementor-widget-form')) {
         window.captchaFoxOnLoad();
       }
-    }
+    },
   );
 });
