@@ -98,7 +98,7 @@ This plugin does **not** use cookies, track users, store personal data or commun
 
 Once the plugin is activated, the CaptchaFox service may receive the user's IP address and browser vendor data while protecting enabled pages. However, CaptchaFox is designed to reduce the use of data and to dispose of it as soon as the verification request is processed.
 
-To learn more, pplease read the privacy policy at [captchafox.com/privacy](https://captchafox.com/privacy).
+To learn more, please read the privacy policy at [captchafox.com/privacy](https://captchafox.com/privacy).
 
 == Changelog ==
 
