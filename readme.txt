@@ -2,9 +2,9 @@
 Contributors: scorialabs
 Tags: captcha, recaptcha, spam, anti-spam, gdpr
 Requires at least: 5.0
-Tested up to: 6.8
+Tested up to: 7.0
 Requires PHP: 7.0
-Stable tag: 1.12.0
+Stable tag: 1.13.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -101,6 +101,10 @@ Once the plugin is activated, the CaptchaFox service may receive the user's IP a
 To learn more, please read the privacy policy at [captchafox.com/privacy](https://captchafox.com/privacy).
 
 == Changelog ==
+
+= 1.13.0 =
+* Tested on WordPress 7.0
+* Update for Elementor 4.0
 
 = 1.12.0 =
 * Moved plugin settings to main menu
