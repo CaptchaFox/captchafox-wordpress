@@ -37,6 +37,13 @@ class Security {
             'placeholder' => "203.0.113.5\n192.168.0.0/24",
             'description' => __( 'Trusted IP addresses or CIDR ranges (one per line) that skip the captcha.', 'captchafox-for-forms' ),
         ]);
+        add_settings_field('field_denylist', __( 'IP Denylist', 'captchafox-for-forms' ), [ $this, 'render_textarea_field' ], 'captchafox-security', $setting_security, [
+            'label_for'   => 'field_denylist',
+            'class'       => 'cf-row',
+            'group'       => $setting_security,
+            'placeholder' => "203.0.113.6\n10.0.0.0/8",
+            'description' => __( 'Blocked IP addresses or CIDR ranges (one per line). Submissions from these are always rejected, even if also allowlisted.', 'captchafox-for-forms' ),
+        ]);
         add_settings_field('field_login_limit', __( 'Login Attempts Before Captcha', 'captchafox-for-forms' ), [ $this, 'render_number_field' ], 'captchafox-security', $setting_security, [
             'label_for'   => 'field_login_limit',
             'class'       => 'cf-row',

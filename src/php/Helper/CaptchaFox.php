@@ -148,6 +148,21 @@ class CaptchaFox {
     }
 
     /**
+     * Get the configured denylist of IP addresses / CIDR ranges.
+     *
+     * @return string[]
+     */
+    public static function get_denylist() {
+        $options = get_option( 'captchafox_security' );
+        $raw = isset( $options['field_denylist'] ) ? $options['field_denylist'] : '';
+
+        $list = preg_split( '/\r\n|\r|\n/', (string) $raw );
+        $list = array_values( array_filter( array_map( 'trim', $list ) ) );
+
+        return apply_filters( 'capf_denylist', $list );
+    }
+
+    /**
      * Get the visitor's IP address.
      *
      * @return string
@@ -170,7 +185,8 @@ class CaptchaFox {
     public static function is_ip_allowed() {
         $ip = self::get_client_ip();
 
-        if ( '' === $ip ) {
+        // A denied IP is never treated as allowed; blocking takes precedence.
+        if ( '' === $ip || self::is_ip_denied() ) {
             return (bool) apply_filters( 'capf_ip_allowed', false, $ip );
         }
 
@@ -183,6 +199,29 @@ class CaptchaFox {
         }
 
         return (bool) apply_filters( 'capf_ip_allowed', $allowed, $ip );
+    }
+
+    /**
+     * Whether the visitor's IP is denylisted and should be blocked.
+     *
+     * @return bool
+     */
+    public static function is_ip_denied() {
+        $ip = self::get_client_ip();
+
+        if ( '' === $ip ) {
+            return (bool) apply_filters( 'capf_ip_denied', false, $ip );
+        }
+
+        $denied = false;
+        foreach ( self::get_denylist() as $entry ) {
+            if ( self::ip_matches( $ip, $entry ) ) {
+                $denied = true;
+                break;
+            }
+        }
+
+        return (bool) apply_filters( 'capf_ip_denied', $denied, $ip );
     }
 
     /**

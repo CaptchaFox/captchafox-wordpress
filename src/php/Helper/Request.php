@@ -13,6 +13,10 @@ class Request {
             return true;
         }
 
+        if ( CaptchaFox::is_ip_denied() ) {
+            return false;
+        }
+
         // phpcs:disable WordPress.Security.NonceVerification.Missing
         if ( ! isset( $_POST['cf-captcha-response'] ) ) {
             return false;
@@ -36,6 +40,13 @@ class Request {
             return (object) [
                 'success' => true,
                 'errors'  => [],
+            ];
+        }
+
+        if ( CaptchaFox::is_ip_denied() ) {
+            return (object) [
+                'success' => false,
+                'errors'  => [ 'ip_denied' ],
             ];
         }
 
