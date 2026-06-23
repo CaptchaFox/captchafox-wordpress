@@ -44,6 +44,12 @@ class Security {
             'placeholder' => "203.0.113.6\n10.0.0.0/8",
             'description' => __( 'Blocked IP addresses or CIDR ranges (one per line). Submissions from these are always rejected, even if also allowlisted.', 'captchafox-for-forms' ),
         ]);
+        add_settings_field('field_skip_logged_in', __( 'Skip for Logged-in Users', 'captchafox-for-forms' ), [ $this, 'render_checkbox_field' ], 'captchafox-security', $setting_security, [
+            'label_for'   => 'field_skip_logged_in',
+            'class'       => 'cf-row',
+            'group'       => $setting_security,
+            'description' => __( 'Do not show the captcha to users who are signed in.', 'captchafox-for-forms' ),
+        ]);
         add_settings_field('field_login_limit', __( 'Login Attempts Before Captcha', 'captchafox-for-forms' ), [ $this, 'render_number_field' ], 'captchafox-security', $setting_security, [
             'label_for'   => 'field_login_limit',
             'class'       => 'cf-row',

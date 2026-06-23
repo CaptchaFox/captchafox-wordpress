@@ -154,7 +154,7 @@ class Forms extends Plugin {
 		}
         $field = current( $fields );
 
-		if ( CaptchaFox::is_ip_allowed() ) {
+		if ( CaptchaFox::should_skip_captcha() ) {
 			$record->remove_field( $field['id'] );
 
 			return;

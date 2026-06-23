@@ -9,7 +9,7 @@ class Request {
      * @return bool
      */
     public static function validate_post() {
-        if ( CaptchaFox::is_ip_allowed() ) {
+        if ( CaptchaFox::should_skip_captcha() ) {
             return true;
         }
 
@@ -36,7 +36,7 @@ class Request {
      * @return object
      */
     public static function validate( string $response ) {
-        if ( CaptchaFox::is_ip_allowed() ) {
+        if ( CaptchaFox::should_skip_captcha() ) {
             return (object) [
                 'success' => true,
                 'errors'  => [],

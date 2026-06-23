@@ -65,11 +65,38 @@ function cf_test_set_option( $name, $value ) {
  * @return void
  */
 function cf_test_reset() {
-	$GLOBALS['cf_test_options']    = [];
-	$GLOBALS['cf_test_transients'] = [];
-	$GLOBALS['cf_test_enqueued']   = [];
-	$_POST                         = [];
+	$GLOBALS['cf_test_options']     = [];
+	$GLOBALS['cf_test_transients']  = [];
+	$GLOBALS['cf_test_enqueued']    = [];
+	$GLOBALS['cf_test_logged_in']   = false;
+	$GLOBALS['cf_test_user_roles']  = [];
+	$_POST                          = [];
 	unset( $_SERVER['REMOTE_ADDR'] );
+}
+
+/**
+ * Set the current user's logged-in state and roles for the current test.
+ *
+ * @param bool     $logged_in Whether the user is logged in.
+ * @param string[] $roles     The user's roles.
+ *
+ * @return void
+ */
+function cf_test_set_user( $logged_in, $roles = [] ) {
+	$GLOBALS['cf_test_logged_in']  = $logged_in;
+	$GLOBALS['cf_test_user_roles'] = $roles;
+}
+
+if ( ! function_exists( 'is_user_logged_in' ) ) {
+	function is_user_logged_in() {
+		return ! empty( $GLOBALS['cf_test_logged_in'] );
+	}
+}
+
+if ( ! function_exists( 'wp_get_current_user' ) ) {
+	function wp_get_current_user() {
+		return (object) [ 'roles' => $GLOBALS['cf_test_user_roles'] ?? [] ];
+	}
 }
 
 if ( ! function_exists( 'get_option' ) ) {

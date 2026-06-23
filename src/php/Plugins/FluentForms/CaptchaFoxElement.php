@@ -100,7 +100,7 @@ class CaptchaFoxElement extends \FluentForm\App\Services\FormBuilder\BaseFieldMa
 	 * @return array
 	 */
 	public function verify( $error_message, $field, $form_data, $fields, $form ) {
-		if ( CaptchaFox::is_ip_allowed() ) {
+		if ( CaptchaFox::should_skip_captcha() ) {
 			return $error_message;
 		}
 

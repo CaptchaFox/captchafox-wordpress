@@ -202,6 +202,34 @@ class CaptchaFox {
     }
 
     /**
+     * Whether logged-in users skip the captcha.
+     *
+     * @return bool
+     */
+    public static function is_user_exempt() {
+        $options = get_option( 'captchafox_security' );
+        $enabled = isset( $options['field_skip_logged_in'] ) && '1' === $options['field_skip_logged_in'];
+        $enabled = (bool) apply_filters( 'capf_skip_logged_in', $enabled );
+
+        if ( ! $enabled || ! function_exists( 'is_user_logged_in' ) || ! is_user_logged_in() ) {
+            return false;
+        }
+
+        return (bool) apply_filters( 'capf_user_exempt', true );
+    }
+
+    /**
+     * Whether the captcha should be skipped for the current request, either
+     * because the IP is allowlisted or the user is exempt. A denylisted IP is
+     * never skipped.
+     *
+     * @return bool
+     */
+    public static function should_skip_captcha() {
+        return self::is_ip_allowed() || ( ! self::is_ip_denied() && self::is_user_exempt() );
+    }
+
+    /**
      * Whether the visitor's IP is denylisted and should be blocked.
      *
      * @return bool
@@ -413,9 +441,9 @@ class CaptchaFox {
      * @return string
      */
     public static function build_html( $data = null ) {
-        // Allowlisted visitors skip the captcha entirely, so render nothing and
-        // avoid loading the assets. Verification is bypassed accordingly.
-        if ( self::is_ip_allowed() ) {
+        // Allowlisted/exempt visitors skip the captcha entirely, so render
+        // nothing and avoid loading the assets. Verification is bypassed too.
+        if ( self::should_skip_captcha() ) {
             return '';
         }
 
