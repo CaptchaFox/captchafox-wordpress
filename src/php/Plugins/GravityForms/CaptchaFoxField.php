@@ -143,6 +143,10 @@ class CaptchaFoxField extends GF_Field {
 		$tabindex = GFCommon::$tab_index > 0 ? GFCommon::$tab_index++ : 0;
 		$search = 'class="captchafox"';
 
+		if ( ! $is_entry_detail && ! $is_form_editor ) {
+			$this->load_frontend_scripts();
+		}
+
 		return str_replace(
 			$search,
 			$search . ' id="' . $field_id . '" data-tabindex="' . $tabindex . '"',
@@ -151,7 +155,7 @@ class CaptchaFoxField extends GF_Field {
 	}
 
 	/**
-	 * Load required scripts
+	 * Load required scripts for the form editor preview
 	 *
 	 * @return void
 	 */
@@ -159,5 +163,21 @@ class CaptchaFoxField extends GF_Field {
         wp_enqueue_script( 'captchafox-form', constant( 'CAPTCHAFOX_BASE_URL' ) . '/assets/js/form.js', [], PLUGIN_VERSION, true );
         wp_enqueue_script( 'captchafox-admin', constant( 'CAPTCHAFOX_BASE_URL' ) . '/assets/js/gravityFormsAdmin.js', [], PLUGIN_VERSION, true );
         wp_enqueue_script( 'captchafox', CaptchaFox::get_script(), [], PLUGIN_VERSION, true );
+	}
+
+	/**
+	 * Load required scripts when the field is displayed on the frontend.
+	 * The core assets are enqueued through CaptchaFox::build_html.
+	 *
+	 * @return void
+	 */
+	public function load_frontend_scripts() {
+		wp_enqueue_script(
+			'gravity-forms',
+			constant( 'CAPTCHAFOX_BASE_URL' ) . '/assets/js/gravityForms.js',
+			[ 'jquery', 'captchafox-form' ],
+			PLUGIN_VERSION,
+			true
+		);
 	}
 }

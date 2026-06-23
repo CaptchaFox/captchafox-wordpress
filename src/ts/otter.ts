@@ -18,24 +18,27 @@ interface Window {
   };
 }
 
+// Stop Otter Blocks from loading its own captcha api script.
+if (window.themeisleGutenbergForm?.reRecaptchaSitekey) {
+  window.grecaptcha = {};
+}
+
 document.addEventListener('DOMContentLoaded', function () {
   if (!window.themeisleGutenbergForm) return;
 
   if (!window.themeisleGutenbergForm.reRecaptchaSitekey) {
     console.warn(
-      'Open the Otter Blocks settings to set the sitekey for CaptchaFox'
+      'Open the Otter Blocks settings to set the sitekey for CaptchaFox',
     );
     return;
   }
 
-  // noop for otter checks
-  window.grecaptcha = {};
   window.captchaFoxLoadOtter();
 });
 
 window.captchaFoxLoadOtter = () => {
   const forms = document.querySelectorAll<HTMLDivElement>(
-    '.wp-block-themeisle-blocks-form'
+    '.wp-block-themeisle-blocks-form',
   );
 
   forms.forEach(async (form: HTMLDivElement) => {

@@ -24,7 +24,6 @@ class Forms extends Plugin {
 		add_action( 'gform_loaded', [ $this, 'register_field' ], 10, 0 );
 		add_filter( 'gform_validation', [ $this, 'verify' ], 10, 2 );
 		add_filter( 'gform_form_validation_errors', [ $this, 'form_validation_errors' ], 10, 2 );
-		add_action( 'wp_print_footer_scripts', [ $this, 'load_scripts' ], 8 );
 	}
 
 	/**
@@ -148,20 +147,5 @@ class Forms extends Plugin {
 		}
 
 		return false;
-	}
-
-	/**
-	 * Load required scripts
-	 *
-	 * @return void
-	 */
-    public function load_scripts() {
-		wp_enqueue_script(
-			'gravity-forms',
-			CAPTCHAFOX_BASE_URL . '/assets/js/gravityForms.js',
-			[ 'jquery' ],
-			PLUGIN_VERSION,
-			true
-		);
 	}
 }

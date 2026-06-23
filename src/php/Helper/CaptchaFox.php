@@ -3,14 +3,14 @@
 namespace CaptchaFox\Helper;
 
 class CaptchaFox {
+
     /**
-     * Get styles
+     * Get the widget styles as a CSS string.
      *
-     * @return void
+     * @return string
      */
-    public static function get_styles() {
-        ?>
-        <style>
+    public static function get_styles_css() {
+        return '
             .wpforms-container .captchafox,
             .captchafox {
                 margin-bottom: 16px;
@@ -19,19 +19,57 @@ class CaptchaFox {
             .captchafox[data-mode="hidden"] {
                 margin-bottom: 0;
             }
-        </style>
-		<?php
+        ';
     }
 
     /**
-     * Load head
+     * Register the frontend assets without enqueuing them.
+     *
+     * Registering keeps the scripts available so they can be enqueued lazily
+     * (or pulled in as dependencies) only on pages that actually contain a
+     * CaptchaFox widget. This avoids loading the third party script on every
+     * page for data privacy reasons.
+     *
+     * @return void
+     */
+    public static function register_assets() {
+        if ( wp_script_is( 'captchafox-form', 'registered' ) ) {
+            return;
+        }
+
+        // form.js defines window.captchaFoxOnLoad, which the CDN api.js invokes
+        // via its onload parameter, so form.js must be loaded before the api
+        // script. The dependency guarantees that order.
+        wp_register_script( 'captchafox-form', constant( 'CAPTCHAFOX_BASE_URL' ) . '/assets/js/form.js', [], PLUGIN_VERSION, true );
+        wp_register_script( 'captchafox', self::get_script(), [ 'captchafox-form' ], PLUGIN_VERSION, true );
+
+        wp_register_style( 'captchafox', false, [], PLUGIN_VERSION );
+        wp_add_inline_style( 'captchafox', self::get_styles_css() );
+    }
+
+    /**
+     * Enqueue the assets.
+     *
+     * Called whenever a widget is rendered so the scripts are only loaded on
+     * pages that contain a CaptchaFox widget.
+     *
+     * @return void
+     */
+    public static function enqueue_assets() {
+        self::register_assets();
+
+        wp_enqueue_script( 'captchafox-form' );
+        wp_enqueue_script( 'captchafox' );
+        wp_enqueue_style( 'captchafox' );
+    }
+
+    /**
+     * Load head. Used on the login pages, where the captcha is always present.
      *
      * @return void
      */
     public static function load_head() {
-		wp_enqueue_script( 'captchafox-form', constant( 'CAPTCHAFOX_BASE_URL' ) . '/assets/js/form.js', [], PLUGIN_VERSION, true );
-        wp_enqueue_script( 'captchafox', self::get_script(), [], PLUGIN_VERSION, true );
-        self::get_styles();
+        self::enqueue_assets();
     }
 
     /**
@@ -72,6 +110,10 @@ class CaptchaFox {
      * @return string
      */
     public static function build_html( $data = null ) {
+        // A widget is being rendered, so make sure the scripts are loaded on
+        // this page. Enqueuing here keeps the assets off pages without a form.
+        self::enqueue_assets();
+
         if ( ! $data ) {
             $data = self::get_widget_options();
         }

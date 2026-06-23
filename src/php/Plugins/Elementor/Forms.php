@@ -183,8 +183,7 @@ class Forms extends Plugin {
      * @return void
      */
     public function enqueue_scripts() {
-        wp_enqueue_script( 'captchafox', CaptchaFox::get_script(), [], PLUGIN_VERSION, true );
-        wp_enqueue_script( 'captchafox-form', constant( 'CAPTCHAFOX_BASE_URL' ) . '/assets/js/form.js', [ 'captchafox' ], PLUGIN_VERSION, true );
+        CaptchaFox::enqueue_assets();
         wp_enqueue_script(
 		'captchafox-elementor',
 		constant( 'CAPTCHAFOX_BASE_URL' ) . '/assets/js/elementor.js',

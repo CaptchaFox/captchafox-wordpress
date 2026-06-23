@@ -18,7 +18,6 @@ class Forms extends Plugin {
     public function setup() {
 		add_filter( 'wpcf7_form_elements', [ $this, 'render_captcha' ], 20, 1 );
 		add_filter( 'wpcf7_spam', [ $this, 'verify' ], 9, 1 );
-        add_action( 'wp_print_footer_scripts', [ $this, 'load_scripts' ], 9 );
     }
 
     /**
@@ -28,6 +27,8 @@ class Forms extends Plugin {
      * @return string
      */
     public function render_captcha( string $elements ) {
+		$this->load_scripts();
+
 		return preg_replace(
         '/(<input.*?type="submit")/',
 		CaptchaFox::get_ob_html() . '$1',
@@ -69,7 +70,7 @@ class Forms extends Plugin {
 		wp_enqueue_script(
             'captchafox-cf7',
             constant( 'CAPTCHAFOX_BASE_URL' ) . '/assets/js/contactForm7.js',
-            [],
+            [ 'captchafox-form' ],
             PLUGIN_VERSION,
             true
         );

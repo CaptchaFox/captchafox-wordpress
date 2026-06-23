@@ -78,7 +78,7 @@ class Forms extends Plugin {
 		wp_enqueue_script(
             'captchafox-ninjaforms',
             constant( 'CAPTCHAFOX_BASE_URL' ) . '/assets/js/ninjaforms.js',
-            [ 'nf-front-end' ],
+            [ 'nf-front-end', 'captchafox-form' ],
             PLUGIN_VERSION,
             true
         );

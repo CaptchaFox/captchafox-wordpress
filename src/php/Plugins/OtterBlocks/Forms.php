@@ -19,7 +19,7 @@ class Forms extends Plugin {
 		add_filter( 'default_option_themeisle_google_captcha_api_secret_key', [ $this, 'replace_secret' ], 99, 3 );
 		add_filter( 'otter_blocks_recaptcha_verify_url', [ $this, 'replace_siteverify_url' ] );
 		add_filter( 'otter_blocks_recaptcha_api_url', [ $this, 'replace_api_url' ] );
-        add_action( 'wp_enqueue_scripts', [ $this, 'load_scripts' ] );
+        add_action( 'wp_enqueue_scripts', [ $this, 'register_scripts' ] );
     }
 
 	/**
@@ -52,22 +52,40 @@ class Forms extends Plugin {
 	/**
 	 * Replace JavaScript API URL.
 	 *
+	 * Otter Blocks only requests the captcha api url when a form block with
+	 * captcha protection is rendered on the page, so this is the moment to load
+	 * the CaptchaFox assets. Otter widgets are not rendered through
+	 * CaptchaFox::build_html, so we enqueue them here instead. otter.js fakes
+	 * window.grecaptcha to stop Otter from loading the api itself, which means
+	 * we have to provide window.captchafox ourselves.
+	 *
 	 * @return string
 	 */
 	public function replace_api_url(): string {
+		$this->register_scripts();
+
+		CaptchaFox::enqueue_assets();
+		wp_enqueue_script( 'captchafox-otter' );
+
 		return 'https://cdn.captchafox.com/api.js?render=explicit&onload=captchaFoxLoadOtter';
 	}
 
     /**
-     * Load required scripts
+     * Register required scripts
      *
      * @return void
      */
-    public function load_scripts() {
-		wp_enqueue_script(
+    public function register_scripts() {
+		CaptchaFox::register_assets();
+
+		if ( wp_script_is( 'captchafox-otter', 'registered' ) ) {
+			return;
+		}
+
+		wp_register_script(
             'captchafox-otter',
             constant( 'CAPTCHAFOX_BASE_URL' ) . '/assets/js/otter.js',
-            [],
+            [ 'captchafox' ],
             PLUGIN_VERSION,
             true
         );

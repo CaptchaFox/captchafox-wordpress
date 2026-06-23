@@ -27,7 +27,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 define( 'CAPTCHAFOX_BASE_URL', untrailingslashit( plugin_dir_url( __FILE__ ) ) );
 
 const CAPTCHAFOX_BASE_FILE = __FILE__;
-const PLUGIN_VERSION = '1.10.1';
+const PLUGIN_VERSION = '1.13.0';
 
 require 'vendor/autoload.php';
 
