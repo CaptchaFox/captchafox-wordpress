@@ -202,19 +202,20 @@ class Plugins {
             $disabled = $plugin_available ? '' : 'disabled=""';
 
             $select_options .= sprintf(
-                '<div><input name="%s" id="%s" type="checkbox" value="%s" %s/><label for="%s">%s</label></div>
+                '<label class="cf-switch"><input name="%s" id="%s" type="checkbox" value="%s" %s/><span class="cf-switch-track"></span><span class="cf-switch-label">%s</span></label>
             ',
                 esc_attr( $name ),
                 esc_attr( $id ),
                 esc_attr( $attr ),
                 esc_attr( $checked . $disabled ),
-                esc_attr( $id ),
                 esc_attr( $value )
             );
         }
 
         $allowed_html = [
-            'div'   => [],
+            'label' => [
+                'class' => [],
+            ],
             'input' => [
                 'value'    => [],
                 'name'     => [],
@@ -223,8 +224,8 @@ class Plugins {
                 'checked'  => [],
                 'disabled' => [],
             ],
-            'label' => [
-                'for' => [],
+            'span'  => [
+                'class' => [],
             ],
         ];
 

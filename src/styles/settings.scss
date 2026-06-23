@@ -44,6 +44,11 @@
     &:hover {
       box-shadow: inset 0 -2px #dfdfdf;
     }
+
+    &:focus-visible {
+      outline: 2px solid #000;
+      outline-offset: -2px;
+    }
   }
 }
 
@@ -54,6 +59,78 @@
   input[type='text'],
   input[type='password'] {
     min-width: 300px;
+  }
+}
+
+.cf-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+
+  input[type='checkbox'] {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    opacity: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+  }
+
+  .cf-switch-track {
+    position: relative;
+    flex: 0 0 auto;
+    width: 40px;
+    height: 22px;
+    background: #c4c4c4;
+    border-radius: 999px;
+    transition: background 0.15s ease;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 18px;
+      height: 18px;
+      background: #fff;
+      border-radius: 50%;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+      transition: transform 0.15s ease;
+    }
+  }
+
+  .cf-switch-label {
+    line-height: 22px;
+  }
+
+  input[type='checkbox']:checked + .cf-switch-track {
+    background: #ff9b21;
+
+    &::before {
+      transform: translateX(18px);
+    }
+  }
+
+  input[type='checkbox']:focus-visible + .cf-switch-track {
+    box-shadow:
+      0 0 0 2px #fff,
+      0 0 0 4px #000;
+  }
+
+  input[type='checkbox']:disabled + .cf-switch-track {
+    opacity: 0.5;
+  }
+
+  &:has(input[type='checkbox']:disabled) {
+    cursor: not-allowed;
+
+    .cf-switch-label {
+      opacity: 0.5;
+    }
   }
 }
 
@@ -92,19 +169,6 @@
 .cf-input-plugin {
   display: grid;
   gap: 16px;
-
-  div {
-    display: flex;
-    align-items: center;
-  }
-
-  input {
-    margin-top: 0;
-  }
-
-  label {
-    margin-left: 8px;
-  }
 }
 
 .cf-admin .button-primary,
@@ -142,6 +206,12 @@
 
   &:focus {
     background: #df7e2a;
+  }
+
+  &:focus-visible {
+    outline: 2px solid #000;
+    outline-offset: 2px;
+    box-shadow: none;
   }
 }
 

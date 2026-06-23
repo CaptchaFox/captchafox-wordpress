@@ -97,7 +97,7 @@ trait FieldRenderer {
         $current_value = isset( $options[ $field_name ] ) ? $options[ $field_name ] : '';
 
         printf(
-            '<label><input id="%1$s" name="%2$s[%1$s]" type="checkbox" value="1" %3$s> %4$s</label>',
+            '<label class="cf-switch"><input id="%1$s" name="%2$s[%1$s]" type="checkbox" value="1" %3$s><span class="cf-switch-track"></span><span class="cf-switch-label">%4$s</span></label>',
             esc_attr( $field_name ),
             esc_attr( $option_group ),
             checked( '1', $current_value, false ),
