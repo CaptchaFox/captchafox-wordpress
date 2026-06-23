@@ -47,6 +47,104 @@ class CaptchaFox {
     }
 
     /**
+     * Get the configured allowlist of IP addresses / CIDR ranges.
+     *
+     * @return string[]
+     */
+    public static function get_allowlist() {
+        $options = get_option( 'captchafox_options' );
+        $raw = isset( $options['field_allowlist'] ) ? $options['field_allowlist'] : '';
+
+        $list = preg_split( '/\r\n|\r|\n/', (string) $raw );
+        $list = array_values( array_filter( array_map( 'trim', $list ) ) );
+
+        return apply_filters( 'capf_allowlist', $list );
+    }
+
+    /**
+     * Get the visitor's IP address.
+     *
+     * @return string
+     */
+    public static function get_client_ip() {
+        $ip = isset( $_SERVER['REMOTE_ADDR'] ) ?
+            sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) :
+            '';
+
+        $ip = apply_filters( 'capf_client_ip', $ip );
+
+        return filter_var( $ip, FILTER_VALIDATE_IP ) ? $ip : '';
+    }
+
+    /**
+     * Whether the visitor's IP is allowlisted and should skip the captcha.
+     *
+     * @return bool
+     */
+    public static function is_ip_allowed() {
+        $ip = self::get_client_ip();
+
+        if ( '' === $ip ) {
+            return (bool) apply_filters( 'capf_ip_allowed', false, $ip );
+        }
+
+        $allowed = false;
+        foreach ( self::get_allowlist() as $entry ) {
+            if ( self::ip_matches( $ip, $entry ) ) {
+                $allowed = true;
+                break;
+            }
+        }
+
+        return (bool) apply_filters( 'capf_ip_allowed', $allowed, $ip );
+    }
+
+    /**
+     * Match an IP against an allowlist entry (exact match or CIDR range).
+     *
+     * Supports both IPv4 and IPv6.
+     *
+     * @param string $ip    Visitor IP address.
+     * @param string $entry Allowlist entry.
+     *
+     * @return bool
+     */
+    private static function ip_matches( $ip, $entry ) {
+        if ( $ip === $entry ) {
+            return true;
+        }
+
+        if ( false === strpos( $entry, '/' ) ) {
+            return false;
+        }
+
+        list( $subnet, $bits ) = explode( '/', $entry, 2 );
+        $bits = (int) $bits;
+
+        $ip_bin = inet_pton( $ip );
+        $subnet_bin = inet_pton( $subnet );
+
+        if ( false === $ip_bin || false === $subnet_bin || strlen( $ip_bin ) !== strlen( $subnet_bin ) ) {
+            return false;
+        }
+
+        $bytes = intdiv( $bits, 8 );
+        $remainder = $bits % 8;
+
+        if ( $bytes > 0 && 0 !== substr_compare( $ip_bin, $subnet_bin, 0, $bytes ) ) {
+            return false;
+        }
+
+        if ( $remainder > 0 ) {
+            $mask = chr( ( 0xff << ( 8 - $remainder ) ) & 0xff );
+
+            return ( ord( $ip_bin[ $bytes ] ) & ord( $mask ) ) === ( ord( $subnet_bin[ $bytes ] ) & ord( $mask ) );
+        }
+
+        return true;
+    }
+
+    /**
      * Get the widget styles as a CSS string.
      *
      * @return string
@@ -67,7 +165,6 @@ class CaptchaFox {
     /**
      * Register the frontend assets without enqueuing them.
      *
-     *
      * @return void
      */
     public static function register_assets() {
@@ -77,7 +174,7 @@ class CaptchaFox {
 
         // form.js defines window.captchaFoxOnLoad, which the CDN api.js invokes
         // via its onload parameter, so form.js must be loaded before the api
-        // script
+        // script.
         wp_register_script( 'captchafox-form', constant( 'CAPTCHAFOX_BASE_URL' ) . '/assets/js/form.js', [], PLUGIN_VERSION, true );
         wp_register_script( 'captchafox', self::get_script(), [ 'captchafox-form' ], PLUGIN_VERSION, true );
 
@@ -163,6 +260,12 @@ class CaptchaFox {
      * @return string
      */
     public static function build_html( $data = null ) {
+        // Allowlisted visitors skip the captcha entirely, so render nothing and
+        // avoid loading the assets. Verification is bypassed accordingly.
+        if ( self::is_ip_allowed() ) {
+            return '';
+        }
+
         // A widget is being rendered, so make sure the scripts are loaded on
         // this page. Enqueuing here keeps the assets off pages without a form.
         self::enqueue_assets();

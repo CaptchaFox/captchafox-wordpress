@@ -78,6 +78,13 @@ class General {
             'group'       => $setting_general,
             'description' => __( 'Add a hidden field that catches bots which auto-fill forms.', 'captchafox-for-forms' ),
         ]);
+        add_settings_field('field_allowlist', __( 'IP Allowlist', 'captchafox-for-forms' ), [ $this, 'render_textarea_field' ], 'captchafox', $setting_general, [
+            'label_for'   => 'field_allowlist',
+            'class'       => 'cf-row',
+            'group'       => $setting_general,
+            'placeholder' => "203.0.113.5\n192.168.0.0/24",
+            'description' => __( 'Trusted IP addresses or CIDR ranges (one per line) that skip the captcha.', 'captchafox-for-forms' ),
+        ]);
     }
 
     /**
@@ -130,6 +137,33 @@ class General {
             esc_attr( $field_type ),
             esc_html( $current_value )
         );
+    }
+
+    /**
+     * Textarea Field
+     *
+     * @param  mixed $args Args.
+     * @return void
+     */
+    public function render_textarea_field( $args ) {
+        $option_group = $args['group'];
+        $options = get_option( $option_group );
+        $field_name = esc_attr( $args['label_for'] );
+        $placeholder = isset( $args['placeholder'] ) ? $args['placeholder'] : '';
+        $description = isset( $args['description'] ) ? $args['description'] : '';
+        $current_value = isset( $options[ $field_name ] ) ? $options[ $field_name ] : '';
+
+        printf(
+            '<textarea id="%1$s" name="%2$s[%1$s]" rows="4" cols="40" placeholder="%3$s">%4$s</textarea>',
+            esc_attr( $field_name ),
+            esc_attr( $option_group ),
+            esc_attr( $placeholder ),
+            esc_textarea( $current_value )
+        );
+
+        if ( '' !== $description ) {
+            printf( '<p class="description">%s</p>', esc_html( $description ) );
+        }
     }
 
     /**

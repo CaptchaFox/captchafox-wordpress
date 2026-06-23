@@ -9,6 +9,10 @@ class Request {
      * @return bool
      */
     public static function validate_post() {
+        if ( CaptchaFox::is_ip_allowed() ) {
+            return true;
+        }
+
         // phpcs:disable WordPress.Security.NonceVerification.Missing
         if ( ! isset( $_POST['cf-captcha-response'] ) ) {
             return false;
@@ -28,6 +32,13 @@ class Request {
      * @return object
      */
     public static function validate( string $response ) {
+        if ( CaptchaFox::is_ip_allowed() ) {
+            return (object) [
+                'success' => true,
+                'errors'  => [],
+            ];
+        }
+
         if ( ! self::passed_honeypot() ) {
             return (object) [
                 'success' => false,

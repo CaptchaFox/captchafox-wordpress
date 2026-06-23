@@ -154,6 +154,12 @@ class Forms extends Plugin {
 		}
         $field = current( $fields );
 
+		if ( CaptchaFox::is_ip_allowed() ) {
+			$record->remove_field( $field['id'] );
+
+			return;
+		}
+
 		// phpcs:disable WordPress.Security.NonceVerification.Missing
 		$response_token = isset( $_POST['cf-captcha-response'] ) ?
 			filter_var( wp_unslash( $_POST['cf-captcha-response'] ), FILTER_SANITIZE_FULL_SPECIAL_CHARS ) :

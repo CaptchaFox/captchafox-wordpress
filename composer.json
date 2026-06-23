@@ -5,12 +5,21 @@
         "wp-coding-standards/wpcs": "^2.3",
         "phpcompatibility/phpcompatibility-wp": "*",
         "dealerdirect/phpcodesniffer-composer-installer": "^0.7",
-        "friendsofphp/php-cs-fixer": "^3.88"
+        "friendsofphp/php-cs-fixer": "^3.88",
+        "phpunit/phpunit": "^12"
     },
     "autoload": {
         "psr-4": {
             "CaptchaFox\\": "src/php"
         }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "CaptchaFox\\Tests\\": "tests"
+        }
+    },
+    "scripts": {
+        "test": "phpunit"
     },
     "authors": [
         {
