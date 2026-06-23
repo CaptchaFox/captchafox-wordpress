@@ -85,6 +85,13 @@ class General {
             'placeholder' => "203.0.113.5\n192.168.0.0/24",
             'description' => __( 'Trusted IP addresses or CIDR ranges (one per line) that skip the captcha.', 'captchafox-for-forms' ),
         ]);
+        add_settings_field('field_login_limit', __( 'Login Protection', 'captchafox-for-forms' ), [ $this, 'render_number_field' ], 'captchafox', $setting_general, [
+            'label_for'   => 'field_login_limit',
+            'class'       => 'cf-row',
+            'group'       => $setting_general,
+            'min'         => 0,
+            'description' => __( 'Failed login attempts before the captcha is shown on login forms (0 = always show).', 'captchafox-for-forms' ),
+        ]);
     }
 
     /**
@@ -137,6 +144,33 @@ class General {
             esc_attr( $field_type ),
             esc_html( $current_value )
         );
+    }
+
+    /**
+     * Number Field
+     *
+     * @param  mixed $args Args.
+     * @return void
+     */
+    public function render_number_field( $args ) {
+        $option_group = $args['group'];
+        $options = get_option( $option_group );
+        $field_name = esc_attr( $args['label_for'] );
+        $min = isset( $args['min'] ) ? (int) $args['min'] : 0;
+        $description = isset( $args['description'] ) ? $args['description'] : '';
+        $current_value = isset( $options[ $field_name ] ) ? $options[ $field_name ] : '';
+
+        printf(
+            '<input id="%1$s" name="%2$s[%1$s]" type="number" min="%3$d" value="%4$s">',
+            esc_attr( $field_name ),
+            esc_attr( $option_group ),
+            esc_attr( $min ),
+            esc_attr( $current_value )
+        );
+
+        if ( '' !== $description ) {
+            printf( '<p class="description">%s</p>', esc_html( $description ) );
+        }
     }
 
     /**

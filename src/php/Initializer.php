@@ -3,6 +3,7 @@
 namespace CaptchaFox;
 
 use CaptchaFox\Helper\CaptchaFox;
+use CaptchaFox\Helper\LoginProtection;
 use CaptchaFox\Settings\Settings;
 
 class Initializer {
@@ -27,6 +28,8 @@ class Initializer {
 		if ( ! function_exists( 'is_plugin_active' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/plugin.php';
 		}
+
+		( new LoginProtection() )->setup();
 
 		$this->load_enabled_plugins();
 	}

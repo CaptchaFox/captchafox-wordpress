@@ -18,6 +18,17 @@ if ( ! defined( 'PLUGIN_VERSION' ) ) {
 	define( 'PLUGIN_VERSION', '0.0.0-test' );
 }
 
+if ( ! defined( 'HOUR_IN_SECONDS' ) ) {
+	define( 'HOUR_IN_SECONDS', 3600 );
+}
+
+/**
+ * In-memory transient store controlled by the tests.
+ *
+ * @var array<string, mixed>
+ */
+$GLOBALS['cf_test_transients'] = [];
+
 /**
  * In-memory option store controlled by the tests.
  *
@@ -43,14 +54,43 @@ function cf_test_set_option( $name, $value ) {
  * @return void
  */
 function cf_test_reset() {
-	$GLOBALS['cf_test_options'] = [];
-	$_POST                      = [];
+	$GLOBALS['cf_test_options']    = [];
+	$GLOBALS['cf_test_transients'] = [];
+	$_POST                         = [];
 	unset( $_SERVER['REMOTE_ADDR'] );
 }
 
 if ( ! function_exists( 'get_option' ) ) {
 	function get_option( $name, $default_value = false ) {
 		return $GLOBALS['cf_test_options'][ $name ] ?? $default_value;
+	}
+}
+
+if ( ! function_exists( 'get_transient' ) ) {
+	function get_transient( $key ) {
+		return $GLOBALS['cf_test_transients'][ $key ] ?? false;
+	}
+}
+
+if ( ! function_exists( 'set_transient' ) ) {
+	function set_transient( $key, $value, $expiration = 0 ) {
+		$GLOBALS['cf_test_transients'][ $key ] = $value;
+
+		return true;
+	}
+}
+
+if ( ! function_exists( 'delete_transient' ) ) {
+	function delete_transient( $key ) {
+		unset( $GLOBALS['cf_test_transients'][ $key ] );
+
+		return true;
+	}
+}
+
+if ( ! function_exists( 'add_action' ) ) {
+	function add_action( ...$args ) {
+		return true;
 	}
 }
 
