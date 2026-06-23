@@ -14,12 +14,12 @@ function resetFormWidget(formSelector: string) {
 
 function initializeForms() {
   const forms = document.querySelectorAll<HTMLFormElement | HTMLElement>(
-    'form, .gform_editor'
+    'form, .gform_editor',
   );
 
   forms.forEach(async (form) => {
     const [submitButton] = form.querySelectorAll<HTMLElement>(
-      '[type="submit"], .forminator-button-submit'
+      '[type="submit"], .forminator-button-submit',
     );
     const captchaSlot: HTMLDivElement | null =
       form.querySelector('.captchafox');
@@ -58,7 +58,7 @@ async function executeCaptcha(
   event: Event,
   form: HTMLFormElement,
   widgetId: string,
-  submitButton: HTMLElement
+  submitButton: HTMLElement,
 ) {
   event.preventDefault();
   event.stopPropagation();
@@ -85,3 +85,47 @@ async function executeCaptcha(
 window.captchaFoxWPReset = resetFormWidget;
 
 window.captchaFoxOnLoad = initializeForms;
+
+/**
+ * Inject the CaptchaFox api script. Once it loads it calls
+ * window.captchaFoxOnLoad (via its onload parameter) and renders the widgets.
+ */
+function injectApiScript() {
+  if (document.getElementById('captchafox-api')) return;
+
+  const api = window.captchaFoxConfig?.api;
+  if (!api) return;
+
+  const script = document.createElement('script');
+  script.id = 'captchafox-api';
+  script.src = api;
+  script.async = true;
+  document.head.appendChild(script);
+}
+
+/**
+ * When loading is delayed, load the api script only after the first user
+ * interaction.
+ */
+function setupDelayedLoading() {
+  if (window.captchaFoxConfig?.delay !== '1' || window.captchafox) return;
+
+  const events: (
+    | 'mousemove'
+    | 'mousedown'
+    | 'keydown'
+    | 'touchstart'
+    | 'focusin'
+  )[] = ['mousemove', 'mousedown', 'keydown', 'touchstart', 'focusin'];
+
+  const trigger = () => {
+    events.forEach((event) => window.removeEventListener(event, trigger, true));
+    injectApiScript();
+  };
+
+  events.forEach((event) =>
+    window.addEventListener(event, trigger, { capture: true, passive: true }),
+  );
+}
+
+setupDelayedLoading();

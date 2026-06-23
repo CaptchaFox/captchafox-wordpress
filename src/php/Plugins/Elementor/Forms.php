@@ -189,7 +189,7 @@ class Forms extends Plugin {
      * @return void
      */
     public function enqueue_scripts() {
-        CaptchaFox::enqueue_assets();
+        CaptchaFox::enqueue_assets( true );
         wp_enqueue_script(
 		'captchafox-elementor',
 		constant( 'CAPTCHAFOX_BASE_URL' ) . '/assets/js/elementor.js',

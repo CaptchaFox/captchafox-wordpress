@@ -30,6 +30,13 @@ if ( ! defined( 'HOUR_IN_SECONDS' ) ) {
 $GLOBALS['cf_test_transients'] = [];
 
 /**
+ * Handles that have been enqueued during a test.
+ *
+ * @var string[]
+ */
+$GLOBALS['cf_test_enqueued'] = [];
+
+/**
  * In-memory option store controlled by the tests.
  *
  * @var array<string, mixed>
@@ -56,6 +63,7 @@ function cf_test_set_option( $name, $value ) {
 function cf_test_reset() {
 	$GLOBALS['cf_test_options']    = [];
 	$GLOBALS['cf_test_transients'] = [];
+	$GLOBALS['cf_test_enqueued']   = [];
 	$_POST                         = [];
 	unset( $_SERVER['REMOTE_ADDR'] );
 }
@@ -189,7 +197,15 @@ if ( ! function_exists( 'wp_register_script' ) ) {
 }
 
 if ( ! function_exists( 'wp_enqueue_script' ) ) {
-	function wp_enqueue_script( ...$args ) {}
+	function wp_enqueue_script( $handle = '', ...$args ) {
+		$GLOBALS['cf_test_enqueued'][] = $handle;
+	}
+}
+
+if ( ! function_exists( 'wp_localize_script' ) ) {
+	function wp_localize_script( ...$args ) {
+		return true;
+	}
 }
 
 if ( ! function_exists( 'wp_register_style' ) ) {

@@ -178,8 +178,26 @@ class CaptchaFox {
         wp_register_script( 'captchafox-form', constant( 'CAPTCHAFOX_BASE_URL' ) . '/assets/js/form.js', [], PLUGIN_VERSION, true );
         wp_register_script( 'captchafox', self::get_script(), [ 'captchafox-form' ], PLUGIN_VERSION, true );
 
+        wp_localize_script( 'captchafox-form', 'captchaFoxConfig', [
+            'api'   => self::get_script(),
+            'delay' => self::is_delayed() ? '1' : '0',
+        ] );
+
         wp_register_style( 'captchafox', false, [], PLUGIN_VERSION );
         wp_add_inline_style( 'captchafox', self::get_styles_css() );
+    }
+
+    /**
+     * Whether the api script loading is delayed until the first user
+     * interaction.
+     *
+     * @return bool
+     */
+    public static function is_delayed() {
+        $options = get_option( 'captchafox_options' );
+        $loading = isset( $options['field_loading'] ) ? $options['field_loading'] : 'instant';
+
+        return (bool) apply_filters( 'capf_delay', 'interaction' === $loading );
     }
 
     /**
@@ -188,13 +206,23 @@ class CaptchaFox {
      * Called whenever a widget is rendered so the scripts are only loaded on
      * pages that contain a CaptchaFox widget.
      *
+     * @param bool $force_api Always enqueue the api script, even when loading
+     *                        is delayed. Used by integrations that need the api
+     *                        available immediately.
+     *
      * @return void
      */
-    public static function enqueue_assets() {
+    public static function enqueue_assets( $force_api = false ) {
         self::register_assets();
 
         wp_enqueue_script( 'captchafox-form' );
-        wp_enqueue_script( 'captchafox' );
+
+        // When loading is delayed, form.js injects the api script on the first
+        // user interaction instead of it being enqueued up front.
+        if ( $force_api || ! self::is_delayed() ) {
+            wp_enqueue_script( 'captchafox' );
+        }
+
         wp_enqueue_style( 'captchafox' );
     }
 

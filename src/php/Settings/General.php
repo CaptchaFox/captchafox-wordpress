@@ -92,6 +92,16 @@ class General {
             'min'         => 0,
             'description' => __( 'Failed login attempts before the captcha is shown on login forms (0 = always show).', 'captchafox-for-forms' ),
         ]);
+        add_settings_field('field_loading', __( 'Script Loading', 'captchafox-for-forms' ), [ $this, 'render_select_field' ], 'captchafox', $setting_general, [
+            'label_for'   => 'field_loading',
+            'class'       => 'cf-row',
+            'group'       => $setting_general,
+            'description' => __( 'Delay loading the captcha script until the visitor interacts with the page for better performance.', 'captchafox-for-forms' ),
+            'options'     => [
+                'instant'     => __( 'Instant (Default)', 'captchafox-for-forms' ),
+                'interaction' => __( 'On user interaction', 'captchafox-for-forms' ),
+            ],
+        ]);
     }
 
     /**
@@ -232,6 +242,7 @@ class General {
         $option_group = $args['group'];
         $options = get_option( $option_group );
         $field_name = esc_attr( $args['label_for'] );
+        $description = isset( $args['description'] ) ? $args['description'] : '';
         $current_value = isset( $options[ $field_name ] ) ? $options[ $field_name ] : '';
 
         $select_options = '';
@@ -258,5 +269,9 @@ class General {
             esc_attr( $field_name ),
             wp_kses( $select_options, $allowed_html )
         );
+
+        if ( '' !== $description ) {
+            printf( '<p class="description">%s</p>', esc_html( $description ) );
+        }
     }
 }

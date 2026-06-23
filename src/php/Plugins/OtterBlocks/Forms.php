@@ -52,19 +52,13 @@ class Forms extends Plugin {
 	/**
 	 * Replace JavaScript API URL.
 	 *
-	 * Otter Blocks only requests the captcha api url when a form block with
-	 * captcha protection is rendered on the page, so this is the moment to load
-	 * the CaptchaFox assets. Otter widgets are not rendered through
-	 * CaptchaFox::build_html, so we enqueue them here instead. otter.js fakes
-	 * window.grecaptcha to stop Otter from loading the api itself, which means
-	 * we have to provide window.captchafox ourselves.
 	 *
 	 * @return string
 	 */
 	public function replace_api_url(): string {
 		$this->register_scripts();
 
-		CaptchaFox::enqueue_assets();
+		CaptchaFox::enqueue_assets( true );
 		wp_enqueue_script( 'captchafox-otter' );
 
 		return 'https://cdn.captchafox.com/api.js?render=explicit&onload=captchaFoxLoadOtter';
