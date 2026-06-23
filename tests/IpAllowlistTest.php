@@ -28,7 +28,7 @@ class IpAllowlistTest extends TestCase {
 	 * @param string $ip        Visitor IP.
 	 */
 	private function configure( $allowlist, $ip ) {
-		cf_test_set_option( 'captchafox_options', [ 'field_allowlist' => $allowlist ] );
+		cf_test_set_option( 'captchafox_security', [ 'field_allowlist' => $allowlist ] );
 		$_SERVER['REMOTE_ADDR'] = $ip;
 	}
 
@@ -99,7 +99,7 @@ class IpAllowlistTest extends TestCase {
 	}
 
 	public function test_get_allowlist_trims_and_ignores_blanks() {
-		cf_test_set_option( 'captchafox_options', [ 'field_allowlist' => "  203.0.113.10  \n\n   \n198.51.100.4\n" ] );
+		cf_test_set_option( 'captchafox_security', [ 'field_allowlist' => "  203.0.113.10  \n\n   \n198.51.100.4\n" ] );
 
 		$this->assertSame(
 			[ '203.0.113.10', '198.51.100.4' ],

@@ -12,11 +12,11 @@ class LoginProtection {
     const TRANSIENT_PREFIX = 'captchafox_login_';
 
     /**
-     * How long failed attempts are remembered, in seconds.
+     * Default interval, in minutes, that failed attempts are remembered.
      *
      * @var int
      */
-    const WINDOW = HOUR_IN_SECONDS;
+    const DEFAULT_INTERVAL = 15;
 
     /**
      * Setup
@@ -36,10 +36,23 @@ class LoginProtection {
      * @return int
      */
     public static function get_limit() {
-        $options = get_option( 'captchafox_options' );
+        $options = get_option( 'captchafox_security' );
         $limit = isset( $options['field_login_limit'] ) ? (int) $options['field_login_limit'] : 0;
 
         return (int) apply_filters( 'capf_login_limit', max( 0, $limit ) );
+    }
+
+    /**
+     * How long, in seconds, failed attempts are remembered.
+     *
+     * @return int
+     */
+    public static function get_interval() {
+        $options = get_option( 'captchafox_security' );
+        $minutes = isset( $options['field_login_interval'] ) ? (int) $options['field_login_interval'] : self::DEFAULT_INTERVAL;
+        $minutes = max( 1, $minutes );
+
+        return (int) apply_filters( 'capf_login_interval', $minutes * MINUTE_IN_SECONDS );
     }
 
     /**
@@ -74,7 +87,7 @@ class LoginProtection {
             return;
         }
 
-        set_transient( self::get_key(), self::get_attempts() + 1, self::WINDOW );
+        set_transient( self::get_key(), self::get_attempts() + 1, self::get_interval() );
     }
 
     /**

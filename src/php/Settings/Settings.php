@@ -19,6 +19,13 @@ class Settings {
     protected $plugins_tab;
 
     /**
+     * Security Tab
+     *
+     * @var mixed
+     */
+    protected $security_tab;
+
+    /**
      * Setup
      *
      * @return void
@@ -55,6 +62,15 @@ class Settings {
         add_submenu_page(
             'captchafox',
             'CaptchaFox',
+            'Security',
+            'manage_options',
+            'captchafox-security',
+            [ $this, 'show_security' ]
+        );
+
+        add_submenu_page(
+            'captchafox',
+            'CaptchaFox',
             'Plugins',
             'manage_options',
             'captchafox-plugins',
@@ -69,6 +85,15 @@ class Settings {
      */
     public function show_plugins() {
         $this->render_settings( 'plugins' );
+    }
+
+    /**
+     * Show security menu page
+     *
+     * @return void
+     */
+    public function show_security() {
+        $this->render_settings( 'security' );
     }
 
     /**
@@ -88,9 +113,11 @@ class Settings {
     public function init_admin_settings() {
         $this->general_tab = new General();
         $this->plugins_tab = new Plugins();
+        $this->security_tab = new Security();
 
         $this->general_tab->setup();
         $this->plugins_tab->setup();
+        $this->security_tab->setup();
     }
 
     /**
@@ -132,12 +159,17 @@ class Settings {
                 </div>
             </div>
             <nav id="cf-admin-nav" class="container nav-tab-wrapper">
-                <a href="?page=captchafox" class="nav-tab 
+                <a href="?page=captchafox" class="nav-tab
                 <?php
                 if ( 'general' === $page ) :
 					?>
                     nav-tab-active<?php endif; ?>">General</a>
-                <a href="?page=captchafox-plugins" class="nav-tab 
+                <a href="?page=captchafox-security" class="nav-tab
+                <?php
+                if ( 'security' === $page ) :
+					?>
+                    nav-tab-active<?php endif; ?>">Security</a>
+                <a href="?page=captchafox-plugins" class="nav-tab
                 <?php
                 if ( 'plugins' === $page ) :
 					?>
@@ -149,6 +181,9 @@ class Settings {
                 switch ( $page ) :
                     case 'plugins':
                         echo esc_html( $this->plugins_tab->get_tab_content() );
+                        break;
+                    case 'security':
+                        echo esc_html( $this->security_tab->get_tab_content() );
                         break;
 					default:
                         echo esc_html( $this->general_tab->get_tab_content() );

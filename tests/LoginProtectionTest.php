@@ -24,10 +24,17 @@ class LoginProtectionTest extends TestCase {
 	/**
 	 * Set the login attempt limit.
 	 *
-	 * @param int $limit Limit.
+	 * @param int      $limit    Limit.
+	 * @param int|null $interval Interval in minutes.
 	 */
-	private function set_limit( $limit ) {
-		cf_test_set_option( 'captchafox_options', [ 'field_login_limit' => $limit ] );
+	private function set_limit( $limit, $interval = null ) {
+		$option = [ 'field_login_limit' => $limit ];
+
+		if ( null !== $interval ) {
+			$option['field_login_interval'] = $interval;
+		}
+
+		cf_test_set_option( 'captchafox_security', $option );
 	}
 
 	public function test_limit_defaults_to_zero() {
@@ -104,5 +111,21 @@ class LoginProtectionTest extends TestCase {
 		LoginProtection::record_failure();
 
 		$this->assertSame( 0, LoginProtection::get_attempts() );
+	}
+
+	public function test_interval_defaults_to_fifteen_minutes() {
+		$this->assertSame( 15 * 60, LoginProtection::get_interval() );
+	}
+
+	public function test_interval_reads_configured_minutes() {
+		$this->set_limit( 1, 30 );
+
+		$this->assertSame( 30 * 60, LoginProtection::get_interval() );
+	}
+
+	public function test_interval_minimum_is_one_minute() {
+		$this->set_limit( 1, 0 );
+
+		$this->assertSame( 60, LoginProtection::get_interval() );
 	}
 }

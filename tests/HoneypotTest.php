@@ -27,7 +27,7 @@ class HoneypotTest extends TestCase {
 	 * @param bool $enabled Whether the honeypot is enabled.
 	 */
 	private function set_enabled( $enabled ) {
-		cf_test_set_option( 'captchafox_options', [ 'field_honeypot' => $enabled ? '1' : '' ] );
+		cf_test_set_option( 'captchafox_security', [ 'field_honeypot' => $enabled ? '1' : '' ] );
 	}
 
 	public function test_disabled_by_default() {
@@ -78,13 +78,8 @@ class HoneypotTest extends TestCase {
 	}
 
 	public function test_build_html_includes_honeypot_when_enabled() {
-		cf_test_set_option(
-			'captchafox_options',
-			[
-				'field_honeypot' => '1',
-				'field_sitekey'  => 'sk_test',
-			]
-		);
+		cf_test_set_option( 'captchafox_options', [ 'field_sitekey' => 'sk_test' ] );
+		cf_test_set_option( 'captchafox_security', [ 'field_honeypot' => '1' ] );
 		$_SERVER['REMOTE_ADDR'] = '203.0.113.10';
 
 		$html = CaptchaFox::build_html();
@@ -94,13 +89,8 @@ class HoneypotTest extends TestCase {
 	}
 
 	public function test_build_html_omits_honeypot_when_disabled() {
-		cf_test_set_option(
-			'captchafox_options',
-			[
-				'field_honeypot' => '',
-				'field_sitekey'  => 'sk_test',
-			]
-		);
+		cf_test_set_option( 'captchafox_options', [ 'field_sitekey' => 'sk_test' ] );
+		cf_test_set_option( 'captchafox_security', [ 'field_honeypot' => '' ] );
 		$_SERVER['REMOTE_ADDR'] = '203.0.113.10';
 
 		$html = CaptchaFox::build_html();

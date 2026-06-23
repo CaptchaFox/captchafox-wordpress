@@ -52,7 +52,6 @@ class Forms extends Plugin {
 	/**
 	 * Replace JavaScript API URL.
 	 *
-	 *
 	 * @return string
 	 */
 	public function replace_api_url(): string {

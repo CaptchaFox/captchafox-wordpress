@@ -17,7 +17,7 @@ class CaptchaFox {
      * @return bool
      */
     public static function is_honeypot_enabled() {
-        $options = get_option( 'captchafox_options' );
+        $options = get_option( 'captchafox_security' );
         $enabled = isset( $options['field_honeypot'] ) && '1' === $options['field_honeypot'];
 
         return (bool) apply_filters( 'capf_honeypot', $enabled );
@@ -52,7 +52,7 @@ class CaptchaFox {
      * @return string[]
      */
     public static function get_allowlist() {
-        $options = get_option( 'captchafox_options' );
+        $options = get_option( 'captchafox_security' );
         $raw = isset( $options['field_allowlist'] ) ? $options['field_allowlist'] : '';
 
         $list = preg_split( '/\r\n|\r|\n/', (string) $raw );
