@@ -34,6 +34,7 @@ class Settings {
 		add_action( 'admin_init', [ $this, 'init_admin_settings' ] );
         add_action( 'admin_menu', [ $this, 'add_to_admin_menu' ] );
         add_action( 'admin_enqueue_scripts', [ $this, 'add_styles_to_admin_head' ] );
+        add_action( 'in_admin_header', [ $this, 'hide_admin_notices' ], PHP_INT_MAX );
         add_filter( 'admin_footer_text', [ $this, 'admin_footer_text' ] );
         add_filter( 'update_footer', [ $this, 'update_footer' ], PHP_INT_MAX );
         add_filter(
@@ -242,6 +243,37 @@ class Settings {
     private function is_visible() {
         $current_screen = get_current_screen()->id;
         return 'settings_page_captchafox' === $current_screen;
+    }
+
+    /**
+     * Check if the current screen belongs to the plugin.
+     *
+     * @return boolean
+     */
+    private function is_captchafox_screen() {
+        $screen = get_current_screen();
+
+        if ( null === $screen ) {
+            return false;
+        }
+
+        return false !== strpos( $screen->id, 'captchafox' );
+    }
+
+    /**
+     * Hide third-party admin notices on the plugin's own screens.
+     *
+     * @return void
+     */
+    public function hide_admin_notices() {
+        if ( ! $this->is_captchafox_screen() ) {
+            return;
+        }
+
+        remove_all_actions( 'admin_notices' );
+        remove_all_actions( 'all_admin_notices' );
+        remove_all_actions( 'user_admin_notices' );
+        remove_all_actions( 'network_admin_notices' );
     }
 
     /**
