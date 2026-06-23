@@ -219,6 +219,40 @@
   margin-bottom: 32px;
 }
 
+.cf-status-wrap {
+  max-width: 720px;
+}
+
+.cf-status-section {
+  margin: 24px 0 8px;
+  font-size: 1.05rem;
+}
+
+.cf-status td {
+  vertical-align: middle;
+}
+
+.cf-status-badge {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 8px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.cf-status-ok {
+  background: #e6f4ea;
+  color: #1e7e34;
+}
+
+.cf-status-warn {
+  background: #fcf0e3;
+  color: #b3580f;
+}
+
 #toplevel_page_captchafox {
   .wp-menu-image img {
     padding-top: 7.5px;

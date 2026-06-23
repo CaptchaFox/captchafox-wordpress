@@ -26,6 +26,13 @@ class Settings {
     protected $security_tab;
 
     /**
+     * Status Tab
+     *
+     * @var mixed
+     */
+    protected $status_tab;
+
+    /**
      * Setup
      *
      * @return void
@@ -77,6 +84,15 @@ class Settings {
             'captchafox-plugins',
             [ $this, 'show_plugins' ]
         );
+
+        add_submenu_page(
+            'captchafox',
+            'CaptchaFox',
+            'Status',
+            'manage_options',
+            'captchafox-status',
+            [ $this, 'show_status' ]
+        );
     }
 
     /**
@@ -98,6 +114,15 @@ class Settings {
     }
 
     /**
+     * Show status menu page
+     *
+     * @return void
+     */
+    public function show_status() {
+        $this->render_settings( 'status' );
+    }
+
+    /**
      * Add admin styles to head
      *
      * @return void
@@ -115,10 +140,12 @@ class Settings {
         $this->general_tab = new General();
         $this->plugins_tab = new Plugins();
         $this->security_tab = new Security();
+        $this->status_tab = new Status();
 
         $this->general_tab->setup();
         $this->plugins_tab->setup();
         $this->security_tab->setup();
+        $this->status_tab->setup();
     }
 
     /**
@@ -175,6 +202,11 @@ class Settings {
                 if ( 'plugins' === $page ) :
 					?>
                     nav-tab-active<?php endif; ?>">Plugins</a>
+                <a href="?page=captchafox-status" class="nav-tab
+                <?php
+                if ( 'status' === $page ) :
+					?>
+                    nav-tab-active<?php endif; ?>">Status</a>
             </nav>
 
             <div class="wrap tab-content">
@@ -185,6 +217,9 @@ class Settings {
                         break;
                     case 'security':
                         echo esc_html( $this->security_tab->get_tab_content() );
+                        break;
+                    case 'status':
+                        echo esc_html( $this->status_tab->get_tab_content() );
                         break;
 					default:
                         echo esc_html( $this->general_tab->get_tab_content() );
