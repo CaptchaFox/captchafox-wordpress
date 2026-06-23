@@ -22,6 +22,14 @@ class Security {
             'group'       => $setting_security,
             'description' => __( 'Add a hidden field that catches bots which auto-fill forms.', 'captchafox-for-forms' ),
         ]);
+        add_settings_field('field_min_time', __( 'Minimum Submission Time', 'captchafox-for-forms' ), [ $this, 'render_number_field' ], 'captchafox-security', $setting_security, [
+            'label_for'   => 'field_min_time',
+            'class'       => 'cf-row',
+            'group'       => $setting_security,
+            'min'         => 0,
+            'default'     => 0,
+            'description' => __( 'Reject submissions completed faster than this many seconds (0 = disabled). Bots usually submit instantly.', 'captchafox-for-forms' ),
+        ]);
         add_settings_field('field_allowlist', __( 'IP Allowlist', 'captchafox-for-forms' ), [ $this, 'render_textarea_field' ], 'captchafox-security', $setting_security, [
             'label_for'   => 'field_allowlist',
             'class'       => 'cf-row',

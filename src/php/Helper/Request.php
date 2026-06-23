@@ -46,6 +46,13 @@ class Request {
             ];
         }
 
+        if ( ! self::passed_min_time() ) {
+            return (object) [
+                'success' => false,
+                'errors'  => [ 'min_time' ],
+            ];
+        }
+
         $response = sanitize_text_field( $response );
         $secret = CaptchaFox::get_secret();
         $url = 'https://api.captchafox.com/siteverify';
@@ -96,5 +103,41 @@ class Request {
         // phpcs:enable WordPress.Security.NonceVerification.Missing
 
         return '' === $value;
+    }
+
+    /**
+     * Check that the form was not submitted faster than the configured minimum.
+     *
+     * Returns true when the time trap is disabled, when the signed timestamp is
+     * absent (integrations that do not render it are not penalised), or when
+     * enough time has elapsed. Returns false for forged tokens or submissions
+     * that arrived too quickly (likely a bot).
+     *
+     * @return bool
+     */
+    public static function passed_min_time() {
+        $min = CaptchaFox::get_min_time();
+
+        if ( $min <= 0 ) {
+            return true;
+        }
+
+        // phpcs:disable WordPress.Security.NonceVerification.Missing
+        $value = isset( $_POST[ CaptchaFox::TIMESTAMP_NAME ] ) ?
+            sanitize_text_field( wp_unslash( $_POST[ CaptchaFox::TIMESTAMP_NAME ] ) ) :
+            '';
+        // phpcs:enable WordPress.Security.NonceVerification.Missing
+
+        if ( '' === $value ) {
+            return true;
+        }
+
+        $timestamp = CaptchaFox::verify_timestamp( $value );
+
+        if ( null === $timestamp ) {
+            return false;
+        }
+
+        return ( time() - $timestamp ) >= $min;
     }
 }

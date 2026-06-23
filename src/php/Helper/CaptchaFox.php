@@ -12,6 +12,13 @@ class CaptchaFox {
     const HONEYPOT_NAME = 'cf-captcha-hp';
 
     /**
+     * Name of the signed timestamp field used by the time trap.
+     *
+     * @var string
+     */
+    const TIMESTAMP_NAME = 'cf-captcha-ts';
+
+    /**
      * Whether the honeypot spam protection is enabled.
      *
      * @return bool
@@ -43,6 +50,85 @@ class CaptchaFox {
             '</div>',
             esc_attr( self::HONEYPOT_NAME ),
             esc_html__( 'Leave this field empty', 'captchafox-for-forms' )
+        );
+    }
+
+    /**
+     * Minimum number of seconds a visitor must spend on the form before the
+     * submission is accepted (0 disables the check).
+     *
+     * @return int
+     */
+    public static function get_min_time() {
+        $options = get_option( 'captchafox_security' );
+        $seconds = isset( $options['field_min_time'] ) ? (int) $options['field_min_time'] : 0;
+
+        return (int) apply_filters( 'capf_min_time', max( 0, $seconds ) );
+    }
+
+    /**
+     * Secret key used to sign the timestamp token so it cannot be forged.
+     *
+     * @return string
+     */
+    private static function get_signing_key() {
+        if ( function_exists( 'wp_salt' ) ) {
+            return wp_salt( 'auth' );
+        }
+
+        return defined( 'AUTH_SALT' ) ? AUTH_SALT : 'captchafox-fallback-key';
+    }
+
+    /**
+     * Build a signed "time.signature" token for the current request.
+     *
+     * @return string
+     */
+    private static function create_timestamp_token() {
+        $time = (string) time();
+
+        return $time . '.' . hash_hmac( 'sha256', $time, self::get_signing_key() );
+    }
+
+    /**
+     * Verify a timestamp token and return the embedded time, or null when the
+     * token is missing/invalid (tampered).
+     *
+     * @param string $token Token from the request.
+     *
+     * @return int|null
+     */
+    public static function verify_timestamp( $token ) {
+        $parts = explode( '.', (string) $token, 2 );
+
+        if ( count( $parts ) !== 2 || ! ctype_digit( $parts[0] ) ) {
+            return null;
+        }
+
+        list( $time, $signature ) = $parts;
+        $expected = hash_hmac( 'sha256', $time, self::get_signing_key() );
+
+        if ( ! hash_equals( $expected, $signature ) ) {
+            return null;
+        }
+
+        return (int) $time;
+    }
+
+    /**
+     * Build the hidden signed timestamp field used by the time trap.
+     *
+     * @return string
+     */
+    public static function get_timestamp_html() {
+        if ( self::get_min_time() <= 0 ) {
+            return '';
+        }
+
+        return sprintf(
+            '<input type="hidden" name="%1$s" value="%2$s" autocomplete="off">',
+            esc_attr( self::TIMESTAMP_NAME ),
+            esc_attr( self::create_timestamp_token() )
         );
     }
 
@@ -315,7 +401,7 @@ class CaptchaFox {
             'data',
         ]) );
 
-        return $widget . self::get_honeypot_html();
+        return $widget . self::get_honeypot_html() . self::get_timestamp_html();
     }
 
     /**
