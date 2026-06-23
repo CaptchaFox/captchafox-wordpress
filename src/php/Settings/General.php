@@ -72,6 +72,12 @@ class General {
                 'id'    => __( 'Indonesian', 'captchafox-for-forms' ),
             ],
         ]);
+        add_settings_field('field_honeypot', __( 'Honeypot', 'captchafox-for-forms' ), [ $this, 'render_checkbox_field' ], 'captchafox', $setting_general, [
+            'label_for'   => 'field_honeypot',
+            'class'       => 'cf-row',
+            'group'       => $setting_general,
+            'description' => __( 'Add a hidden field that catches bots which auto-fill forms.', 'captchafox-for-forms' ),
+        ]);
     }
 
     /**
@@ -123,6 +129,28 @@ class General {
             esc_attr( $field_name ),
             esc_attr( $field_type ),
             esc_html( $current_value )
+        );
+    }
+
+    /**
+     * Checkbox Field
+     *
+     * @param  mixed $args Args.
+     * @return void
+     */
+    public function render_checkbox_field( $args ) {
+        $option_group = $args['group'];
+        $options = get_option( $option_group );
+        $field_name = esc_attr( $args['label_for'] );
+        $description = isset( $args['description'] ) ? $args['description'] : '';
+        $current_value = isset( $options[ $field_name ] ) ? $options[ $field_name ] : '';
+
+        printf(
+            '<label><input id="%1$s" name="%2$s[%1$s]" type="checkbox" value="1" %3$s> %4$s</label>',
+            esc_attr( $field_name ),
+            esc_attr( $option_group ),
+            checked( '1', $current_value, false ),
+            esc_html( $description )
         );
     }
 

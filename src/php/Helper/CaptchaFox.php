@@ -5,6 +5,48 @@ namespace CaptchaFox\Helper;
 class CaptchaFox {
 
     /**
+     * Name of the honeypot field.
+     *
+     * @var string
+     */
+    const HONEYPOT_NAME = 'cf-captcha-hp';
+
+    /**
+     * Whether the honeypot spam protection is enabled.
+     *
+     * @return bool
+     */
+    public static function is_honeypot_enabled() {
+        $options = get_option( 'captchafox_options' );
+        $enabled = isset( $options['field_honeypot'] ) && '1' === $options['field_honeypot'];
+
+        return (bool) apply_filters( 'capf_honeypot', $enabled );
+    }
+
+    /**
+     * Build the honeypot field markup.
+     *
+     * A hidden field that real users never fill in. Bots that auto fill form
+     * fields will populate it, which lets us reject the submission.
+     *
+     * @return string
+     */
+    public static function get_honeypot_html() {
+        if ( ! self::is_honeypot_enabled() ) {
+            return '';
+        }
+
+        return sprintf(
+            '<div class="cf-hp-field" aria-hidden="true" style="position:absolute;left:-9999px;top:-9999px;height:1px;width:1px;overflow:hidden;">' .
+            '<label for="%1$s">%2$s</label>' .
+            '<input type="text" id="%1$s" name="%1$s" value="" autocomplete="off" tabindex="-1">' .
+            '</div>',
+            esc_attr( self::HONEYPOT_NAME ),
+            esc_html__( 'Leave this field empty', 'captchafox-for-forms' )
+        );
+    }
+
+    /**
      * Get the widget styles as a CSS string.
      *
      * @return string
@@ -25,10 +67,6 @@ class CaptchaFox {
     /**
      * Register the frontend assets without enqueuing them.
      *
-     * Registering keeps the scripts available so they can be enqueued lazily
-     * (or pulled in as dependencies) only on pages that actually contain a
-     * CaptchaFox widget. This avoids loading the third party script on every
-     * page for data privacy reasons.
      *
      * @return void
      */
@@ -39,7 +77,7 @@ class CaptchaFox {
 
         // form.js defines window.captchaFoxOnLoad, which the CDN api.js invokes
         // via its onload parameter, so form.js must be loaded before the api
-        // script. The dependency guarantees that order.
+        // script
         wp_register_script( 'captchafox-form', constant( 'CAPTCHAFOX_BASE_URL' ) . '/assets/js/form.js', [], PLUGIN_VERSION, true );
         wp_register_script( 'captchafox', self::get_script(), [ 'captchafox-form' ], PLUGIN_VERSION, true );
 
@@ -99,7 +137,22 @@ class CaptchaFox {
      * @return mixed
      */
     public static function get_html() {
-        print( wp_kses_post( self::build_html() ) );
+        $allowed = wp_kses_allowed_html( 'post' );
+
+        // Allow the honeypot input field, which is not part of the default
+        // post allowed tags.
+        $allowed['input'] = [
+            'type'         => true,
+            'id'           => true,
+            'name'         => true,
+            'value'        => true,
+            'autocomplete' => true,
+            'tabindex'     => true,
+            'class'        => true,
+            'aria-hidden'  => true,
+        ];
+
+        print( wp_kses( self::build_html(), $allowed ) );
     }
 
     /**
@@ -127,9 +180,11 @@ class CaptchaFox {
         }
         $attrs = rtrim( $attrs );
 
-        return sprintf( '<div class="captchafox" %s></div>', wp_kses( $attrs, [
+        $widget = sprintf( '<div class="captchafox" %s></div>', wp_kses( $attrs, [
             'data',
         ]) );
+
+        return $widget . self::get_honeypot_html();
     }
 
     /**
