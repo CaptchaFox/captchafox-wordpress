@@ -138,6 +138,7 @@ Visit the [website](https://captchafox.com/) to find more information about Capt
 3. Contact Form
 4. General Settings
 5. Manage Plugins
+6. Security Tools
 
 == Privacy Notices ==
 
