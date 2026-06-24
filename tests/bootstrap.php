@@ -417,6 +417,12 @@ if ( ! function_exists( 'add_action' ) ) {
 	}
 }
 
+if ( ! function_exists( 'add_filter' ) ) {
+	function add_filter( ...$args ) {
+		return true;
+	}
+}
+
 if ( ! function_exists( 'apply_filters' ) ) {
 	function apply_filters( $tag, $value, ...$args ) {
 		return $GLOBALS['cf_test_filters'][ $tag ] ?? $value;
