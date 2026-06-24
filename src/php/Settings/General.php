@@ -150,15 +150,10 @@ class General {
      * @return void
      */
     public function get_tab_content() {
-		?>
-        <form action="options.php" method="post">
-            <?php
-            settings_fields( 'captchafox' );
-            $this->render_sections( 'captchafox' );
-            submit_button( __( 'Save Settings', 'captchafox-for-forms' ) );
-            ?>
-        </form>
-		<?php
+        echo '<form action="options.php" method="post">';
+        settings_fields( 'captchafox' );
+        $this->render_sections( 'captchafox' );
+        submit_button( __( 'Save Settings', 'captchafox-for-forms' ) );
+        echo '</form>';
     }
-
 }
