@@ -14,9 +14,18 @@ class Checkout extends Plugin {
      * @return void
      */
     public function setup() {
-		add_action( 'woocommerce_review_order_before_submit', [ CaptchaFox::class, 'get_html' ] );
+		add_action( 'woocommerce_review_order_before_submit', [ $this, 'render' ] );
         add_action( 'woocommerce_checkout_process', [ $this, 'verify' ] );
-        add_action( 'wp_enqueue_scripts', [ $this, 'load_scripts' ] );
+    }
+
+    /**
+     * Render captcha and load the required scripts
+     *
+     * @return void
+     */
+    public function render() {
+		$this->load_scripts();
+        CaptchaFox::get_html();
     }
 
     /**
@@ -25,10 +34,10 @@ class Checkout extends Plugin {
      * @return void
      */
     public function verify() {
-		$verified = Request::validate_post();
+		$verified = Request::validate_post( 'woocommerce-checkout' );
 
         if ( ! $verified ) {
-            wc_add_notice( __( 'Invalid Captcha', 'captchafox-for-forms' ), 'error' );
+            wc_add_notice( CaptchaFox::get_error_message(), 'error' );
         }
     }
 
@@ -41,7 +50,7 @@ class Checkout extends Plugin {
 		wp_enqueue_script(
             'captchafox-woocommerce',
             constant( 'CAPTCHAFOX_BASE_URL' ) . '/assets/js/woocommerce.js',
-            [ 'jquery' ],
+            [ 'jquery', 'captchafox-form' ],
             PLUGIN_VERSION,
             true
         );

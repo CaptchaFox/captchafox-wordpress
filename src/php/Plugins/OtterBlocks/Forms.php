@@ -19,7 +19,7 @@ class Forms extends Plugin {
 		add_filter( 'default_option_themeisle_google_captcha_api_secret_key', [ $this, 'replace_secret' ], 99, 3 );
 		add_filter( 'otter_blocks_recaptcha_verify_url', [ $this, 'replace_siteverify_url' ] );
 		add_filter( 'otter_blocks_recaptcha_api_url', [ $this, 'replace_api_url' ] );
-        add_action( 'wp_enqueue_scripts', [ $this, 'load_scripts' ] );
+        add_action( 'wp_enqueue_scripts', [ $this, 'register_scripts' ] );
     }
 
 	/**
@@ -55,19 +55,30 @@ class Forms extends Plugin {
 	 * @return string
 	 */
 	public function replace_api_url(): string {
+		$this->register_scripts();
+
+		CaptchaFox::enqueue_assets( true );
+		wp_enqueue_script( 'captchafox-otter' );
+
 		return 'https://cdn.captchafox.com/api.js?render=explicit&onload=captchaFoxLoadOtter';
 	}
 
     /**
-     * Load required scripts
+     * Register required scripts
      *
      * @return void
      */
-    public function load_scripts() {
-		wp_enqueue_script(
+    public function register_scripts() {
+		CaptchaFox::register_assets();
+
+		if ( wp_script_is( 'captchafox-otter', 'registered' ) ) {
+			return;
+		}
+
+		wp_register_script(
             'captchafox-otter',
             constant( 'CAPTCHAFOX_BASE_URL' ) . '/assets/js/otter.js',
-            [],
+            [ 'captchafox' ],
             PLUGIN_VERSION,
             true
         );

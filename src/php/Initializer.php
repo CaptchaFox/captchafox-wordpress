@@ -3,6 +3,8 @@
 namespace CaptchaFox;
 
 use CaptchaFox\Helper\CaptchaFox;
+use CaptchaFox\Helper\LoginProtection;
+use CaptchaFox\Helper\Statistics;
 use CaptchaFox\Settings\Settings;
 
 class Initializer {
@@ -16,12 +18,25 @@ class Initializer {
 		$settings = new Settings();
 		$settings->setup();
 
+		// Create or upgrade the events table on existing installs (the
+		// activation hook only fires on a fresh activation).
+		add_action( 'admin_init', [ Statistics::class, 'maybe_create_table' ] );
+		add_action( Statistics::RETENTION_HOOK, [ Statistics::class, 'prune_old_events' ] );
+		Statistics::schedule_retention();
+
 		add_action( 'init', [ $this, 'init' ] );
-		add_action( 'wp_head', [ CaptchaFox::class, 'load_head' ] );
+
+		// Register the assets so they are available, but do not enqueue them
+		// globally. They are enqueued lazily only on pages that render a widget
+		// (see CaptchaFox::build_html) for data privacy reasons.
+		add_action( 'wp_enqueue_scripts', [ CaptchaFox::class, 'register_assets' ] );
+		add_action( 'login_enqueue_scripts', [ CaptchaFox::class, 'register_assets' ] );
 
 		if ( ! function_exists( 'is_plugin_active' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/plugin.php';
 		}
+
+		( new LoginProtection() )->setup();
 
 		$this->load_enabled_plugins();
 	}

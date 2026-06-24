@@ -51,7 +51,7 @@ class Forms extends Plugin {
 		$response = $form_data['cf-captcha-response'] ?? '';
         // phpcs:enable WordPress.Security.NonceVerification.Missing
 
-		$verification = Request::validate( $response );
+		$verification = Request::validate( $response, 'avada-forms' );
 
 		if ( $verification->success ) {
 			return $demo_mode;
@@ -60,7 +60,7 @@ class Forms extends Plugin {
 		wp_die(wp_json_encode(
             [
                 'status' => 'error',
-                'info'   => [ 'captchafox' => __( 'Invalid Captcha', 'captchafox-for-forms' ) ],
+                'info'   => [ 'captchafox' => CaptchaFox::get_error_message() ],
 			]));
     }
 }

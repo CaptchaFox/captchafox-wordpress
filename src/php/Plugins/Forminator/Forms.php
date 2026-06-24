@@ -43,12 +43,12 @@ class Forms extends Plugin {
      * @return mixed
      */
     public function verify( $can_show, int $id, array $form_settings ) {
-        $verified = Request::validate_post();
+        $verified = Request::validate_post( 'forminator' );
 
         if ( ! $verified ) {
             return [
                 'can_submit' => false,
-                'error'      => __( 'Invalid Captcha', 'captchafox-for-forms' ),
+                'error'      => CaptchaFox::get_error_message(),
             ];
         }
 

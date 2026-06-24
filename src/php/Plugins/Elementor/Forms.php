@@ -154,6 +154,12 @@ class Forms extends Plugin {
 		}
         $field = current( $fields );
 
+		if ( CaptchaFox::should_skip_captcha() ) {
+			$record->remove_field( $field['id'] );
+
+			return;
+		}
+
 		// phpcs:disable WordPress.Security.NonceVerification.Missing
 		$response_token = isset( $_POST['cf-captcha-response'] ) ?
 			filter_var( wp_unslash( $_POST['cf-captcha-response'] ), FILTER_SANITIZE_FULL_SPECIAL_CHARS ) :
@@ -166,10 +172,10 @@ class Forms extends Plugin {
 			return;
 		}
 
-		$verification = Request::validate( $response_token );
+		$verification = Request::validate( $response_token, 'elementor' );
 
 		if ( ! $verification->success ) {
-			$ajax_handler->add_error( $field['id'], __( 'Invalid Captcha', 'captchafox-for-forms' ) );
+			$ajax_handler->add_error( $field['id'], CaptchaFox::get_error_message() );
 
 			return;
 		}
@@ -183,8 +189,7 @@ class Forms extends Plugin {
      * @return void
      */
     public function enqueue_scripts() {
-        wp_enqueue_script( 'captchafox', CaptchaFox::get_script(), [], PLUGIN_VERSION, true );
-        wp_enqueue_script( 'captchafox-form', constant( 'CAPTCHAFOX_BASE_URL' ) . '/assets/js/form.js', [ 'captchafox' ], PLUGIN_VERSION, true );
+        CaptchaFox::enqueue_assets( true );
         wp_enqueue_script(
 		'captchafox-elementor',
 		constant( 'CAPTCHAFOX_BASE_URL' ) . '/assets/js/elementor.js',

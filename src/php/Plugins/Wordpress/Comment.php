@@ -48,10 +48,10 @@ class Comment extends Plugin {
 		}
 		$already_checked = true;
 
-        $verified = Request::validate_post();
+        $verified = Request::validate_post( 'wordpress-comment' );
 
         if ( ! $verified ) {
-            $approved = new WP_Error( 'invalid_captcha', __( 'Invalid Captcha', 'captchafox-for-forms' ), 400 );
+            $approved = new WP_Error( 'invalid_captcha', CaptchaFox::get_error_message(), 400 );
         }
 
         return $approved;

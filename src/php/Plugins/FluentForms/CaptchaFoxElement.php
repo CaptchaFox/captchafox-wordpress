@@ -100,6 +100,10 @@ class CaptchaFoxElement extends \FluentForm\App\Services\FormBuilder\BaseFieldMa
 	 * @return array
 	 */
 	public function verify( $error_message, $field, $form_data, $fields, $form ) {
+		if ( CaptchaFox::should_skip_captcha() ) {
+			return $error_message;
+		}
+
 		$field_name = $field['name'];
 		$response = $form_data[ $field_name ];
 
@@ -107,10 +111,10 @@ class CaptchaFoxElement extends \FluentForm\App\Services\FormBuilder\BaseFieldMa
 			return [ __( 'Please fill out the captcha', 'captchafox-for-forms' ) ];
 		}
 
-        $verification = Request::validate( $response );
+        $verification = Request::validate( $response, 'fluent-forms' );
 
         if ( ! $verification->success ) {
-            $error_message = [ __( 'Invalid Captcha', 'captchafox-for-forms' ) ];
+            $error_message = [ CaptchaFox::get_error_message() ];
         }
 
 		return $error_message;

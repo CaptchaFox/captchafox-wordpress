@@ -26,10 +26,10 @@ class Register extends Plugin {
      * @return mixed
      */
     public function verify( $validation_error ) {
-        $verified = Request::validate_post();
+        $verified = Request::validate_post( 'woocommerce-register' );
 
         if ( ! $verified ) {
-            $validation_error = new WP_Error( 'invalid_captcha', __( 'Invalid Captcha', 'captchafox-for-forms' ), 400 );
+            $validation_error = new WP_Error( 'invalid_captcha', CaptchaFox::get_error_message(), 400 );
         }
 
         return $validation_error;

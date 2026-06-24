@@ -1,6 +1,7 @@
 composer.phar
 vendor
 *.lock
+*.cache
 node_modules
 .DS_STORE
 /assets/js

@@ -50,7 +50,7 @@ class Forms extends Plugin {
 
         $messages['invalid'] = [
             'type' => 'error',
-            'text' => __( 'Invalid Captcha', 'captchafox-for-forms' ),
+            'text' => CaptchaFox::get_error_message(),
         ];
 
         return $messages;
@@ -64,7 +64,7 @@ class Forms extends Plugin {
      * @return mixed
      */
     public function verify( $errors, MC4WP_Form $form ) {
-        $verified = Request::validate_post();
+        $verified = Request::validate_post( 'mailchimp' );
 
         if ( ! $verified ) {
             $errors     = (array) $errors;
