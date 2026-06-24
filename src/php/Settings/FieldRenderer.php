@@ -5,6 +5,44 @@ namespace CaptchaFox\Settings;
 trait FieldRenderer {
 
     /**
+     * Render the registered settings sections, each wrapped in its own card.
+     *
+     * Mirrors do_settings_sections() but adds a per-section wrapper so each
+     * group can be styled as a distinct card.
+     *
+     * @param string $page Settings page slug.
+     *
+     * @return void
+     */
+    public function render_sections( $page ) {
+        global $wp_settings_sections, $wp_settings_fields;
+
+        if ( ! isset( $wp_settings_sections[ $page ] ) ) {
+            return;
+        }
+
+        foreach ( (array) $wp_settings_sections[ $page ] as $section ) {
+            echo '<div class="cf-settings-card">';
+
+            if ( $section['title'] ) {
+                printf( '<h2 class="cf-settings-card-title">%s</h2>', esc_html( $section['title'] ) );
+            }
+
+            if ( $section['callback'] ) {
+                call_user_func( $section['callback'], $section );
+            }
+
+            if ( isset( $wp_settings_fields[ $page ][ $section['id'] ] ) ) {
+                echo '<table class="form-table" role="presentation">';
+                do_settings_fields( $page, $section['id'] );
+                echo '</table>';
+            }
+
+            echo '</div>';
+        }
+    }
+
+    /**
      * Text Field
      *
      * @param  mixed $args Args.
