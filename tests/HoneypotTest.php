@@ -99,6 +99,18 @@ class HoneypotTest extends TestCase {
 		$this->assertStringNotContainsString( CaptchaFox::HONEYPOT_NAME, $html );
 	}
 
+	public function test_build_html_escapes_data_attributes() {
+		$html = CaptchaFox::build_html( [
+			'sitekey'     => '"><script>alert(1)</script>',
+			'theme'       => 'dark',
+			'bad attr<>=' => 'ignored-name-is-sanitized',
+		] );
+
+		$this->assertStringContainsString( 'data-sitekey="&quot;&gt;&lt;script&gt;alert(1)&lt;/script&gt;"', $html );
+		$this->assertStringNotContainsString( '<script>', $html );
+		$this->assertStringNotContainsString( 'bad attr', $html );
+	}
+
 	public function test_validate_fails_when_honeypot_filled() {
 		$this->set_enabled( true );
 		$_POST[ CaptchaFox::HONEYPOT_NAME ] = 'i am a bot';

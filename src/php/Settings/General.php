@@ -13,7 +13,9 @@ class General {
      */
     public function setup() {
         $setting_general = 'captchafox_options';
-        register_setting( 'captchafox', $setting_general );
+        register_setting( 'captchafox', $setting_general, [
+            'sanitize_callback' => [ $this, 'sanitize_options' ],
+        ] );
 
         $section_keys        = 'captchafox_general_keys';
         $section_appearance  = 'captchafox_general_appearance';
@@ -92,6 +94,27 @@ class General {
                 'interaction' => __( 'On user interaction', 'captchafox-for-forms' ),
             ],
         ]);
+    }
+
+    /**
+     * Sanitize general settings before saving.
+     *
+     * @param mixed $input Raw option value.
+     *
+     * @return array
+     */
+    public function sanitize_options( $input ) {
+        $input = is_array( $input ) ? $input : [];
+        $languages = [ 'auto', 'cs', 'zh-cn', 'zh-tw', 'da', 'nl', 'de', 'en', 'fi', 'fr', 'it', 'ja', 'ko', 'no', 'pt', 'pl', 'ru', 'es', 'sv', 'tr', 'uk', 'id' ];
+
+        return [
+            'field_sitekey'      => isset( $input['field_sitekey'] ) ? sanitize_text_field( $input['field_sitekey'] ) : '',
+            'field_secret'       => isset( $input['field_secret'] ) ? sanitize_text_field( $input['field_secret'] ) : '',
+            'field_display_mode' => isset( $input['field_display_mode'] ) && in_array( $input['field_display_mode'], [ 'inline', 'popup', 'hidden' ], true ) ? $input['field_display_mode'] : 'inline',
+            'field_theme'        => isset( $input['field_theme'] ) && in_array( $input['field_theme'], [ 'light', 'dark' ], true ) ? $input['field_theme'] : 'light',
+            'field_lang'         => isset( $input['field_lang'] ) && in_array( $input['field_lang'], $languages, true ) ? $input['field_lang'] : 'auto',
+            'field_loading'      => isset( $input['field_loading'] ) && in_array( $input['field_loading'], [ 'instant', 'interaction' ], true ) ? $input['field_loading'] : 'instant',
+        ];
     }
 
     /**

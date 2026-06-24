@@ -2,6 +2,8 @@
 
 namespace CaptchaFox\Settings;
 
+use CaptchaFox\Helper\CaptchaFox;
+
 class Security {
 
     use FieldRenderer;
@@ -13,7 +15,9 @@ class Security {
      */
     public function setup() {
         $setting_security = 'captchafox_security';
-        register_setting( 'captchafox_security', $setting_security );
+        register_setting( 'captchafox_security', $setting_security, [
+            'sanitize_callback' => [ $this, 'sanitize_options' ],
+        ] );
 
         $section_spam  = 'captchafox_security_spam';
         $section_ip    = 'captchafox_security_ip';
@@ -93,6 +97,73 @@ class Security {
             'group'       => $setting_security,
             'description' => __( 'Store the visitor user agent with each event.', 'captchafox-for-forms' ),
         ]);
+    }
+
+    /**
+     * Sanitize security settings before saving.
+     *
+     * @param mixed $input Raw option value.
+     *
+     * @return array
+     */
+    public function sanitize_options( $input ) {
+        $input = is_array( $input ) ? $input : [];
+
+        return [
+            'field_honeypot'           => ! empty( $input['field_honeypot'] ) ? '1' : '',
+            'field_min_time'           => isset( $input['field_min_time'] ) ? max( 0, (int) $input['field_min_time'] ) : 0,
+            'field_skip_logged_in'     => ! empty( $input['field_skip_logged_in'] ) ? '1' : '',
+            'field_allowlist'          => $this->sanitize_ip_list( $input['field_allowlist'] ?? '', 'field_allowlist' ),
+            'field_denylist'           => $this->sanitize_ip_list( $input['field_denylist'] ?? '', 'field_denylist' ),
+            'field_login_limit'        => isset( $input['field_login_limit'] ) ? max( 0, (int) $input['field_login_limit'] ) : 0,
+            'field_login_interval'     => isset( $input['field_login_interval'] ) ? max( 1, (int) $input['field_login_interval'] ) : 15,
+            'field_statistics'         => ! empty( $input['field_statistics'] ) ? '1' : '',
+            'field_collect_ip'         => ! empty( $input['field_collect_ip'] ) ? '1' : '',
+            'field_collect_user_agent' => ! empty( $input['field_collect_user_agent'] ) ? '1' : '',
+        ];
+    }
+
+    /**
+     * Sanitize an IP/CIDR textarea, dropping invalid entries.
+     *
+     * @param string $raw   Raw textarea value.
+     * @param string $field Field name for settings errors.
+     *
+     * @return string
+     */
+    private function sanitize_ip_list( $raw, $field ) {
+        $lines = preg_split( '/\r\n|\r|\n/', (string) $raw );
+        $valid = [];
+        $invalid = [];
+
+        foreach ( $lines as $line ) {
+            $entry = trim( sanitize_text_field( $line ) );
+
+            if ( '' === $entry ) {
+                continue;
+            }
+
+            if ( CaptchaFox::is_valid_ip_entry( $entry ) ) {
+                $valid[] = $entry;
+                continue;
+            }
+
+            $invalid[] = $entry;
+        }
+
+        if ( ! empty( $invalid ) && function_exists( 'add_settings_error' ) ) {
+            add_settings_error(
+                'captchafox_security',
+                $field . '_invalid',
+                sprintf(
+                    /* translators: %s: comma separated invalid IP entries. */
+                    __( 'Invalid IP entries were ignored: %s', 'captchafox-for-forms' ),
+                    implode( ', ', $invalid )
+                )
+            );
+        }
+
+        return implode( "\n", array_unique( $valid ) );
     }
 
     /**

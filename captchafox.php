@@ -33,6 +33,7 @@ const PLUGIN_VERSION = '1.13.0';
 require 'vendor/autoload.php';
 
 register_activation_hook( __FILE__, [ Statistics::class, 'create_table' ] );
+register_deactivation_hook( __FILE__, [ Statistics::class, 'clear_retention_schedule' ] );
 
 /**
  * Initialize plugin

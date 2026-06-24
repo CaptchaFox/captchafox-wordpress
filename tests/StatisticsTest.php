@@ -40,7 +40,7 @@ class StatisticsTest extends TestCase {
 		$this->assertSame( 0, $stats['passed'] );
 		$this->assertSame( 0, $stats['failed'] );
 		$this->assertSame(
-			[ 'ip_denied', 'honeypot', 'min_time', 'captcha' ],
+			[ 'ip_denied', 'honeypot', 'min_time', 'captcha', 'api_error' ],
 			array_keys( $stats['reasons'] )
 		);
 		$this->assertSame( [], Statistics::get_events() );
@@ -223,5 +223,41 @@ class StatisticsTest extends TestCase {
 		$stats = Statistics::get_stats();
 		$this->assertSame( 1, $stats['reasons']['ip_denied'] );
 		$this->assertSame( 'ip_denied', Statistics::get_events()[0]['reason'] );
+	}
+
+	public function test_prune_old_events_keeps_default_fourteen_day_window() {
+		global $wpdb;
+
+		$wpdb->rows = [
+			[
+				'id'            => 1,
+				'success'       => 0,
+				'reason'        => 'captcha',
+				'source'        => '',
+				'form_id'       => '',
+				'ip'            => '',
+				'ip_anonymized' => 1,
+				'user_agent'    => '',
+				'ua_anonymized' => 1,
+				'date_gmt'      => gmdate( 'Y-m-d H:i:s', time() - ( 15 * DAY_IN_SECONDS ) ),
+			],
+			[
+				'id'            => 2,
+				'success'       => 0,
+				'reason'        => 'honeypot',
+				'source'        => '',
+				'form_id'       => '',
+				'ip'            => '',
+				'ip_anonymized' => 1,
+				'user_agent'    => '',
+				'ua_anonymized' => 1,
+				'date_gmt'      => gmdate( 'Y-m-d H:i:s', time() - ( 13 * DAY_IN_SECONDS ) ),
+			],
+		];
+
+		Statistics::prune_old_events();
+
+		$this->assertCount( 1, $wpdb->rows );
+		$this->assertSame( 'honeypot', $wpdb->rows[0]['reason'] );
 	}
 }

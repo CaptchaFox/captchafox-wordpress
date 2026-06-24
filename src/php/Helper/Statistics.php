@@ -36,11 +36,25 @@ class Statistics {
     const RECENT_LIMIT = 50;
 
     /**
+     * Default number of days to keep events.
+     *
+     * @var int
+     */
+    const RETENTION_DAYS = 14;
+
+    /**
+     * Cron hook used for event retention cleanup.
+     *
+     * @var string
+     */
+    const RETENTION_HOOK = 'captchafox_prune_events';
+
+    /**
      * Known failure reasons.
      *
      * @var string[]
      */
-    const REASONS = [ 'ip_denied', 'honeypot', 'min_time', 'captcha' ];
+    const REASONS = [ 'ip_denied', 'honeypot', 'min_time', 'captcha', 'api_error' ];
 
     /**
      * Fully qualified table name.
@@ -126,6 +140,7 @@ class Statistics {
         self::ensure_columns();
 
         update_option( self::DB_VERSION_OPTION, self::DB_VERSION );
+        self::schedule_retention();
     }
 
     /**
@@ -181,6 +196,69 @@ class Statistics {
         }
 
         self::create_table();
+    }
+
+    /**
+     * Schedule the daily retention cleanup if it is not scheduled already.
+     *
+     * @return void
+     */
+    public static function schedule_retention() {
+        if ( ! function_exists( 'wp_next_scheduled' ) || ! function_exists( 'wp_schedule_event' ) ) {
+            return;
+        }
+
+        if ( ! wp_next_scheduled( self::RETENTION_HOOK ) ) {
+            wp_schedule_event( time() + HOUR_IN_SECONDS, 'daily', self::RETENTION_HOOK );
+        }
+    }
+
+    /**
+     * Clear the scheduled retention cleanup.
+     *
+     * @return void
+     */
+    public static function clear_retention_schedule() {
+        if ( ! function_exists( 'wp_next_scheduled' ) || ! function_exists( 'wp_unschedule_event' ) ) {
+            return;
+        }
+
+        $timestamp = wp_next_scheduled( self::RETENTION_HOOK );
+
+        if ( $timestamp ) {
+            wp_unschedule_event( $timestamp, self::RETENTION_HOOK );
+        }
+    }
+
+    /**
+     * Get the retention window in days.
+     *
+     * @return int
+     */
+    public static function retention_days() {
+        return max( 1, (int) apply_filters( 'capf_event_retention_days', self::RETENTION_DAYS ) );
+    }
+
+    /**
+     * Delete events older than the retention window.
+     *
+     * @param int|null $days Retention window override.
+     *
+     * @return void
+     */
+    public static function prune_old_events( $days = null ) {
+        global $wpdb;
+
+        if ( ! isset( $wpdb ) ) {
+            return;
+        }
+
+        $days = null === $days ? self::retention_days() : max( 1, (int) $days );
+        $cutoff = gmdate( 'Y-m-d H:i:s', time() - ( $days * DAY_IN_SECONDS ) );
+        $table = self::table_name();
+
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+        $wpdb->query( $wpdb->prepare( "DELETE FROM $table WHERE date_gmt < %s", $cutoff ) );
     }
 
     /**

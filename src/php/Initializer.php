@@ -21,6 +21,8 @@ class Initializer {
 		// Create or upgrade the events table on existing installs (the
 		// activation hook only fires on a fresh activation).
 		add_action( 'admin_init', [ Statistics::class, 'maybe_create_table' ] );
+		add_action( Statistics::RETENTION_HOOK, [ Statistics::class, 'prune_old_events' ] );
+		Statistics::schedule_retention();
 
 		add_action( 'init', [ $this, 'init' ] );
 

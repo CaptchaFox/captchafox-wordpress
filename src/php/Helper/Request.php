@@ -3,6 +3,22 @@
 namespace CaptchaFox\Helper;
 
 class Request {
+
+    /**
+     * Build a stable validation result object.
+     *
+     * @param bool     $success Whether validation passed.
+     * @param string[] $errors  Error codes.
+     *
+     * @return object
+     */
+    private static function result( $success, array $errors = [] ) {
+        return (object) [
+            'success' => (bool) $success,
+            'errors'  => $errors,
+        ];
+    }
+
     /**
      * Validate POST request
      *
@@ -41,34 +57,22 @@ class Request {
      */
     public static function validate( string $response, $source = '' ) {
         if ( CaptchaFox::should_skip_captcha() ) {
-            return (object) [
-                'success' => true,
-                'errors'  => [],
-            ];
+            return self::result( true );
         }
 
         if ( CaptchaFox::is_ip_denied() ) {
             Statistics::record_failure( 'ip_denied', $source );
-            return (object) [
-                'success' => false,
-                'errors'  => [ 'ip_denied' ],
-            ];
+            return self::result( false, [ 'ip_denied' ] );
         }
 
         if ( ! self::passed_honeypot() ) {
             Statistics::record_failure( 'honeypot', $source );
-            return (object) [
-                'success' => false,
-                'errors'  => [ 'honeypot' ],
-            ];
+            return self::result( false, [ 'honeypot' ] );
         }
 
         if ( ! self::passed_min_time() ) {
             Statistics::record_failure( 'min_time', $source );
-            return (object) [
-                'success' => false,
-                'errors'  => [ 'min_time' ],
-            ];
+            return self::result( false, [ 'min_time' ] );
         }
 
         $response = sanitize_text_field( $response );
@@ -83,25 +87,43 @@ class Request {
             'body' => $data,
         ) );
 
-        if ( is_wp_error( $post_response ) ) {
-            return false;
+        if ( is_wp_error( $post_response ) || ! is_array( $post_response ) ) {
+            Statistics::record_failure( 'api_error', $source );
+            return self::result( false, [ 'api_error' ] );
+        }
+
+        $status_code = (int) wp_remote_retrieve_response_code( $post_response );
+
+        if ( $status_code >= 400 ) {
+            Statistics::record_failure( 'api_error', $source );
+            return self::result( false, [ 'api_error' ] );
         }
 
         $body = wp_remote_retrieve_body( $post_response );
         $result = json_decode( $body );
+
+        if ( ! is_object( $result ) || ! property_exists( $result, 'success' ) ) {
+            Statistics::record_failure( 'api_error', $source );
+            return self::result( false, [ 'api_error' ] );
+        }
+
         if ( $result->success ) {
             Statistics::record_pass( $source );
-            return (object) [
-                'success' => true,
-                'errors'  => [],
-            ];
+            return self::result( true );
+        }
+
+        $errors = [];
+
+        if ( isset( $result->{'error-codes'} ) && is_array( $result->{'error-codes'} ) ) {
+            $errors = array_map( 'sanitize_text_field', $result->{'error-codes'} );
+        }
+
+        if ( empty( $errors ) ) {
+            $errors = [ 'captcha' ];
         }
 
         Statistics::record_failure( 'captcha', $source );
-        return (object) [
-            'success' => false,
-            'errors'  => $result->{'error-codes'},
-        ];
+        return self::result( false, $errors );
     }
 
     /**

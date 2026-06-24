@@ -272,12 +272,23 @@ class CaptchaFox {
         }
 
         list( $subnet, $bits ) = explode( '/', $entry, 2 );
+
+        if ( ! ctype_digit( (string) $bits ) ) {
+            return false;
+        }
+
         $bits = (int) $bits;
 
         $ip_bin = inet_pton( $ip );
         $subnet_bin = inet_pton( $subnet );
 
         if ( false === $ip_bin || false === $subnet_bin || strlen( $ip_bin ) !== strlen( $subnet_bin ) ) {
+            return false;
+        }
+
+        $max_bits = strlen( $ip_bin ) * 8;
+
+        if ( $bits < 0 || $bits > $max_bits ) {
             return false;
         }
 
@@ -295,6 +306,41 @@ class CaptchaFox {
         }
 
         return true;
+    }
+
+    /**
+     * Whether a configured IP access entry is valid.
+     *
+     * @param string $entry IP address or CIDR range.
+     *
+     * @return bool
+     */
+    public static function is_valid_ip_entry( $entry ) {
+        $entry = trim( (string) $entry );
+
+        if ( filter_var( $entry, FILTER_VALIDATE_IP ) ) {
+            return true;
+        }
+
+        if ( false === strpos( $entry, '/' ) ) {
+            return false;
+        }
+
+        list( $subnet, $bits ) = explode( '/', $entry, 2 );
+
+        if ( ! filter_var( $subnet, FILTER_VALIDATE_IP ) || ! ctype_digit( (string) $bits ) ) {
+            return false;
+        }
+
+        $subnet_bin = inet_pton( $subnet );
+
+        if ( false === $subnet_bin ) {
+            return false;
+        }
+
+        $bits = (int) $bits;
+
+        return $bits >= 0 && $bits <= strlen( $subnet_bin ) * 8;
     }
 
     /**
@@ -470,13 +516,18 @@ class CaptchaFox {
             if ( null === $value ) {
                 continue;
             }
-            $attrs .= "data-{$attr}=\"{$value}\" ";
+
+            $attr = preg_replace( '/[^a-z0-9_-]/i', '', (string) $attr );
+
+            if ( '' === $attr ) {
+                continue;
+            }
+
+            $attrs .= sprintf( 'data-%s="%s" ', esc_attr( $attr ), esc_attr( $value ) );
         }
         $attrs = rtrim( $attrs );
 
-        $widget = sprintf( '<div class="captchafox" %s></div>', wp_kses( $attrs, [
-            'data',
-        ]) );
+        $widget = sprintf( '<div class="captchafox"%s></div>', '' !== $attrs ? ' ' . $attrs : '' );
 
         return $widget . self::get_honeypot_html() . self::get_timestamp_html();
     }

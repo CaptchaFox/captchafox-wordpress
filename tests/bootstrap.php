@@ -26,6 +26,10 @@ if ( ! defined( 'HOUR_IN_SECONDS' ) ) {
 	define( 'HOUR_IN_SECONDS', 3600 );
 }
 
+if ( ! defined( 'DAY_IN_SECONDS' ) ) {
+	define( 'DAY_IN_SECONDS', 86400 );
+}
+
 /**
  * In-memory transient store controlled by the tests.
  *
@@ -39,6 +43,35 @@ $GLOBALS['cf_test_transients'] = [];
  * @var string[]
  */
 $GLOBALS['cf_test_enqueued'] = [];
+
+/**
+ * Remote request responses controlled by the tests.
+ *
+ * @var mixed
+ */
+$GLOBALS['cf_test_remote_post_response'] = [
+	'body'     => '{"success":true}',
+	'response' => [ 'code' => 200 ],
+];
+$GLOBALS['cf_test_remote_head_response'] = [
+	'body'     => '',
+	'response' => [ 'code' => 200 ],
+];
+$GLOBALS['cf_test_remote_head_calls'] = 0;
+
+/**
+ * Settings errors captured during tests.
+ *
+ * @var array<int, array<string, mixed>>
+ */
+$GLOBALS['cf_test_settings_errors'] = [];
+
+/**
+ * Cron events scheduled during tests.
+ *
+ * @var array<string, int>
+ */
+$GLOBALS['cf_test_scheduled'] = [];
 
 /**
  * In-memory option store controlled by the tests.
@@ -170,6 +203,19 @@ class CF_Test_WPDB {
 	}
 
 	public function query( $query ) {
+		if ( false !== strpos( $query, 'DELETE' ) && preg_match( "/date_gmt < '([^']+)'/", $query, $m ) ) {
+			$cutoff     = $m[1];
+			$this->rows = array_values(
+				array_filter(
+					$this->rows,
+					static function ( $row ) use ( $cutoff ) {
+						return $row['date_gmt'] >= $cutoff;
+					}
+				)
+			);
+			return true;
+		}
+
 		if ( false !== strpos( $query, 'DELETE' ) ) {
 			$this->rows = [];
 		}
@@ -214,6 +260,17 @@ function cf_test_reset() {
 	$GLOBALS['cf_test_filters']     = [];
 	$GLOBALS['wpdb']                = new CF_Test_WPDB();
 	$GLOBALS['cf_test_enqueued']    = [];
+	$GLOBALS['cf_test_remote_post_response'] = [
+		'body'     => '{"success":true}',
+		'response' => [ 'code' => 200 ],
+	];
+	$GLOBALS['cf_test_remote_head_response'] = [
+		'body'     => '',
+		'response' => [ 'code' => 200 ],
+	];
+	$GLOBALS['cf_test_remote_head_calls'] = 0;
+	$GLOBALS['cf_test_settings_errors'] = [];
+	$GLOBALS['cf_test_scheduled'] = [];
 	$GLOBALS['cf_test_logged_in']   = false;
 	$GLOBALS['cf_test_user_roles']  = [];
 	$_POST                          = [];
@@ -279,6 +336,78 @@ if ( ! function_exists( 'delete_transient' ) ) {
 		unset( $GLOBALS['cf_test_transients'][ $key ] );
 
 		return true;
+	}
+}
+
+if ( ! class_exists( 'WP_Error' ) ) {
+	class WP_Error {
+		public $code;
+		public $message;
+
+		public function __construct( $code = '', $message = '' ) {
+			$this->code    = $code;
+			$this->message = $message;
+		}
+	}
+}
+
+if ( ! function_exists( 'is_wp_error' ) ) {
+	function is_wp_error( $thing ) {
+		return $thing instanceof WP_Error;
+	}
+}
+
+if ( ! function_exists( 'wp_remote_post' ) ) {
+	function wp_remote_post( ...$args ) {
+		return $GLOBALS['cf_test_remote_post_response'];
+	}
+}
+
+if ( ! function_exists( 'wp_remote_head' ) ) {
+	function wp_remote_head( ...$args ) {
+		$GLOBALS['cf_test_remote_head_calls']++;
+
+		return $GLOBALS['cf_test_remote_head_response'];
+	}
+}
+
+if ( ! function_exists( 'wp_remote_retrieve_body' ) ) {
+	function wp_remote_retrieve_body( $response ) {
+		return is_array( $response ) && isset( $response['body'] ) ? $response['body'] : '';
+	}
+}
+
+if ( ! function_exists( 'wp_remote_retrieve_response_code' ) ) {
+	function wp_remote_retrieve_response_code( $response ) {
+		return is_array( $response ) && isset( $response['response']['code'] ) ? (int) $response['response']['code'] : 0;
+	}
+}
+
+if ( ! function_exists( 'wp_next_scheduled' ) ) {
+	function wp_next_scheduled( $hook ) {
+		return $GLOBALS['cf_test_scheduled'][ $hook ] ?? false;
+	}
+}
+
+if ( ! function_exists( 'wp_schedule_event' ) ) {
+	function wp_schedule_event( $timestamp, $recurrence, $hook ) {
+		$GLOBALS['cf_test_scheduled'][ $hook ] = $timestamp;
+
+		return true;
+	}
+}
+
+if ( ! function_exists( 'wp_unschedule_event' ) ) {
+	function wp_unschedule_event( $timestamp, $hook ) {
+		unset( $GLOBALS['cf_test_scheduled'][ $hook ] );
+
+		return true;
+	}
+}
+
+if ( ! function_exists( 'add_settings_error' ) ) {
+	function add_settings_error( $setting, $code, $message, $type = 'error' ) {
+		$GLOBALS['cf_test_settings_errors'][] = compact( 'setting', 'code', 'message', 'type' );
 	}
 }
 

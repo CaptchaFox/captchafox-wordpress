@@ -1,6 +1,6 @@
 import type { Theme, WidgetDisplayMode } from '@captchafox/types';
 
-let executeListener: (event: Event) => void;
+const executeListeners = new WeakMap<HTMLElement, (event: Event) => void>();
 
 function resetFormWidget(formSelector: string) {
   const element = document.querySelector<HTMLFormElement>(formSelector);
@@ -47,8 +47,16 @@ function initializeForms() {
     }
 
     if (submitButton) {
-      executeListener = (event: Event) =>
+      const existingListener = executeListeners.get(submitButton);
+
+      if (existingListener) {
+        submitButton.removeEventListener('click', existingListener, true);
+      }
+
+      const executeListener = (event: Event) =>
         executeCaptcha(event, form as HTMLFormElement, widgetId, submitButton);
+
+      executeListeners.set(submitButton, executeListener);
       submitButton.addEventListener('click', executeListener, true);
     }
   });
@@ -69,7 +77,13 @@ async function executeCaptcha(
 
   // handle ninja forms
   if (submitButton.classList.contains('ninja-forms-field')) {
-    submitButton.removeEventListener('click', executeListener, true);
+    const executeListener = executeListeners.get(submitButton);
+
+    if (executeListener) {
+      executeListeners.delete(submitButton);
+      submitButton.removeEventListener('click', executeListener, true);
+    }
+
     submitButton.click();
     return;
   }

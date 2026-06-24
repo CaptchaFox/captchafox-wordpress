@@ -51,6 +51,7 @@ class Events {
             'honeypot'  => __( 'Honeypot', 'captchafox-for-forms' ),
             'min_time'  => __( 'Too fast', 'captchafox-for-forms' ),
             'captcha'   => __( 'Failed captcha', 'captchafox-for-forms' ),
+            'api_error' => __( 'API error', 'captchafox-for-forms' ),
         ];
     }
 
