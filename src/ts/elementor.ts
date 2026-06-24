@@ -7,7 +7,7 @@ interface Window {
 }
 
 jQuery(document).on(
-  'ajaxSuccess',
+  'ajaxComplete',
   (_event: any, _xhr: any, settings: { data: Record<string, string> }) => {
     const params = new URLSearchParams(settings.data);
     if (params.get('action') !== 'elementor_pro_forms_send_form') {
@@ -23,8 +23,7 @@ jQuery(document).ready(() => {
   window.elementorFrontend?.hooks?.addAction(
     'frontend/element_ready/widget',
     function (scope) {
-      const isAdmin = (window as any).elementor;
-      if (isAdmin && scope[0].classList.contains('elementor-widget-form')) {
+      if (scope[0].classList.contains('elementor-widget-form')) {
         window.captchaFoxOnLoad();
       }
     },

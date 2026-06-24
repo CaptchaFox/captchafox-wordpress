@@ -2,14 +2,18 @@ import type { Theme, WidgetDisplayMode } from '@captchafox/types';
 
 const executeListeners = new WeakMap<HTMLElement, (event: Event) => void>();
 
-function resetFormWidget(formSelector: string) {
-  const element = document.querySelector<HTMLFormElement>(formSelector);
-  if (!element) return;
-
+function resetFormElement(element: HTMLFormElement | HTMLElement) {
   const widgetId = element.dataset.cfWidgetId;
   if (!widgetId) return;
 
   window.captchafox?.reset(widgetId);
+}
+
+function resetFormWidget(formSelector: string) {
+  const element = document.querySelector<HTMLFormElement>(formSelector);
+  if (!element) return;
+
+  resetFormElement(element);
 }
 
 function initializeForms() {
@@ -24,21 +28,34 @@ function initializeForms() {
     const captchaSlot: HTMLDivElement | null =
       form.querySelector('.captchafox');
     const isAlreadyRendered = captchaSlot?.hasChildNodes();
+    const isRendering = captchaSlot?.dataset.cfRendering === '1';
 
-    if (!captchaSlot || !window.captchafox || isAlreadyRendered) return;
+    if (!captchaSlot || !window.captchafox || isAlreadyRendered || isRendering)
+      return;
+
+    captchaSlot.dataset.cfRendering = '1';
 
     const mode = captchaSlot.dataset.mode as WidgetDisplayMode;
     const sitekey = captchaSlot.dataset.sitekey;
     const theme = captchaSlot.dataset.theme as Theme;
     const lang = captchaSlot.dataset.lang;
 
-    const widgetId = await window.captchafox.render(captchaSlot, {
-      sitekey: sitekey ?? '',
-      ...(mode && { mode }),
-      ...(lang && { lang }),
-      ...(theme && { theme }),
-      onError: (error) => console.error(error),
-    });
+    let widgetId: string;
+
+    try {
+      widgetId = await window.captchafox.render(captchaSlot, {
+        sitekey: sitekey ?? '',
+        ...(mode && { mode }),
+        ...(lang && { lang }),
+        ...(theme && { theme }),
+        onError: (error) => console.error(error),
+      });
+    } catch (error) {
+      console.error(error);
+      return;
+    } finally {
+      delete captchaSlot.dataset.cfRendering;
+    }
 
     form.dataset.cfWidgetId = widgetId;
 
@@ -143,3 +160,10 @@ function setupDelayedLoading() {
 }
 
 setupDelayedLoading();
+
+// Some optimizers can move the local form script behind the external
+// CaptchaFox api script. In that case the api onload callback was missed, so
+// initialize immediately once this script finally runs.
+if (window.captchafox) {
+  initializeForms();
+}
