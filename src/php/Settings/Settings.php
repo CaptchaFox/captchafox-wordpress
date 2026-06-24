@@ -314,8 +314,7 @@ class Settings {
      * @return boolean
      */
     private function is_visible() {
-        $current_screen = get_current_screen()->id;
-        return 'settings_page_captchafox' === $current_screen;
+        return $this->is_captchafox_screen();
     }
 
     /**
@@ -378,6 +377,12 @@ class Settings {
             return $text;
         }
 
-        return '';
+        return sprintf(
+            /* translators: 1: plugin name, 2: five-star rating link, 3: WordPress.org link. */
+            __( 'Enjoying %1$s? Share a %2$s review on %3$s', 'captchafox-for-forms' ),
+            '<strong>CaptchaFox for WordPress</strong>',
+            '<a href="https://wordpress.org/support/plugin/captchafox-for-forms/reviews/?filter=5#new-post" target="_blank" rel="noopener noreferrer" aria-label="' . esc_attr__( 'Rate CaptchaFox for WordPress five stars on WordPress.org', 'captchafox-for-forms' ) . '">★★★★★</a>',
+            '<a href="https://wordpress.org/support/plugin/captchafox-for-forms/reviews/?filter=5#new-post" target="_blank" rel="noopener noreferrer">WordPress.org</a>'
+        );
     }
 }
