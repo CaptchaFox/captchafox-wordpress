@@ -107,12 +107,18 @@ class Statistics {
     /**
      * Create the events table. Safe to call repeatedly (dbDelta is idempotent).
      *
-     * @return void
+     * @return bool Whether the table exists after creation.
      */
     public static function create_table() {
         global $wpdb;
 
-        require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+        if ( ! isset( $wpdb ) ) {
+            return false;
+        }
+
+        if ( ! function_exists( 'dbDelta' ) ) {
+            require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+        }
 
         $table = self::table_name();
         $charset_collate = $wpdb->get_charset_collate();
@@ -135,12 +141,36 @@ class Statistics {
 
         dbDelta( $sql );
 
+        if ( ! self::table_exists() ) {
+            return false;
+        }
+
         // dbDelta is unreliable at adding columns to a pre-existing table, so
         // reconcile the schema explicitly as a fallback.
         self::ensure_columns();
 
         update_option( self::DB_VERSION_OPTION, self::DB_VERSION );
         self::schedule_retention();
+
+        return true;
+    }
+
+    /**
+     * Whether the events table exists.
+     *
+     * @return bool
+     */
+    private static function table_exists() {
+        global $wpdb;
+
+        if ( ! isset( $wpdb ) ) {
+            return false;
+        }
+
+        $table = self::table_name();
+
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+        return $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table ) ) === $table;
     }
 
     /**
@@ -151,6 +181,10 @@ class Statistics {
      */
     private static function ensure_columns() {
         global $wpdb;
+
+        if ( ! self::table_exists() ) {
+            return;
+        }
 
         $table = self::table_name();
 
@@ -249,7 +283,7 @@ class Statistics {
     public static function prune_old_events( $days = null ) {
         global $wpdb;
 
-        if ( ! isset( $wpdb ) ) {
+        if ( ! isset( $wpdb ) || ! self::table_exists() ) {
             return;
         }
 
@@ -299,6 +333,14 @@ class Statistics {
         global $wpdb;
 
         if ( ! self::is_enabled() || ! isset( $wpdb ) ) {
+            return;
+        }
+
+        if ( get_option( self::DB_VERSION_OPTION ) !== self::DB_VERSION ) {
+            self::create_table();
+        }
+
+        if ( ! self::table_exists() ) {
             return;
         }
 
@@ -407,6 +449,14 @@ class Statistics {
             return $stats;
         }
 
+        if ( get_option( self::DB_VERSION_OPTION ) !== self::DB_VERSION ) {
+            self::create_table();
+        }
+
+        if ( ! self::table_exists() ) {
+            return $stats;
+        }
+
         $table = self::table_name();
 
         // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
@@ -440,6 +490,14 @@ class Statistics {
         global $wpdb;
 
         if ( ! isset( $wpdb ) ) {
+            return [];
+        }
+
+        if ( get_option( self::DB_VERSION_OPTION ) !== self::DB_VERSION ) {
+            self::create_table();
+        }
+
+        if ( ! self::table_exists() ) {
             return [];
         }
 
@@ -483,7 +541,7 @@ class Statistics {
     public static function reset() {
         global $wpdb;
 
-        if ( ! isset( $wpdb ) ) {
+        if ( ! isset( $wpdb ) || ! self::table_exists() ) {
             return;
         }
 

@@ -211,6 +211,29 @@ class StatisticsTest extends TestCase {
 		$this->assertSame( [], Statistics::get_events() );
 	}
 
+	public function test_create_table_does_not_mark_version_when_table_is_missing() {
+		global $wpdb;
+
+		$wpdb->table_exists = false;
+
+		$this->assertFalse( Statistics::create_table() );
+		$this->assertNotSame( Statistics::DB_VERSION, get_option( Statistics::DB_VERSION_OPTION ) );
+	}
+
+	public function test_missing_table_returns_empty_stats_and_ignores_inserts() {
+		global $wpdb;
+
+		$wpdb->table_exists = false;
+
+		Statistics::record_failure( 'honeypot' );
+
+		$stats = Statistics::get_stats();
+		$this->assertSame( 0, $stats['passed'] );
+		$this->assertSame( 0, $stats['failed'] );
+		$this->assertSame( [], Statistics::get_events() );
+		$this->assertSame( [], $wpdb->rows );
+	}
+
 	public function test_validate_records_denied_ip_event() {
 		cf_test_set_option( 'captchafox_security', [
 			'field_statistics' => '1',

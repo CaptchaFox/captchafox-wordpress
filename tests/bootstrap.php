@@ -117,6 +117,13 @@ class CF_Test_WPDB {
 	public $rows = [];
 
 	/**
+	 * Whether the events table exists.
+	 *
+	 * @var bool
+	 */
+	public $table_exists = true;
+
+	/**
 	 * Next auto-increment id.
 	 *
 	 * @var int
@@ -144,6 +151,10 @@ class CF_Test_WPDB {
 	}
 
 	public function get_var( $query ) {
+		if ( false !== strpos( $query, 'SHOW TABLES LIKE' ) ) {
+			return $this->table_exists ? $this->prefix . 'captchafox_events' : null;
+		}
+
 		if ( false !== strpos( $query, 'success = 1' ) ) {
 			return (string) count( $this->where_success( 1 ) );
 		}
@@ -336,6 +347,12 @@ if ( ! function_exists( 'delete_transient' ) ) {
 		unset( $GLOBALS['cf_test_transients'][ $key ] );
 
 		return true;
+	}
+}
+
+if ( ! function_exists( 'dbDelta' ) ) {
+	function dbDelta( ...$args ) {
+		return [];
 	}
 }
 
