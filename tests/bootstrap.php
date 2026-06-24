@@ -440,6 +440,56 @@ if ( ! function_exists( 'add_filter' ) ) {
 	}
 }
 
+if ( ! class_exists( 'CF_Test_WPForms' ) ) {
+	class CF_Test_WPForms {
+		public $process;
+
+		public function __construct() {
+			$this->process = (object) [ 'errors' => [] ];
+		}
+
+		public function get( $name ) {
+			return 'process' === $name ? $this->process : null;
+		}
+	}
+}
+
+if ( ! function_exists( 'wpforms' ) ) {
+	function wpforms() {
+		if ( empty( $GLOBALS['cf_test_wpforms'] ) ) {
+			$GLOBALS['cf_test_wpforms'] = new CF_Test_WPForms();
+		}
+
+		return $GLOBALS['cf_test_wpforms'];
+	}
+}
+
+if ( ! class_exists( 'WPCF7_Submission' ) ) {
+	class WPCF7_Submission {
+		public $spam_log = [];
+
+		public static function get_instance() {
+			if ( empty( $GLOBALS['cf_test_wpcf7_submission'] ) ) {
+				$GLOBALS['cf_test_wpcf7_submission'] = new self();
+			}
+
+			return $GLOBALS['cf_test_wpcf7_submission'];
+		}
+
+		public function add_spam_log( $entry ) {
+			$this->spam_log[] = $entry;
+		}
+	}
+}
+
+if ( ! class_exists( 'GFFormsModel' ) ) {
+	class GFFormsModel {
+		public static function get_form_meta( $form_id ) {
+			return $GLOBALS['cf_test_gf_forms'][ $form_id ] ?? false;
+		}
+	}
+}
+
 if ( ! function_exists( 'apply_filters' ) ) {
 	function apply_filters( $tag, $value, ...$args ) {
 		return $GLOBALS['cf_test_filters'][ $tag ] ?? $value;
