@@ -111,7 +111,7 @@ class CaptchaFoxElement extends \FluentForm\App\Services\FormBuilder\BaseFieldMa
 			return [ __( 'Please fill out the captcha', 'captchafox-for-forms' ) ];
 		}
 
-        $verification = Request::validate( $response );
+        $verification = Request::validate( $response, 'fluent-forms' );
 
         if ( ! $verification->success ) {
             $error_message = [ CaptchaFox::get_error_message() ];

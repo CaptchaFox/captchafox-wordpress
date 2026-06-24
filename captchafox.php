@@ -18,6 +18,7 @@
  * WC tested up to:       10.7
  */
 
+use CaptchaFox\Helper\Statistics;
 use CaptchaFox\Initializer;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -30,6 +31,8 @@ const CAPTCHAFOX_BASE_FILE = __FILE__;
 const PLUGIN_VERSION = '1.13.0';
 
 require 'vendor/autoload.php';
+
+register_activation_hook( __FILE__, [ Statistics::class, 'create_table' ] );
 
 /**
  * Initialize plugin

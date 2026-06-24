@@ -6,14 +6,17 @@ class Request {
     /**
      * Validate POST request
      *
+     * @param string $source Integration that handled the request.
+     *
      * @return bool
      */
-    public static function validate_post() {
+    public static function validate_post( $source = '' ) {
         if ( CaptchaFox::should_skip_captcha() ) {
             return true;
         }
 
         if ( CaptchaFox::is_ip_denied() ) {
+            Statistics::record_failure( 'ip_denied', $source );
             return false;
         }
 
@@ -25,17 +28,18 @@ class Request {
 		$response = filter_var( wp_unslash( $_POST['cf-captcha-response'] ), FILTER_SANITIZE_FULL_SPECIAL_CHARS );
         // phpcs:enable WordPress.Security.NonceVerification.Missing
 
-        return self::validate( $response )->success;
+        return self::validate( $response, $source )->success;
     }
 
     /**
      * Validate request using response
      *
      * @param string $response Response.
+     * @param string $source   Integration that handled the request.
      *
      * @return object
      */
-    public static function validate( string $response ) {
+    public static function validate( string $response, $source = '' ) {
         if ( CaptchaFox::should_skip_captcha() ) {
             return (object) [
                 'success' => true,
@@ -44,6 +48,7 @@ class Request {
         }
 
         if ( CaptchaFox::is_ip_denied() ) {
+            Statistics::record_failure( 'ip_denied', $source );
             return (object) [
                 'success' => false,
                 'errors'  => [ 'ip_denied' ],
@@ -51,6 +56,7 @@ class Request {
         }
 
         if ( ! self::passed_honeypot() ) {
+            Statistics::record_failure( 'honeypot', $source );
             return (object) [
                 'success' => false,
                 'errors'  => [ 'honeypot' ],
@@ -58,6 +64,7 @@ class Request {
         }
 
         if ( ! self::passed_min_time() ) {
+            Statistics::record_failure( 'min_time', $source );
             return (object) [
                 'success' => false,
                 'errors'  => [ 'min_time' ],
@@ -83,11 +90,14 @@ class Request {
         $body = wp_remote_retrieve_body( $post_response );
         $result = json_decode( $body );
         if ( $result->success ) {
+            Statistics::record_pass( $source );
             return (object) [
                 'success' => true,
                 'errors'  => [],
             ];
         }
+
+        Statistics::record_failure( 'captcha', $source );
         return (object) [
             'success' => false,
             'errors'  => $result->{'error-codes'},

@@ -48,6 +48,150 @@ $GLOBALS['cf_test_enqueued'] = [];
 $GLOBALS['cf_test_options'] = [];
 
 /**
+ * Filter overrides controlled by the tests.
+ *
+ * @var array<string, mixed>
+ */
+$GLOBALS['cf_test_filters'] = [];
+
+if ( ! defined( 'ARRAY_A' ) ) {
+	define( 'ARRAY_A', 'ARRAY_A' );
+}
+
+if ( ! defined( 'OBJECT' ) ) {
+	define( 'OBJECT', 'OBJECT' );
+}
+
+/**
+ * Minimal in-memory stand-in for $wpdb covering the queries the Statistics
+ * recorder issues. It stores rows in an array and answers the handful of
+ * aggregate/select queries by inspecting the SQL.
+ */
+class CF_Test_WPDB {
+
+	/**
+	 * Table prefix.
+	 *
+	 * @var string
+	 */
+	public $prefix = 'wp_';
+
+	/**
+	 * Stored rows.
+	 *
+	 * @var array<int, array<string, mixed>>
+	 */
+	public $rows = [];
+
+	/**
+	 * Next auto-increment id.
+	 *
+	 * @var int
+	 */
+	private $next_id = 1;
+
+	public function get_charset_collate() {
+		return '';
+	}
+
+	public function prepare( $query, ...$args ) {
+		foreach ( $args as $arg ) {
+			$replacement = is_int( $arg ) ? (string) $arg : "'" . $arg . "'";
+			$query       = preg_replace( '/%[ds]/', $replacement, $query, 1 );
+		}
+
+		return $query;
+	}
+
+	public function insert( $table, $data, $format = null ) {
+		$data['id']   = $this->next_id++;
+		$this->rows[] = $data;
+
+		return 1;
+	}
+
+	public function get_var( $query ) {
+		if ( false !== strpos( $query, 'success = 1' ) ) {
+			return (string) count( $this->where_success( 1 ) );
+		}
+
+		if ( false !== strpos( $query, 'success = 0' ) ) {
+			return (string) count( $this->where_success( 0 ) );
+		}
+
+		return (string) count( $this->rows );
+	}
+
+	public function get_results( $query, $output = OBJECT ) {
+		if ( false !== strpos( $query, 'GROUP BY reason' ) ) {
+			$counts = [];
+			foreach ( $this->where_success( 0 ) as $row ) {
+				$counts[ $row['reason'] ] = ( $counts[ $row['reason'] ] ?? 0 ) + 1;
+			}
+
+			$results = [];
+			foreach ( $counts as $reason => $total ) {
+				$results[] = [
+					'reason' => $reason,
+					'total'  => (string) $total,
+				];
+			}
+
+			return $results;
+		}
+
+		$rows = ( false !== strpos( $query, 'success = 0' ) ) ? $this->where_success( 0 ) : $this->rows;
+		$rows = array_reverse( $rows );
+
+		if ( preg_match( '/LIMIT (\d+)/', $query, $m ) ) {
+			$rows = array_slice( $rows, 0, (int) $m[1] );
+		}
+
+		return array_map(
+			static function ( $row ) {
+				return [
+					'date_gmt'      => $row['date_gmt'],
+					'success'       => $row['success'],
+					'reason'        => $row['reason'],
+					'source'        => $row['source'] ?? '',
+					'form_id'       => $row['form_id'] ?? '',
+					'ip'            => $row['ip'],
+					'ip_anonymized' => $row['ip_anonymized'] ?? 1,
+					'user_agent'    => $row['user_agent'] ?? '',
+					'ua_anonymized' => $row['ua_anonymized'] ?? 1,
+				];
+			},
+			$rows
+		);
+	}
+
+	public function get_col( $query ) {
+		return [];
+	}
+
+	public function query( $query ) {
+		if ( false !== strpos( $query, 'DELETE' ) ) {
+			$this->rows = [];
+		}
+
+		return true;
+	}
+
+	private function where_success( $value ) {
+		return array_values(
+			array_filter(
+				$this->rows,
+				static function ( $row ) use ( $value ) {
+					return (int) $row['success'] === $value;
+				}
+			)
+		);
+	}
+}
+
+$GLOBALS['wpdb'] = new CF_Test_WPDB();
+
+/**
  * Set an option value for the current test.
  *
  * @param string $name  Option name.
@@ -67,11 +211,14 @@ function cf_test_set_option( $name, $value ) {
 function cf_test_reset() {
 	$GLOBALS['cf_test_options']     = [];
 	$GLOBALS['cf_test_transients']  = [];
+	$GLOBALS['cf_test_filters']     = [];
+	$GLOBALS['wpdb']                = new CF_Test_WPDB();
 	$GLOBALS['cf_test_enqueued']    = [];
 	$GLOBALS['cf_test_logged_in']   = false;
 	$GLOBALS['cf_test_user_roles']  = [];
 	$_POST                          = [];
 	unset( $_SERVER['REMOTE_ADDR'] );
+	unset( $_SERVER['HTTP_USER_AGENT'] );
 }
 
 /**
@@ -105,6 +252,14 @@ if ( ! function_exists( 'get_option' ) ) {
 	}
 }
 
+if ( ! function_exists( 'update_option' ) ) {
+	function update_option( $name, $value, $autoload = null ) {
+		$GLOBALS['cf_test_options'][ $name ] = $value;
+
+		return true;
+	}
+}
+
 if ( ! function_exists( 'get_transient' ) ) {
 	function get_transient( $key ) {
 		return $GLOBALS['cf_test_transients'][ $key ] ?? false;
@@ -135,8 +290,20 @@ if ( ! function_exists( 'add_action' ) ) {
 
 if ( ! function_exists( 'apply_filters' ) ) {
 	function apply_filters( $tag, $value, ...$args ) {
-		return $value;
+		return $GLOBALS['cf_test_filters'][ $tag ] ?? $value;
 	}
+}
+
+/**
+ * Override a filter's return value for the current test.
+ *
+ * @param string $tag   Filter name.
+ * @param mixed  $value Value to return.
+ *
+ * @return void
+ */
+function cf_test_set_filter( $tag, $value ) {
+	$GLOBALS['cf_test_filters'][ $tag ] = $value;
 }
 
 if ( ! function_exists( 'wp_salt' ) ) {

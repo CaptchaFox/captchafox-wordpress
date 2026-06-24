@@ -49,7 +49,7 @@ class Forms extends Plugin {
 			return $validation_result;
 		}
 
-		$verified = Request::validate_post();
+		$verified = Request::validate_post( 'gravity-forms' );
 
 		if ( ! $verified ) {
 			$this->message = CaptchaFox::get_error_message();

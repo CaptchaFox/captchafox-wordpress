@@ -64,7 +64,7 @@ class Forms extends Plugin {
      * @return mixed
      */
     public function verify( $errors, MC4WP_Form $form ) {
-        $verified = Request::validate_post();
+        $verified = Request::validate_post( 'mailchimp' );
 
         if ( ! $verified ) {
             $errors     = (array) $errors;

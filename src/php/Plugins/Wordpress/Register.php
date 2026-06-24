@@ -29,7 +29,7 @@ class Register extends Plugin {
      * @return mixed
      */
     public function verify( $errors, string $sanitized_user_login, string $user_email ) {
-        $verified = Request::validate_post();
+        $verified = Request::validate_post( 'wordpress-register' );
 
         if ( ! $verified ) {
             $errors = new WP_Error( 'invalid_captcha', CaptchaFox::get_error_message(), 400 );

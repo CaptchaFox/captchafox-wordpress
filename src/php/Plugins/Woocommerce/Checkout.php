@@ -34,7 +34,7 @@ class Checkout extends Plugin {
      * @return void
      */
     public function verify() {
-		$verified = Request::validate_post();
+		$verified = Request::validate_post( 'woocommerce-checkout' );
 
         if ( ! $verified ) {
             wc_add_notice( CaptchaFox::get_error_message(), 'error' );

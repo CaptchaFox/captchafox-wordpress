@@ -48,7 +48,7 @@ class Forms extends Plugin {
 		}
 
 		$submission = WPCF7_Submission::get_instance();
-		$verified = Request::validate_post();
+		$verified = Request::validate_post( 'contact-form-7' );
 
 		if ( ! $verified ) {
 			$spam = true;

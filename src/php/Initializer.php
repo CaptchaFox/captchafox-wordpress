@@ -4,6 +4,7 @@ namespace CaptchaFox;
 
 use CaptchaFox\Helper\CaptchaFox;
 use CaptchaFox\Helper\LoginProtection;
+use CaptchaFox\Helper\Statistics;
 use CaptchaFox\Settings\Settings;
 
 class Initializer {
@@ -16,6 +17,10 @@ class Initializer {
 	public function setup() {
 		$settings = new Settings();
 		$settings->setup();
+
+		// Create or upgrade the events table on existing installs (the
+		// activation hook only fires on a fresh activation).
+		add_action( 'admin_init', [ Statistics::class, 'maybe_create_table' ] );
 
 		add_action( 'init', [ $this, 'init' ] );
 

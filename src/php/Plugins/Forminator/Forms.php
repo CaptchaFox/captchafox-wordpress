@@ -43,7 +43,7 @@ class Forms extends Plugin {
      * @return mixed
      */
     public function verify( $can_show, int $id, array $form_settings ) {
-        $verified = Request::validate_post();
+        $verified = Request::validate_post( 'forminator' );
 
         if ( ! $verified ) {
             return [

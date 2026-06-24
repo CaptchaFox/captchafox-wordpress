@@ -33,11 +33,23 @@ class Settings {
     protected $status_tab;
 
     /**
+     * Statistics / Events Tab
+     *
+     * @var mixed
+     */
+    protected $events_tab;
+
+    /**
      * Setup
      *
      * @return void
      */
     public function setup() {
+        // Registered here (not in init_admin_settings) so the "clear
+        // statistics" action is handled before admin_init finishes.
+        $this->events_tab = new Events();
+        $this->events_tab->setup();
+
 		add_action( 'admin_init', [ $this, 'init_admin_settings' ] );
         add_action( 'admin_menu', [ $this, 'add_to_admin_menu' ] );
         add_action( 'admin_enqueue_scripts', [ $this, 'add_styles_to_admin_head' ] );
@@ -93,6 +105,15 @@ class Settings {
             'captchafox-status',
             [ $this, 'show_status' ]
         );
+
+        add_submenu_page(
+            'captchafox',
+            'CaptchaFox',
+            'Statistics',
+            'manage_options',
+            'captchafox-stats',
+            [ $this, 'show_stats' ]
+        );
     }
 
     /**
@@ -120,6 +141,15 @@ class Settings {
      */
     public function show_status() {
         $this->render_settings( 'status' );
+    }
+
+    /**
+     * Show statistics menu page
+     *
+     * @return void
+     */
+    public function show_stats() {
+        $this->render_settings( 'stats' );
     }
 
     /**
@@ -202,6 +232,11 @@ class Settings {
                 if ( 'plugins' === $page ) :
 					?>
                     nav-tab-active<?php endif; ?>">Plugins</a>
+                <a href="?page=captchafox-stats" class="nav-tab
+                <?php
+                if ( 'stats' === $page ) :
+					?>
+                    nav-tab-active<?php endif; ?>">Statistics</a>
                 <a href="?page=captchafox-status" class="nav-tab
                 <?php
                 if ( 'status' === $page ) :
@@ -220,6 +255,9 @@ class Settings {
                         break;
                     case 'status':
                         echo esc_html( $this->status_tab->get_tab_content() );
+                        break;
+                    case 'stats':
+                        echo esc_html( $this->events_tab->get_tab_content() );
                         break;
 					default:
                         echo esc_html( $this->general_tab->get_tab_content() );

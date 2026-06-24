@@ -42,7 +42,7 @@ class Login extends Plugin {
             return $validation_error;
         }
 
-        $verified = Request::validate_post();
+        $verified = Request::validate_post( 'woocommerce-login' );
 
         if ( ! $verified ) {
             $validation_error = new WP_Error( 'invalid_captcha', CaptchaFox::get_error_message(), 400 );

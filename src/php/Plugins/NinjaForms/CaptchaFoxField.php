@@ -61,7 +61,7 @@ class CaptchaFoxField extends NF_Fields_Recaptcha {
             return __( 'Please complete the captcha', 'captchafox-for-forms' );
         }
 
-        $verified = Request::validate( $value )->success;
+        $verified = Request::validate( $value, 'ninja-forms' )->success;
         if ( ! $verified ) {
             return CaptchaFox::get_error_message();
         }

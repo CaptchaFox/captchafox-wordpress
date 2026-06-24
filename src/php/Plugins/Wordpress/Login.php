@@ -55,7 +55,7 @@ class Login extends Plugin {
             return $user;
         }
 
-        $verified = Request::validate_post();
+        $verified = Request::validate_post( 'wordpress-login' );
 
         if ( ! $verified ) {
             return new WP_Error( 'invalid_captcha', CaptchaFox::get_error_message(), 400 );

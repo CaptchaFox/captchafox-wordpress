@@ -25,7 +25,7 @@ class NewTopic extends Plugin {
      * @noinspection PhpUndefinedFunctionInspection
      */
     public function verify() {
-		$verified = Request::validate_post();
+		$verified = Request::validate_post( 'bbpress-new-topic' );
 
         if ( ! $verified ) {
             bbp_add_error( 'captchafox_error', CaptchaFox::get_error_message() );

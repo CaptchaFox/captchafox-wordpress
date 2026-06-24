@@ -172,7 +172,7 @@ class Forms extends Plugin {
 			return;
 		}
 
-		$verification = Request::validate( $response_token );
+		$verification = Request::validate( $response_token, 'elementor' );
 
 		if ( ! $verification->success ) {
 			$ajax_handler->add_error( $field['id'], CaptchaFox::get_error_message() );

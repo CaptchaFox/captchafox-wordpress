@@ -29,7 +29,7 @@ class Forms extends Plugin {
      * @noinspection PhpUndefinedFunctionInspection
      * */
     public function verify( array $fields, array $entry, array $form_data ) {
-        $verified = Request::validate_post();
+        $verified = Request::validate_post( 'wpforms' );
 
         if ( ! $verified ) {
             wpforms()->get( 'process' )->errors[ $form_data['id'] ]['footer'] = CaptchaFox::get_error_message();
