@@ -108,12 +108,20 @@ class Status {
      */
     private function environment_rows() {
         $wp_version = get_bloginfo( 'version' );
+        $new_version = $this->available_update();
 
         return [
             [
                 'label'  => __( 'Plugin version', 'captchafox-for-forms' ),
-                'value'  => PLUGIN_VERSION,
-                'status' => '',
+                'value'  => null === $new_version ?
+                    PLUGIN_VERSION :
+                    sprintf(
+                        /* translators: 1: installed version, 2: available version. */
+                        __( '%1$s (update to %2$s available)', 'captchafox-for-forms' ),
+                        PLUGIN_VERSION,
+                        $new_version
+                    ),
+                'status' => null === $new_version ? 'ok' : 'warn',
             ],
             [
                 'label'  => __( 'PHP version', 'captchafox-for-forms' ),
@@ -276,6 +284,30 @@ class Status {
         }
 
         return $active;
+    }
+
+    /**
+     * Get the available plugin version if an update is pending.
+     *
+     * Reads the update_plugins transient WordPress maintains, so it reflects
+     * the last update check without triggering a new network request.
+     *
+     * @return string|null The new version, or null when up to date.
+     */
+    private function available_update() {
+        $updates = get_site_transient( 'update_plugins' );
+
+        if ( ! $updates || empty( $updates->response ) ) {
+            return null;
+        }
+
+        $basename = plugin_basename( CAPTCHAFOX_BASE_FILE );
+
+        if ( empty( $updates->response[ $basename ]->new_version ) ) {
+            return null;
+        }
+
+        return $updates->response[ $basename ]->new_version;
     }
 
     /**
