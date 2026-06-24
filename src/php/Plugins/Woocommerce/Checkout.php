@@ -37,7 +37,7 @@ class Checkout extends Plugin {
 		$verified = Request::validate_post();
 
         if ( ! $verified ) {
-            wc_add_notice( __( 'Invalid Captcha', 'captchafox-for-forms' ), 'error' );
+            wc_add_notice( CaptchaFox::get_error_message(), 'error' );
         }
     }
 

@@ -175,7 +175,7 @@ class Forms extends Plugin {
 		$verification = Request::validate( $response_token );
 
 		if ( ! $verification->success ) {
-			$ajax_handler->add_error( $field['id'], __( 'Invalid Captcha', 'captchafox-for-forms' ) );
+			$ajax_handler->add_error( $field['id'], CaptchaFox::get_error_message() );
 
 			return;
 		}

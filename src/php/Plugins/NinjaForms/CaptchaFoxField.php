@@ -1,6 +1,7 @@
 <?php
 namespace CaptchaFox\Plugins\NinjaForms;
 
+use CaptchaFox\Helper\CaptchaFox;
 use CaptchaFox\Helper\Request;
 use NF_Fields_Recaptcha;
 
@@ -62,7 +63,7 @@ class CaptchaFoxField extends NF_Fields_Recaptcha {
 
         $verified = Request::validate( $value )->success;
         if ( ! $verified ) {
-            return __( 'Invalid Captcha', 'captchafox-for-forms' );
+            return CaptchaFox::get_error_message();
         }
 	}
 }

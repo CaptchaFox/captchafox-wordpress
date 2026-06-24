@@ -3,6 +3,7 @@
 namespace CaptchaFox\Plugins\GravityForms;
 
 use GFFormsModel;
+use CaptchaFox\Helper\CaptchaFox;
 use CaptchaFox\Helper\Request;
 use CaptchaFox\Plugins\Plugin;
 
@@ -51,7 +52,7 @@ class Forms extends Plugin {
 		$verified = Request::validate_post();
 
 		if ( ! $verified ) {
-			$this->message = __( 'Invalid Captcha', 'captchafox-for-forms' );
+			$this->message = CaptchaFox::get_error_message();
 
 			$validation_result['is_valid']                  = false;
 			$validation_result['form']['validationSummary'] = '1';

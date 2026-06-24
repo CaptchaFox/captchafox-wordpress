@@ -54,7 +54,7 @@ class Forms extends Plugin {
 			$spam = true;
 			$submission->add_spam_log(array(
 				'agent'  => 'captchafox',
-				'reason' => __( 'Invalid Captcha', 'captchafox-for-forms' ),
+				'reason' => CaptchaFox::get_error_message(),
 			));
 		}
 

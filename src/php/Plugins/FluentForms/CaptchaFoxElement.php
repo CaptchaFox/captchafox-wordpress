@@ -114,7 +114,7 @@ class CaptchaFoxElement extends \FluentForm\App\Services\FormBuilder\BaseFieldMa
         $verification = Request::validate( $response );
 
         if ( ! $verification->success ) {
-            $error_message = [ __( 'Invalid Captcha', 'captchafox-for-forms' ) ];
+            $error_message = [ CaptchaFox::get_error_message() ];
         }
 
 		return $error_message;

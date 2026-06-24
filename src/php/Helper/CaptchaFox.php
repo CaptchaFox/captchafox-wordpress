@@ -341,6 +341,16 @@ class CaptchaFox {
     }
 
     /**
+     * Get the message shown when captcha verification fails. Customise it with
+     * the `capf_error_message` filter.
+     *
+     * @return string
+     */
+    public static function get_error_message() {
+        return apply_filters( 'capf_error_message', __( 'Invalid Captcha', 'captchafox-for-forms' ) );
+    }
+
+    /**
      * Whether the api script loading is delayed until the first user
      * interaction.
      *

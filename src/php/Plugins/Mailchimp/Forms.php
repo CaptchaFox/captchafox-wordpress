@@ -50,7 +50,7 @@ class Forms extends Plugin {
 
         $messages['invalid'] = [
             'type' => 'error',
-            'text' => __( 'Invalid Captcha', 'captchafox-for-forms' ),
+            'text' => CaptchaFox::get_error_message(),
         ];
 
         return $messages;
