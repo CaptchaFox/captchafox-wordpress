@@ -229,18 +229,18 @@
 }
 
 .cf-status td {
-  vertical-align: middle;
+  vertical-align: top;
 }
 
 .cf-status-badge {
   display: inline-block;
-  margin-left: 6px;
   padding: 1px 8px;
   border-radius: 999px;
   font-size: 0.7rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.02em;
+  white-space: nowrap;
 }
 
 .cf-status-ok {

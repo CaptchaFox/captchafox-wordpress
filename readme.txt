@@ -53,17 +53,29 @@ See the available [plans and pricing](https://captchafox.com/pricing) for more a
 * Fluent Forms
 * Avada Forms
 
+== Spam Protection ==
+
+On top of the captcha, the plugin offers optional protection layers that can be configured under **Settings > CaptchaFox > Security**:
+
+* Honeypot field for bots that auto-fill forms
+* Minimum submission time (time trap)
+* IP allowlist and denylist
+* Skip the captcha for logged-in users
+* Login attempt throttling
+* Privacy-friendly spam statistics with anonymized IP and user agent data
+
 == Frequently Asked Questions ==
 
 = Where do I find my keys? =
 You can find your site key and secret key in the [Portal](https://portal.captchafox.com).
 
-= How to set the widget options programmatically? =
+= How do I set the widget language, theme or mode? =
 
-You can use the following filters to override the language, theme and mode:
-- capf_language
-- capf_theme
-- capf_mode
+Use these filters to override the widget options:
+- `capf_language` – Widget language (see [language codes](https://docs.captchafox.com/language-codes)).
+- `capf_theme` – Widget theme.
+- `capf_mode` – Display mode.
+- `capf_delay` – Load the API script only on the first user interaction.
 
 __Example__
 `
@@ -78,6 +90,43 @@ function set_custom_language( $language ) {
 
 add_filter( 'capf_language', 'set_custom_language' );
 `
+
+= How do I configure the spam protection in code? =
+
+Every Security tab option has a matching filter:
+- `capf_honeypot` – Enable or disable the honeypot.
+- `capf_min_time` – Minimum submission time in seconds.
+- `capf_allowlist` / `capf_denylist` – Arrays of allowlisted / denylisted IPs or CIDR ranges.
+- `capf_ip_allowed` / `capf_ip_denied` – Final allow / deny decision for the current visitor IP (bool).
+- `capf_client_ip` – Override the detected visitor IP address.
+- `capf_skip_logged_in` – Enable or disable skipping logged-in users.
+- `capf_user_exempt` – Final exemption decision for the current user (bool).
+- `capf_login_limit` – Failed login attempts before the captcha is shown.
+- `capf_login_interval` – Minutes that failed login attempts are counted.
+
+= How do I change the message shown when verification fails? =
+
+Use the `capf_error_message` filter:
+
+`
+/**
+* Customize the message shown when verification fails.
+*
+* @param string $message Message.
+*/
+function custom_captcha_error( $message ) {
+  return 'Please confirm you are human.';
+}
+
+add_filter( 'capf_error_message', 'custom_captcha_error' );
+`
+
+= How do I control which statistics are recorded? =
+
+- `capf_record_events` – Enable or disable statistics recording.
+- `capf_collect_ip` – Store the raw IP instead of an anonymized hash.
+- `capf_collect_user_agent` – Store the raw user agent instead of an anonymized hash.
+- `capf_event_form_id` – Override the detected form id stored with an event.
 
 = Where can I learn more about CaptchaFox? =
 Visit the [website](https://captchafox.com/) to find more information about CaptchaFox.

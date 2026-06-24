@@ -76,13 +76,13 @@ class Security {
             'label_for'   => 'field_collect_ip',
             'class'       => 'cf-row',
             'group'       => $setting_security,
-            'description' => __( 'Store the visitor IP address with each event so it is shown instead of an anonymized value.', 'captchafox-for-forms' ),
+            'description' => __( 'Store the visitor IP address with each event.', 'captchafox-for-forms' ),
         ]);
         add_settings_field('field_collect_user_agent', __( 'Store User Agents', 'captchafox-for-forms' ), [ $this, 'render_checkbox_field' ], 'captchafox-security', $setting_security, [
             'label_for'   => 'field_collect_user_agent',
             'class'       => 'cf-row',
             'group'       => $setting_security,
-            'description' => __( 'Store the visitor user agent with each event so it is shown instead of an anonymized value.', 'captchafox-for-forms' ),
+            'description' => __( 'Store the visitor user agent with each event.', 'captchafox-for-forms' ),
         ]);
     }
 
