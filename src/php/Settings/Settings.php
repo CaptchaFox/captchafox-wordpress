@@ -221,27 +221,27 @@ class Settings {
                 <?php
                 if ( 'general' === $page ) :
 					?>
-                    nav-tab-active<?php endif; ?>">General</a>
+                    nav-tab-active<?php endif; ?>"><?php esc_html_e( 'General', 'captchafox-for-forms' ); ?></a>
                 <a href="?page=captchafox-security" class="nav-tab
                 <?php
                 if ( 'security' === $page ) :
 					?>
-                    nav-tab-active<?php endif; ?>">Security</a>
+                    nav-tab-active<?php endif; ?>"><?php esc_html_e( 'Security', 'captchafox-for-forms' ); ?></a>
                 <a href="?page=captchafox-plugins" class="nav-tab
                 <?php
                 if ( 'plugins' === $page ) :
 					?>
-                    nav-tab-active<?php endif; ?>">Plugins</a>
+                    nav-tab-active<?php endif; ?>"><?php esc_html_e( 'Plugins', 'captchafox-for-forms' ); ?></a>
                 <a href="?page=captchafox-stats" class="nav-tab
                 <?php
                 if ( 'stats' === $page ) :
 					?>
-                    nav-tab-active<?php endif; ?>">Statistics</a>
+                    nav-tab-active<?php endif; ?>"><?php esc_html_e( 'Statistics', 'captchafox-for-forms' ); ?></a>
                 <a href="?page=captchafox-status" class="nav-tab
                 <?php
                 if ( 'status' === $page ) :
 					?>
-                    nav-tab-active<?php endif; ?>">Status</a>
+                    nav-tab-active<?php endif; ?>"><?php esc_html_e( 'Status', 'captchafox-for-forms' ); ?></a>
             </nav>
 
             <div class="wrap tab-content">
