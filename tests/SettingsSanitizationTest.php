@@ -30,6 +30,7 @@ class SettingsSanitizationTest extends TestCase {
 			'field_secret'       => " secret\nkey ",
 			'field_display_mode' => 'bogus',
 			'field_theme'        => 'dark',
+			'field_start'        => 'bogus',
 			'field_lang'         => 'bogus',
 			'field_loading'      => 'interaction',
 		] );
@@ -38,8 +39,19 @@ class SettingsSanitizationTest extends TestCase {
 		$this->assertSame( 'secret key', $sanitized['field_secret'] );
 		$this->assertSame( 'inline', $sanitized['field_display_mode'] );
 		$this->assertSame( 'dark', $sanitized['field_theme'] );
+		$this->assertSame( 'none', $sanitized['field_start'] );
 		$this->assertSame( 'auto', $sanitized['field_lang'] );
 		$this->assertSame( 'interaction', $sanitized['field_loading'] );
+	}
+
+	public function test_general_options_keep_valid_verification_start() {
+		$settings = new General();
+
+		$sanitized = $settings->sanitize_options( [
+			'field_start' => 'focus',
+		] );
+
+		$this->assertSame( 'focus', $sanitized['field_start'] );
 	}
 
 	public function test_security_options_drop_invalid_ip_entries() {

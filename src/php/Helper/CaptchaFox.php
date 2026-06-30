@@ -456,21 +456,35 @@ class CaptchaFox {
     /**
      * Get Output Buffer HTML
      *
+     * @param array $overrides Per-instance widget option overrides (e.g. 'start').
+     *
      * @return string
      */
-    public static function get_ob_html() {
+    public static function get_ob_html( $overrides = [] ) {
 		ob_start();
-        self::get_html();
+        self::print_html( $overrides );
 
         return ob_get_clean();
     }
 
     /**
-     * Print HTML for widget
+     * Print HTML for widget.
+     *
      *
      * @return mixed
      */
     public static function get_html() {
+        self::print_html();
+    }
+
+    /**
+     * Sanitize and print the widget markup.
+     *
+     * @param array $overrides Per-instance widget option overrides.
+     *
+     * @return void
+     */
+    private static function print_html( $overrides = [] ) {
         $allowed = wp_kses_allowed_html( 'post' );
 
         // Allow the honeypot input field, which is not part of the default
@@ -486,17 +500,17 @@ class CaptchaFox {
             'aria-hidden'  => true,
         ];
 
-        print( wp_kses( self::build_html(), $allowed ) );
+        print( wp_kses( self::build_html( $overrides ), $allowed ) );
     }
 
     /**
      * Create HTML for widget
      *
-     * @param array $data Widget data.
+     * @param array $overrides Per-instance widget option overrides.
      *
      * @return string
      */
-    public static function build_html( $data = null ) {
+    public static function build_html( $overrides = [] ) {
         // Allowlisted/exempt visitors skip the captcha entirely, so render
         // nothing and avoid loading the assets. Verification is bypassed too.
         if ( self::should_skip_captcha() ) {
@@ -507,8 +521,10 @@ class CaptchaFox {
         // this page. Enqueuing here keeps the assets off pages without a form.
         self::enqueue_assets();
 
-        if ( ! $data ) {
-            $data = self::get_widget_options();
+        $data = self::get_widget_options();
+
+        if ( is_array( $overrides ) && ! empty( $overrides ) ) {
+            $data = self::apply_widget_overrides( $data, $overrides );
         }
 
         $attrs = '';
@@ -533,6 +549,30 @@ class CaptchaFox {
     }
 
     /**
+     * Apply per-instance overrides on top of the global widget options.
+     *
+     *
+     * @param array $data      Resolved global widget options.
+     * @param array $overrides Per-instance overrides.
+     *
+     * @return array
+     */
+    private static function apply_widget_overrides( array $data, array $overrides ) {
+        if ( isset( $overrides['start'] ) ) {
+            $start = $overrides['start'];
+
+            // 'inherit' (or an empty value) keeps the global setting, an
+            // explicit choice overrides it. Anything unknown falls back to the
+            // 'none' default.
+            if ( 'inherit' !== $start && '' !== $start ) {
+                $data['start'] = in_array( $start, [ 'auto', 'focus' ], true ) ? $start : null;
+            }
+        }
+
+        return $data;
+    }
+
+    /**
      * Get saved options for widget
      *
      * @return array
@@ -545,6 +585,7 @@ class CaptchaFox {
             'mode'    => $options['mode'],
             'theme'   => $options['theme'],
             'lang'    => $options['lang'],
+            'start'   => $options['start'],
         ];
     }
 
@@ -562,15 +603,19 @@ class CaptchaFox {
 
         $mode_option = isset( $options['field_display_mode'] ) ? $options['field_display_mode'] : 'inline';
         $theme_option = isset( $options['field_theme'] ) ? $options['field_theme'] : 'light';
+        $start_option = isset( $options['field_start'] ) ? $options['field_start'] : 'none';
+        $start_option = 'none' !== $start_option ? $start_option : null;
 
         $theme = apply_filters( 'capf_theme', $theme_option );
         $mode = apply_filters( 'capf_mode', $mode_option );
         $lang = apply_filters( 'capf_language', $lang_option );
+        $start = apply_filters( 'capf_start', $start_option );
 
         return [
             'mode'    => $mode,
             'theme'   => $theme,
             'lang'    => $lang,
+            'start'   => $start,
             'sitekey' => $sitekey,
             'secret'  => $secret,
         ];
