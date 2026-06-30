@@ -33,7 +33,7 @@ class Settings {
     protected $status_tab;
 
     /**
-     * Statistics / Events Tab
+     * Analytics / Events Tab
      *
      * @var mixed
      */
@@ -46,7 +46,7 @@ class Settings {
      */
     public function setup() {
         // Registered here (not in init_admin_settings) so the "clear
-        // statistics" action is handled before admin_init finishes.
+        // analytics" action is handled before admin_init finishes.
         $this->events_tab = new Events();
         $this->events_tab->setup();
 
@@ -109,9 +109,9 @@ class Settings {
         add_submenu_page(
             'captchafox',
             'CaptchaFox',
-            'Statistics',
+            'Analytics',
             'manage_options',
-            'captchafox-stats',
+            'captchafox-analytics',
             [ $this, 'show_stats' ]
         );
     }
@@ -144,7 +144,7 @@ class Settings {
     }
 
     /**
-     * Show statistics menu page
+     * Show analytics menu page
      *
      * @return void
      */
@@ -232,11 +232,11 @@ class Settings {
                 if ( 'plugins' === $page ) :
 					?>
                     nav-tab-active<?php endif; ?>"><?php esc_html_e( 'Plugins', 'captchafox-for-forms' ); ?></a>
-                <a href="?page=captchafox-stats" class="nav-tab
+                <a href="?page=captchafox-analytics" class="nav-tab
                 <?php
                 if ( 'stats' === $page ) :
 					?>
-                    nav-tab-active<?php endif; ?>"><?php esc_html_e( 'Statistics', 'captchafox-for-forms' ); ?></a>
+                    nav-tab-active<?php endif; ?>"><?php esc_html_e( 'Analytics', 'captchafox-for-forms' ); ?></a>
                 <a href="?page=captchafox-status" class="nav-tab
                 <?php
                 if ( 'status' === $page ) :

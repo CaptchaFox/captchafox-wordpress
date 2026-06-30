@@ -8,7 +8,7 @@
 namespace CaptchaFox\Tests;
 
 use CaptchaFox\Helper\Request;
-use CaptchaFox\Helper\Statistics;
+use CaptchaFox\Helper\Analytics;
 use PHPUnit\Framework\TestCase;
 
 class RequestValidationTest extends TestCase {
@@ -34,7 +34,7 @@ class RequestValidationTest extends TestCase {
 
 		$this->assertTrue( $result->success );
 		$this->assertSame( [], $result->errors );
-		$this->assertSame( 1, Statistics::get_stats()['passed'] );
+		$this->assertSame( 1, Analytics::get_stats()['passed'] );
 	}
 
 	public function test_validate_returns_api_error_object_for_wp_error() {
@@ -44,7 +44,7 @@ class RequestValidationTest extends TestCase {
 
 		$this->assertFalse( $result->success );
 		$this->assertSame( [ 'api_error' ], $result->errors );
-		$this->assertSame( 1, Statistics::get_stats()['reasons']['api_error'] );
+		$this->assertSame( 1, Analytics::get_stats()['reasons']['api_error'] );
 	}
 
 	public function test_validate_returns_api_error_object_for_http_failure() {
@@ -81,6 +81,6 @@ class RequestValidationTest extends TestCase {
 
 		$this->assertFalse( $result->success );
 		$this->assertSame( [ 'invalid-input-response' ], $result->errors );
-		$this->assertSame( 1, Statistics::get_stats()['reasons']['captcha'] );
+		$this->assertSame( 1, Analytics::get_stats()['reasons']['captcha'] );
 	}
 }

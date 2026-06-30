@@ -62,7 +62,7 @@ On top of the captcha, the plugin offers optional protection layers that can be 
 * IP allowlist and denylist
 * Skip the captcha for logged-in users
 * Login attempt throttling
-* Privacy-friendly spam statistics with anonymized IP and user agent data
+* Privacy-friendly spam analytics with anonymized IP and user agent data
 
 == Frequently Asked Questions ==
 
@@ -121,9 +121,9 @@ function custom_captcha_error( $message ) {
 add_filter( 'capf_error_message', 'custom_captcha_error' );
 `
 
-= How do I control which statistics are recorded? =
+= How do I control which analytics are recorded? =
 
-- `capf_record_events` – Enable or disable statistics recording.
+- `capf_record_events` – Enable or disable analytics recording.
 - `capf_collect_ip` – Store the raw IP instead of an anonymized hash.
 - `capf_collect_user_agent` – Store the raw user agent instead of an anonymized hash.
 - `capf_event_form_id` – Override the detected form id stored with an event.
