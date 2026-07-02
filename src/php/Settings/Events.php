@@ -2,7 +2,7 @@
 
 namespace CaptchaFox\Settings;
 
-use CaptchaFox\Helper\Statistics;
+use CaptchaFox\Helper\Analytics;
 
 class Events {
 
@@ -17,7 +17,7 @@ class Events {
     }
 
     /**
-     * Handle the "clear statistics" request.
+     * Handle the "clear analytics" request.
      *
      * @return void
      */
@@ -32,10 +32,10 @@ class Events {
 
         check_admin_referer( 'captchafox_reset_stats' );
 
-        Statistics::reset();
+        Analytics::reset();
 
         wp_safe_redirect(
-            add_query_arg( 'cf_stats', 'cleared', admin_url( 'admin.php?page=captchafox-stats' ) )
+            add_query_arg( 'cf_stats', 'cleared', admin_url( 'admin.php?page=captchafox-analytics' ) )
         );
         exit;
     }
@@ -68,17 +68,17 @@ class Events {
         if ( $cleared ) {
             printf(
                 '<div class="notice notice-success"><p>%s</p></div>',
-                esc_html__( 'Statistics cleared.', 'captchafox-for-forms' )
+                esc_html__( 'Analytics cleared.', 'captchafox-for-forms' )
             );
         }
 
-        if ( ! Statistics::is_enabled() ) {
+        if ( ! Analytics::is_enabled() ) {
             printf(
                 '<div class="notice notice-info"><p>%s</p></div>',
                 sprintf(
                     /* translators: %s: link to the Security settings tab. */
-                    esc_html__( 'Statistics are not being recorded. Enable %s to start collecting data.', 'captchafox-for-forms' ),
-                    '<a href="' . esc_url( admin_url( 'admin.php?page=captchafox-security' ) ) . '">' . esc_html__( 'Record Statistics', 'captchafox-for-forms' ) . '</a>'
+                    esc_html__( 'Analytics are not being recorded. Enable %s to start collecting data.', 'captchafox-for-forms' ),
+                    '<a href="' . esc_url( admin_url( 'admin.php?page=captchafox-security' ) ) . '">' . esc_html__( 'Record Analytics', 'captchafox-for-forms' ) . '</a>'
                 )
             );
         }
@@ -87,8 +87,8 @@ class Events {
         $show_all = isset( $_GET['cf_show'] ) && 'all' === $_GET['cf_show'];
         // phpcs:enable WordPress.Security.NonceVerification.Recommended
 
-        $stats = Statistics::get_stats();
-        $events = Statistics::get_events( Statistics::RECENT_LIMIT, $show_all );
+        $stats = Analytics::get_stats();
+        $events = Analytics::get_events( Analytics::RECENT_LIMIT, $show_all );
         $total = $stats['passed'] + $stats['failed'];
         $block_rate = $total > 0 ? round( ( $stats['failed'] / $total ) * 100 ) : 0;
 
@@ -215,7 +215,7 @@ class Events {
      * @return void
      */
     private function render_events_toggle( $show_all ) {
-        $base = admin_url( 'admin.php?page=captchafox-stats' );
+        $base = admin_url( 'admin.php?page=captchafox-analytics' );
         $url = $show_all ? $base : add_query_arg( 'cf_show', 'all', $base );
 
         printf(
@@ -298,10 +298,10 @@ class Events {
      */
     private function render_reset() {
         ?>
-        <form method="post" action="<?php echo esc_url( admin_url( 'admin.php?page=captchafox-stats' ) ); ?>" class="cf-stats-reset">
+        <form method="post" action="<?php echo esc_url( admin_url( 'admin.php?page=captchafox-analytics' ) ); ?>" class="cf-stats-reset">
             <?php wp_nonce_field( 'captchafox_reset_stats' ); ?>
             <input type="hidden" name="captchafox_action" value="reset_stats">
-            <button type="submit" class="cf-button"><?php esc_html_e( 'Clear statistics', 'captchafox-for-forms' ); ?></button>
+            <button type="submit" class="cf-button"><?php esc_html_e( 'Clear analytics', 'captchafox-for-forms' ); ?></button>
         </form>
         <?php
     }

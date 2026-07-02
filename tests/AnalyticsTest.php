@@ -1,6 +1,6 @@
 <?php
 /**
- * Tests for the spam statistics recorder.
+ * Tests for the spam analytics recorder.
  *
  * @package captchafox
  */
@@ -8,10 +8,10 @@
 namespace CaptchaFox\Tests;
 
 use CaptchaFox\Helper\Request;
-use CaptchaFox\Helper\Statistics;
+use CaptchaFox\Helper\Analytics;
 use PHPUnit\Framework\TestCase;
 
-class StatisticsTest extends TestCase {
+class AnalyticsTest extends TestCase {
 
 	protected function setUp(): void {
 		cf_test_reset();
@@ -25,17 +25,17 @@ class StatisticsTest extends TestCase {
 	public function test_disabled_by_default_records_nothing() {
 		cf_test_set_option( 'captchafox_security', [] );
 
-		Statistics::record_pass();
-		Statistics::record_failure( 'honeypot' );
+		Analytics::record_pass();
+		Analytics::record_failure( 'honeypot' );
 
-		$stats = Statistics::get_stats();
+		$stats = Analytics::get_stats();
 		$this->assertSame( 0, $stats['passed'] );
 		$this->assertSame( 0, $stats['failed'] );
-		$this->assertSame( [], Statistics::get_events() );
+		$this->assertSame( [], Analytics::get_events() );
 	}
 
 	public function test_defaults_are_zeroed() {
-		$stats = Statistics::get_stats();
+		$stats = Analytics::get_stats();
 
 		$this->assertSame( 0, $stats['passed'] );
 		$this->assertSame( 0, $stats['failed'] );
@@ -43,29 +43,29 @@ class StatisticsTest extends TestCase {
 			[ 'ip_denied', 'honeypot', 'min_time', 'captcha', 'api_error' ],
 			array_keys( $stats['reasons'] )
 		);
-		$this->assertSame( [], Statistics::get_events() );
+		$this->assertSame( [], Analytics::get_events() );
 	}
 
 	public function test_record_pass_increments_passed_only() {
-		Statistics::record_pass();
+		Analytics::record_pass();
 
-		$stats = Statistics::get_stats();
+		$stats = Analytics::get_stats();
 		$this->assertSame( 1, $stats['passed'] );
 		$this->assertSame( 0, $stats['failed'] );
-		$this->assertSame( [], Statistics::get_events() );
+		$this->assertSame( [], Analytics::get_events() );
 	}
 
 	public function test_record_failure_counts_and_logs_hashed_event() {
 		$_SERVER['REMOTE_ADDR']     = '203.0.113.10';
 		$_SERVER['HTTP_USER_AGENT'] = 'Mozilla/5.0 (Test Browser)';
 
-		Statistics::record_failure( 'honeypot' );
+		Analytics::record_failure( 'honeypot' );
 
-		$stats = Statistics::get_stats();
+		$stats = Analytics::get_stats();
 		$this->assertSame( 1, $stats['failed'] );
 		$this->assertSame( 1, $stats['reasons']['honeypot'] );
 
-		$events = Statistics::get_events();
+		$events = Analytics::get_events();
 		$this->assertCount( 1, $events );
 		$this->assertSame( 'honeypot', $events[0]['reason'] );
 
@@ -80,9 +80,9 @@ class StatisticsTest extends TestCase {
 	}
 
 	public function test_missing_ip_and_user_agent_are_empty() {
-		Statistics::record_failure( 'honeypot' );
+		Analytics::record_failure( 'honeypot' );
 
-		$event = Statistics::get_events()[0];
+		$event = Analytics::get_events()[0];
 		$this->assertSame( '', $event['ip'] );
 		$this->assertSame( '', $event['user_agent'] );
 	}
@@ -96,26 +96,26 @@ class StatisticsTest extends TestCase {
 		$_SERVER['REMOTE_ADDR']     = '203.0.113.10';
 		$_SERVER['HTTP_USER_AGENT'] = 'Mozilla/5.0 (Test Browser)';
 
-		Statistics::record_failure( 'honeypot' );
+		Analytics::record_failure( 'honeypot' );
 
-		$event = Statistics::get_events()[0];
+		$event = Analytics::get_events()[0];
 		$this->assertSame( '203.0.113.10', $event['ip'] );
 		$this->assertSame( 'Mozilla/5.0 (Test Browser)', $event['user_agent'] );
 	}
 
 	public function test_source_is_recorded() {
-		Statistics::record_failure( 'honeypot', 'contact-form-7' );
+		Analytics::record_failure( 'honeypot', 'contact-form-7' );
 
-		$this->assertSame( 'contact-form-7', Statistics::get_events()[0]['source'] );
+		$this->assertSame( 'contact-form-7', Analytics::get_events()[0]['source'] );
 	}
 
 	public function test_anonymization_flags_reflect_storage() {
 		$_SERVER['REMOTE_ADDR']     = '203.0.113.10';
 		$_SERVER['HTTP_USER_AGENT'] = 'Mozilla/5.0 (Test Browser)';
 
-		Statistics::record_failure( 'honeypot' );
+		Analytics::record_failure( 'honeypot' );
 
-		$event = Statistics::get_events()[0];
+		$event = Analytics::get_events()[0];
 		$this->assertTrue( $event['ip_anonymized'] );
 		$this->assertTrue( $event['ua_anonymized'] );
 	}
@@ -129,9 +129,9 @@ class StatisticsTest extends TestCase {
 		$_SERVER['REMOTE_ADDR']     = '203.0.113.10';
 		$_SERVER['HTTP_USER_AGENT'] = 'Mozilla/5.0 (Test Browser)';
 
-		Statistics::record_failure( 'honeypot' );
+		Analytics::record_failure( 'honeypot' );
 
-		$event = Statistics::get_events()[0];
+		$event = Analytics::get_events()[0];
 		$this->assertFalse( $event['ip_anonymized'] );
 		$this->assertFalse( $event['ua_anonymized'] );
 	}
@@ -139,51 +139,51 @@ class StatisticsTest extends TestCase {
 	public function test_form_id_detected_from_post() {
 		$_POST['_wpcf7'] = '42';
 
-		Statistics::record_failure( 'honeypot' );
+		Analytics::record_failure( 'honeypot' );
 
-		$this->assertSame( '42', Statistics::get_events()[0]['form_id'] );
+		$this->assertSame( '42', Analytics::get_events()[0]['form_id'] );
 	}
 
 	public function test_form_id_filter_overrides_detection() {
 		cf_test_set_filter( 'capf_event_form_id', 'contact-form' );
 
-		Statistics::record_failure( 'honeypot' );
+		Analytics::record_failure( 'honeypot' );
 
-		$this->assertSame( 'contact-form', Statistics::get_events()[0]['form_id'] );
+		$this->assertSame( 'contact-form', Analytics::get_events()[0]['form_id'] );
 	}
 
 	public function test_unknown_reason_falls_back_to_captcha() {
-		Statistics::record_failure( 'bogus' );
+		Analytics::record_failure( 'bogus' );
 
-		$stats = Statistics::get_stats();
+		$stats = Analytics::get_stats();
 		$this->assertSame( 1, $stats['reasons']['captcha'] );
 	}
 
 	public function test_get_events_respects_limit() {
 		for ( $i = 0; $i < 10; $i++ ) {
-			Statistics::record_failure( 'min_time' );
+			Analytics::record_failure( 'min_time' );
 		}
 
-		$this->assertCount( 10, Statistics::get_events() );
-		$this->assertCount( 3, Statistics::get_events( 3 ) );
+		$this->assertCount( 10, Analytics::get_events() );
+		$this->assertCount( 3, Analytics::get_events( 3 ) );
 	}
 
 	public function test_passes_are_logged_but_not_in_events() {
-		Statistics::record_pass();
-		Statistics::record_pass();
-		Statistics::record_failure( 'honeypot' );
+		Analytics::record_pass();
+		Analytics::record_pass();
+		Analytics::record_failure( 'honeypot' );
 
-		$stats = Statistics::get_stats();
+		$stats = Analytics::get_stats();
 		$this->assertSame( 2, $stats['passed'] );
 		$this->assertSame( 1, $stats['failed'] );
-		$this->assertCount( 1, Statistics::get_events() );
+		$this->assertCount( 1, Analytics::get_events() );
 	}
 
 	public function test_get_events_can_include_passes() {
-		Statistics::record_pass();
-		Statistics::record_failure( 'honeypot' );
+		Analytics::record_pass();
+		Analytics::record_failure( 'honeypot' );
 
-		$all = Statistics::get_events( Statistics::RECENT_LIMIT, true );
+		$all = Analytics::get_events( Analytics::RECENT_LIMIT, true );
 		$this->assertCount( 2, $all );
 		// Newest first: the failure was recorded last.
 		$this->assertFalse( $all[0]['success'] );
@@ -191,24 +191,24 @@ class StatisticsTest extends TestCase {
 	}
 
 	public function test_events_are_newest_first() {
-		Statistics::record_failure( 'honeypot' );
-		Statistics::record_failure( 'min_time' );
+		Analytics::record_failure( 'honeypot' );
+		Analytics::record_failure( 'min_time' );
 
-		$events = Statistics::get_events();
+		$events = Analytics::get_events();
 		$this->assertSame( 'min_time', $events[0]['reason'] );
 		$this->assertSame( 'honeypot', $events[1]['reason'] );
 	}
 
 	public function test_reset_clears_everything() {
-		Statistics::record_failure( 'honeypot' );
-		Statistics::record_pass();
+		Analytics::record_failure( 'honeypot' );
+		Analytics::record_pass();
 
-		Statistics::reset();
+		Analytics::reset();
 
-		$stats = Statistics::get_stats();
+		$stats = Analytics::get_stats();
 		$this->assertSame( 0, $stats['passed'] );
 		$this->assertSame( 0, $stats['failed'] );
-		$this->assertSame( [], Statistics::get_events() );
+		$this->assertSame( [], Analytics::get_events() );
 	}
 
 	public function test_create_table_does_not_mark_version_when_table_is_missing() {
@@ -216,8 +216,8 @@ class StatisticsTest extends TestCase {
 
 		$wpdb->table_exists = false;
 
-		$this->assertFalse( Statistics::create_table() );
-		$this->assertNotSame( Statistics::DB_VERSION, get_option( Statistics::DB_VERSION_OPTION ) );
+		$this->assertFalse( Analytics::create_table() );
+		$this->assertNotSame( Analytics::DB_VERSION, get_option( Analytics::DB_VERSION_OPTION ) );
 	}
 
 	public function test_missing_table_returns_empty_stats_and_ignores_inserts() {
@@ -225,12 +225,12 @@ class StatisticsTest extends TestCase {
 
 		$wpdb->table_exists = false;
 
-		Statistics::record_failure( 'honeypot' );
+		Analytics::record_failure( 'honeypot' );
 
-		$stats = Statistics::get_stats();
+		$stats = Analytics::get_stats();
 		$this->assertSame( 0, $stats['passed'] );
 		$this->assertSame( 0, $stats['failed'] );
-		$this->assertSame( [], Statistics::get_events() );
+		$this->assertSame( [], Analytics::get_events() );
 		$this->assertSame( [], $wpdb->rows );
 	}
 
@@ -243,9 +243,9 @@ class StatisticsTest extends TestCase {
 
 		Request::validate( 'token' );
 
-		$stats = Statistics::get_stats();
+		$stats = Analytics::get_stats();
 		$this->assertSame( 1, $stats['reasons']['ip_denied'] );
-		$this->assertSame( 'ip_denied', Statistics::get_events()[0]['reason'] );
+		$this->assertSame( 'ip_denied', Analytics::get_events()[0]['reason'] );
 	}
 
 	public function test_prune_old_events_keeps_default_fourteen_day_window() {
@@ -278,7 +278,7 @@ class StatisticsTest extends TestCase {
 			],
 		];
 
-		Statistics::prune_old_events();
+		Analytics::prune_old_events();
 
 		$this->assertCount( 1, $wpdb->rows );
 		$this->assertSame( 'honeypot', $wpdb->rows[0]['reason'] );

@@ -4,7 +4,7 @@ namespace CaptchaFox;
 
 use CaptchaFox\Helper\CaptchaFox;
 use CaptchaFox\Helper\LoginProtection;
-use CaptchaFox\Helper\Statistics;
+use CaptchaFox\Helper\Analytics;
 use CaptchaFox\Settings\Settings;
 
 class Initializer {
@@ -20,9 +20,9 @@ class Initializer {
 
 		// Create or upgrade the events table on existing installs (the
 		// activation hook only fires on a fresh activation).
-		add_action( 'admin_init', [ Statistics::class, 'maybe_create_table' ] );
-		add_action( Statistics::RETENTION_HOOK, [ Statistics::class, 'prune_old_events' ] );
-		Statistics::schedule_retention();
+		add_action( 'admin_init', [ Analytics::class, 'maybe_create_table' ] );
+		add_action( Analytics::RETENTION_HOOK, [ Analytics::class, 'prune_old_events' ] );
+		Analytics::schedule_retention();
 
 		add_action( 'init', [ $this, 'init' ] );
 

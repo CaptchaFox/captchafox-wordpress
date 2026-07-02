@@ -44,6 +44,33 @@ class CaptchaFoxField extends NF_Fields_Recaptcha {
     public function __construct() {
         parent::__construct();
         $this->_nicename = __( 'CaptchaFox', 'captchafox-for-forms' );
+
+        $this->_settings['captchafox_start'] = [
+            'name'    => 'captchafox_start',
+            'type'    => 'select',
+            'label'   => __( 'Verification Start', 'captchafox-for-forms' ),
+            'group'   => 'primary',
+            'width'   => 'full',
+            'value'   => 'inherit',
+            'options' => [
+                [
+                    'label' => __( 'Use global setting', 'captchafox-for-forms' ),
+                    'value' => 'inherit',
+                ],
+                [
+                    'label' => __( 'On interaction', 'captchafox-for-forms' ),
+                    'value' => 'none',
+                ],
+                [
+                    'label' => __( 'On form focus', 'captchafox-for-forms' ),
+                    'value' => 'focus',
+                ],
+                [
+                    'label' => __( 'Automatically', 'captchafox-for-forms' ),
+                    'value' => 'auto',
+                ],
+            ],
+        ];
     }
 
     /**

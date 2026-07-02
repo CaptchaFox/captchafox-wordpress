@@ -38,12 +38,57 @@ class CaptchaFoxElement extends \FluentForm\App\Services\FormBuilder\BaseFieldMa
 			],
 			'settings'       => [
 				'label'            => '',
+				'start'            => 'inherit',
 				'validation_rules' => [],
 			],
 			'editor_options' => [
 				'title'      => $this->title,
 				'icon_class' => 'ff-edit-recaptha',
 				'template'   => 'inputHidden',
+			],
+		];
+	}
+
+	/**
+	 * General tab editor controls for the element.
+	 *
+	 * @return array
+	 */
+	public function getGeneralEditorElements() {
+		return [
+			'label',
+			'start',
+		];
+	}
+
+	/**
+	 * Definitions for the element's custom editor settings.
+	 *
+	 * @return array
+	 */
+	public function getEditorCustomizationSettings() {
+		return [
+			'start' => [
+				'template' => 'select',
+				'label'    => __( 'Verification Start', 'captchafox-for-forms' ),
+				'options'  => [
+					[
+						'value' => 'inherit',
+						'label' => __( 'Use global setting', 'captchafox-for-forms' ),
+					],
+					[
+						'value' => 'none',
+						'label' => __( 'On interaction', 'captchafox-for-forms' ),
+					],
+					[
+						'value' => 'focus',
+						'label' => __( 'On form focus', 'captchafox-for-forms' ),
+					],
+					[
+						'value' => 'auto',
+						'label' => __( 'Automatically', 'captchafox-for-forms' ),
+					],
+				],
 			],
 		];
 	}
@@ -69,7 +114,8 @@ class CaptchaFoxElement extends \FluentForm\App\Services\FormBuilder\BaseFieldMa
             $container_class = 'ff-el-form-' . $settings['label_placement'];
         }
 
-		$captcha = CaptchaFox::build_html();
+		$start = isset( $settings['start'] ) ? $settings['start'] : 'inherit';
+		$captcha = CaptchaFox::build_html( [ 'start' => $start ] );
 
 		$el = "<div class='ff-el-input--content'><div data-fluent_id='" . $form->id . "'>{$captcha}</div></div>";
         $html = "<div class='ff-el-group " . esc_attr( $container_class ) . "' >" . fluentform_sanitize_html( $label ) . "{$el}</div>";
