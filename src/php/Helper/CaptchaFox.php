@@ -470,7 +470,6 @@ class CaptchaFox {
     /**
      * Print HTML for widget.
      *
-     *
      * @return mixed
      */
     public static function get_html() {
@@ -550,7 +549,6 @@ class CaptchaFox {
 
     /**
      * Apply per-instance overrides on top of the global widget options.
-     *
      *
      * @param array $data      Resolved global widget options.
      * @param array $overrides Per-instance overrides.
