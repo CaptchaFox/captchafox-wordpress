@@ -3,9 +3,9 @@
 namespace CaptchaFox\Helper;
 
 /**
- * Records spam protection statistics in a dedicated database table.
+ * Records spam protection analytics in a dedicated database table.
  */
-class Statistics {
+class Analytics {
 
     /**
      * Unprefixed table name.
@@ -68,7 +68,7 @@ class Statistics {
     }
 
     /**
-     * Whether statistics are recorded. Opt-in via the Security settings and can
+     * Whether analytics are recorded. Opt-in via the Security settings and can
      * be forced off/on with the `capf_record_events` filter.
      *
      * @return bool

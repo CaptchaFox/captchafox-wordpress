@@ -27,7 +27,7 @@ class Security {
         add_settings_section( $section_spam, __( 'Spam Protection', 'captchafox-for-forms' ), [ $this, 'render_section' ], 'captchafox-security' );
         add_settings_section( $section_ip, __( 'IP Access', 'captchafox-for-forms' ), [ $this, 'render_section' ], 'captchafox-security' );
         add_settings_section( $section_login, __( 'Login Protection', 'captchafox-for-forms' ), [ $this, 'render_section' ], 'captchafox-security' );
-        add_settings_section( $section_stats, __( 'Statistics', 'captchafox-for-forms' ), [ $this, 'render_section' ], 'captchafox-security' );
+        add_settings_section( $section_stats, __( 'Analytics', 'captchafox-for-forms' ), [ $this, 'render_section' ], 'captchafox-security' );
 
         add_settings_field('field_honeypot', __( 'Honeypot', 'captchafox-for-forms' ), [ $this, 'render_checkbox_field' ], 'captchafox-security', $section_spam, [
             'label_for'   => 'field_honeypot',
@@ -79,7 +79,7 @@ class Security {
             'default'     => 15,
             'description' => __( 'How long, in minutes, failed login attempts are counted before the captcha is shown.', 'captchafox-for-forms' ),
         ]);
-        add_settings_field('field_statistics', __( 'Record Statistics', 'captchafox-for-forms' ), [ $this, 'render_checkbox_field' ], 'captchafox-security', $section_stats, [
+        add_settings_field('field_statistics', __( 'Record Analytics', 'captchafox-for-forms' ), [ $this, 'render_checkbox_field' ], 'captchafox-security', $section_stats, [
             'label_for'   => 'field_statistics',
             'class'       => 'cf-settings-row',
             'group'       => $setting_security,
@@ -178,7 +178,7 @@ class Security {
             'captchafox_security_spam'  => __( 'Catch bots before they submit your forms.', 'captchafox-for-forms' ),
             'captchafox_security_ip'    => __( 'Always allow or block specific IP addresses or ranges.', 'captchafox-for-forms' ),
             'captchafox_security_login' => __( 'Show the captcha on login forms only after repeated failed attempts.', 'captchafox-for-forms' ),
-            'captchafox_security_stats' => __( 'Record anonymized verification results for the Statistics tab.', 'captchafox-for-forms' ),
+            'captchafox_security_stats' => __( 'Record anonymized verification results for the Analytics tab.', 'captchafox-for-forms' ),
         ];
 
         if ( ! empty( $descriptions[ $args['id'] ] ) ) {

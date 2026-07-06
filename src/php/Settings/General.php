@@ -55,6 +55,17 @@ class General {
                 'dark'  => __( 'Dark', 'captchafox-for-forms' ),
             ],
         ]);
+        add_settings_field('field_start', __( 'Verification Start', 'captchafox-for-forms' ), [ $this, 'render_select_field' ], 'captchafox', $section_appearance, [
+            'label_for'   => 'field_start',
+            'class'       => 'cf-settings-row',
+            'group'       => $setting_general,
+            'description' => __( 'Choose when the verification begins. "Auto" starts as soon as the widget is ready, "On form focus" starts when a field in the form is focused.', 'captchafox-for-forms' ),
+            'options'     => [
+                'none'  => __( 'On interaction (Default)', 'captchafox-for-forms' ),
+                'focus' => __( 'On form focus', 'captchafox-for-forms' ),
+                'auto'  => __( 'Automatically', 'captchafox-for-forms' ),
+            ],
+        ]);
         add_settings_field('field_lang', __( 'Language', 'captchafox-for-forms' ), [ $this, 'render_select_field' ], 'captchafox', $section_appearance, [
             'label_for' => 'field_lang',
             'class'     => 'cf-settings-row',
@@ -112,6 +123,7 @@ class General {
             'field_secret'       => isset( $input['field_secret'] ) ? sanitize_text_field( $input['field_secret'] ) : '',
             'field_display_mode' => isset( $input['field_display_mode'] ) && in_array( $input['field_display_mode'], [ 'inline', 'popup', 'hidden' ], true ) ? $input['field_display_mode'] : 'inline',
             'field_theme'        => isset( $input['field_theme'] ) && in_array( $input['field_theme'], [ 'light', 'dark' ], true ) ? $input['field_theme'] : 'light',
+            'field_start'        => isset( $input['field_start'] ) && in_array( $input['field_start'], [ 'none', 'auto', 'focus' ], true ) ? $input['field_start'] : 'none',
             'field_lang'         => isset( $input['field_lang'] ) && in_array( $input['field_lang'], $languages, true ) ? $input['field_lang'] : 'auto',
             'field_loading'      => isset( $input['field_loading'] ) && in_array( $input['field_loading'], [ 'instant', 'interaction' ], true ) ? $input['field_loading'] : 'instant',
         ];

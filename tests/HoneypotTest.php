@@ -100,15 +100,40 @@ class HoneypotTest extends TestCase {
 	}
 
 	public function test_build_html_escapes_data_attributes() {
-		$html = CaptchaFox::build_html( [
-			'sitekey'     => '"><script>alert(1)</script>',
-			'theme'       => 'dark',
-			'bad attr<>=' => 'ignored-name-is-sanitized',
-		] );
+		cf_test_set_option( 'captchafox_options', [ 'field_sitekey' => '"><script>alert(1)</script>' ] );
+		$_SERVER['REMOTE_ADDR'] = '203.0.113.10';
+
+		$html = CaptchaFox::build_html();
 
 		$this->assertStringContainsString( 'data-sitekey="&quot;&gt;&lt;script&gt;alert(1)&lt;/script&gt;"', $html );
 		$this->assertStringNotContainsString( '<script>', $html );
-		$this->assertStringNotContainsString( 'bad attr', $html );
+	}
+
+	public function test_build_html_applies_valid_start_override() {
+		cf_test_set_option( 'captchafox_options', [ 'field_sitekey' => 'sk_test', 'field_start' => 'none' ] );
+		$_SERVER['REMOTE_ADDR'] = '203.0.113.10';
+
+		$html = CaptchaFox::build_html( [ 'start' => 'focus' ] );
+
+		$this->assertStringContainsString( 'data-start="focus"', $html );
+	}
+
+	public function test_build_html_inherit_override_keeps_global_start() {
+		cf_test_set_option( 'captchafox_options', [ 'field_sitekey' => 'sk_test', 'field_start' => 'auto' ] );
+		$_SERVER['REMOTE_ADDR'] = '203.0.113.10';
+
+		$html = CaptchaFox::build_html( [ 'start' => 'inherit' ] );
+
+		$this->assertStringContainsString( 'data-start="auto"', $html );
+	}
+
+	public function test_build_html_unknown_start_override_falls_back_to_none() {
+		cf_test_set_option( 'captchafox_options', [ 'field_sitekey' => 'sk_test', 'field_start' => 'auto' ] );
+		$_SERVER['REMOTE_ADDR'] = '203.0.113.10';
+
+		$html = CaptchaFox::build_html( [ 'start' => 'bogus' ] );
+
+		$this->assertStringNotContainsString( 'data-start', $html );
 	}
 
 	public function test_validate_fails_when_honeypot_filled() {

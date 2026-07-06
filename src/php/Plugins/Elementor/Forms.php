@@ -90,6 +90,23 @@ class Forms extends Plugin {
 		$control_data['fields']['width']['conditions']['terms'][]    = $term;
 		$control_data['fields']['required']['conditions']['terms'][] = $term;
 
+		$control_data['fields']['captchafox_start'] = [
+			'name'         => 'captchafox_start',
+			'label'        => esc_html__( 'Verification Start', 'captchafox-for-forms' ),
+			'type'         => 'select',
+			'default'      => 'inherit',
+			'options'      => [
+				'inherit' => esc_html__( 'Use global setting', 'captchafox-for-forms' ),
+				'none'    => esc_html__( 'On interaction', 'captchafox-for-forms' ),
+				'focus'   => esc_html__( 'On form focus', 'captchafox-for-forms' ),
+				'auto'    => esc_html__( 'Automatically', 'captchafox-for-forms' ),
+			],
+			'condition'    => [ 'field_type' => static::FIELD_NAME ],
+			'tab'          => 'content',
+			'inner_tab'    => 'form_fields_content_tab',
+			'tabs_wrapper' => 'form_fields_tabs',
+		];
+
 		ElementorPlugin::$instance->controls_manager->update_control_in_stack(
 			$controls_stack,
 			$control_id,
@@ -112,7 +129,8 @@ class Forms extends Plugin {
 
 		if ( static::is_enabled() ) {
 			$this->enqueue_scripts();
-			$html .= CaptchaFox::get_html();
+			$start = isset( $item['captchafox_start'] ) ? $item['captchafox_start'] : 'inherit';
+			$html .= CaptchaFox::get_ob_html( [ 'start' => $start ] );
 		} elseif ( current_user_can( 'manage_options' ) ) {
 			$html .= '<div class="elementor-alert elementor-alert-info">';
 			$html .= static::get_setup_message();

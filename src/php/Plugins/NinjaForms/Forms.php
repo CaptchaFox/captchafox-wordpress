@@ -58,10 +58,12 @@ class Forms extends Plugin {
 		$field = (array) $field;
 
 		$id = $field['id'] ?? 0;
+
+		$start = $field['settings']['captchafox_start'] ?? ( $field['captchafox_start'] ?? 'inherit' );
 		$captchafox = str_replace(
 			'<div',
 			'<div id="nf-cf-' . $id . '"',
-			CaptchaFox::get_ob_html()
+			CaptchaFox::get_ob_html( [ 'start' => $start ] )
 		);
 
 		$field['settings']['captchafox'] = $captchafox;

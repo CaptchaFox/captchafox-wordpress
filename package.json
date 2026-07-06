@@ -1,6 +1,6 @@
 {
   "name": "captchafox-wordpress",
-  "version": "2.0.1",
+  "version": "2.1.0",
   "description": "CaptchaFox plugin for WordPress",
   "scripts": {
     "build": "concurrently npm:build:js npm:build:styles",
@@ -18,7 +18,7 @@
   },
   "homepage": "https://github.com/CaptchaFox/captchafox-wordpress#readme",
   "devDependencies": {
-    "@captchafox/types": "^1.2.0",
+    "@captchafox/types": "^1.6.0",
     "concurrently": "^8.2.2",
     "esbuild": "^0.23.0",
     "sass": "^1.77.8",

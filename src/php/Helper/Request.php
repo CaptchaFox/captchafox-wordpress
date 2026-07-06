@@ -32,7 +32,7 @@ class Request {
         }
 
         if ( CaptchaFox::is_ip_denied() ) {
-            Statistics::record_failure( 'ip_denied', $source );
+            Analytics::record_failure( 'ip_denied', $source );
             return false;
         }
 
@@ -61,17 +61,17 @@ class Request {
         }
 
         if ( CaptchaFox::is_ip_denied() ) {
-            Statistics::record_failure( 'ip_denied', $source );
+            Analytics::record_failure( 'ip_denied', $source );
             return self::result( false, [ 'ip_denied' ] );
         }
 
         if ( ! self::passed_honeypot() ) {
-            Statistics::record_failure( 'honeypot', $source );
+            Analytics::record_failure( 'honeypot', $source );
             return self::result( false, [ 'honeypot' ] );
         }
 
         if ( ! self::passed_min_time() ) {
-            Statistics::record_failure( 'min_time', $source );
+            Analytics::record_failure( 'min_time', $source );
             return self::result( false, [ 'min_time' ] );
         }
 
@@ -88,14 +88,14 @@ class Request {
         ) );
 
         if ( is_wp_error( $post_response ) || ! is_array( $post_response ) ) {
-            Statistics::record_failure( 'api_error', $source );
+            Analytics::record_failure( 'api_error', $source );
             return self::result( false, [ 'api_error' ] );
         }
 
         $status_code = (int) wp_remote_retrieve_response_code( $post_response );
 
         if ( $status_code >= 400 ) {
-            Statistics::record_failure( 'api_error', $source );
+            Analytics::record_failure( 'api_error', $source );
             return self::result( false, [ 'api_error' ] );
         }
 
@@ -103,12 +103,12 @@ class Request {
         $result = json_decode( $body );
 
         if ( ! is_object( $result ) || ! property_exists( $result, 'success' ) ) {
-            Statistics::record_failure( 'api_error', $source );
+            Analytics::record_failure( 'api_error', $source );
             return self::result( false, [ 'api_error' ] );
         }
 
         if ( $result->success ) {
-            Statistics::record_pass( $source );
+            Analytics::record_pass( $source );
             return self::result( true );
         }
 
@@ -122,7 +122,7 @@ class Request {
             $errors = [ 'captcha' ];
         }
 
-        Statistics::record_failure( 'captcha', $source );
+        Analytics::record_failure( 'captcha', $source );
         return self::result( false, $errors );
     }
 

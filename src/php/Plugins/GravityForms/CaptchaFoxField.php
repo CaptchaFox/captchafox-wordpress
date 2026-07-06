@@ -48,6 +48,35 @@ class CaptchaFoxField extends GF_Field {
 
 		add_filter( 'gform_field_groups_form_editor', [ $this, 'add_to_field_groups' ] );
 		add_action( 'admin_print_footer_scripts-toplevel_page_gf_edit_forms', [ $this, 'load_scripts' ] );
+		add_action( 'gform_field_standard_settings', [ $this, 'render_start_setting' ], 10, 2 );
+	}
+
+	/**
+	 * Render the "Verification Start" field setting in the form editor.
+	 *
+	 * @param int $position Settings position being rendered.
+	 * @param int $form_id  Current form id.
+	 *
+	 * @return void
+	 */
+	public function render_start_setting( $position, $form_id ) {
+		// Render just after the standard label/visibility settings.
+		if ( 25 !== $position ) {
+			return;
+		}
+		?>
+		<li class="captchafox_start_setting field_setting">
+			<label for="captchafox_start" class="section_label">
+				<?php esc_html_e( 'Verification Start', 'captchafox-for-forms' ); ?>
+			</label>
+			<select id="captchafox_start" onchange="SetFieldProperty( 'captchafox_start', this.value );">
+				<option value="inherit"><?php esc_html_e( 'Use global setting', 'captchafox-for-forms' ); ?></option>
+				<option value="none"><?php esc_html_e( 'On interaction', 'captchafox-for-forms' ); ?></option>
+				<option value="focus"><?php esc_html_e( 'On form focus', 'captchafox-for-forms' ); ?></option>
+				<option value="auto"><?php esc_html_e( 'Automatically', 'captchafox-for-forms' ); ?></option>
+			</select>
+		</li>
+		<?php
 	}
 
 	/**
@@ -120,6 +149,7 @@ class CaptchaFoxField extends GF_Field {
 	public function get_form_editor_field_settings() {
 		return [
 			'label_placement_setting',
+			'captchafox_start_setting',
 			'description_setting',
 			'css_class_setting',
 		];
@@ -147,10 +177,12 @@ class CaptchaFoxField extends GF_Field {
 			$this->load_frontend_scripts();
 		}
 
+		$start = isset( $this->captchafox_start ) ? $this->captchafox_start : 'inherit';
+
 		return str_replace(
 			$search,
 			$search . ' id="' . $field_id . '" data-tabindex="' . $tabindex . '"',
-			CaptchaFox::build_html()
+			CaptchaFox::build_html( [ 'start' => $start ] )
 		);
 	}
 

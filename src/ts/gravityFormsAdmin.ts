@@ -19,5 +19,16 @@ jQuery(document).on(
     }
 
     window.captchaFoxOnLoad();
-  }
+  },
+);
+
+jQuery(document).on(
+  'gform_load_field_settings',
+  function (_event: any, field: { type: string; captchafox_start?: string }) {
+    if (field.type !== 'captchafox') {
+      return;
+    }
+
+    jQuery('#captchafox_start').val(field.captchafox_start || 'inherit');
+  },
 );

@@ -96,7 +96,7 @@ if ( ! defined( 'OBJECT' ) ) {
 }
 
 /**
- * Minimal in-memory stand-in for $wpdb covering the queries the Statistics
+ * Minimal in-memory stand-in for $wpdb covering the queries the Analytics
  * recorder issues. It stores rows in an array and answers the handful of
  * aggregate/select queries by inspecting the SQL.
  */

@@ -1,4 +1,8 @@
-import type { Theme, WidgetDisplayMode } from '@captchafox/types';
+import type {
+  Theme,
+  WidgetDisplayMode,
+  WidgetStart,
+} from '@captchafox/types';
 
 const executeListeners = new WeakMap<HTMLElement, (event: Event) => void>();
 
@@ -39,6 +43,7 @@ function initializeForms() {
     const sitekey = captchaSlot.dataset.sitekey;
     const theme = captchaSlot.dataset.theme as Theme;
     const lang = captchaSlot.dataset.lang;
+    const start = captchaSlot.dataset.start as WidgetStart | undefined;
 
     let widgetId: string;
 
@@ -48,6 +53,7 @@ function initializeForms() {
         ...(mode && { mode }),
         ...(lang && { lang }),
         ...(theme && { theme }),
+        ...(start && { start }),
         onError: (error) => console.error(error),
       });
     } catch (error) {

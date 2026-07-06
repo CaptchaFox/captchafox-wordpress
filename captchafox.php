@@ -6,7 +6,7 @@
  *
  * Plugin Name:           CaptchaFox for WordPress
  * Description:           GDPR compliant bot and spam protection with CaptchaFox.
- * Version:               2.0.1
+ * Version:               2.1.0
  * Requires at least:     5.0
  * Requires PHP:          7.0
  * Author:                CaptchaFox
@@ -18,7 +18,7 @@
  * WC tested up to:       10.7
  */
 
-use CaptchaFox\Helper\Statistics;
+use CaptchaFox\Helper\Analytics;
 use CaptchaFox\Initializer;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -32,8 +32,8 @@ const PLUGIN_VERSION = '2.0.1';
 
 require 'vendor/autoload.php';
 
-register_activation_hook( __FILE__, [ Statistics::class, 'create_table' ] );
-register_deactivation_hook( __FILE__, [ Statistics::class, 'clear_retention_schedule' ] );
+register_activation_hook( __FILE__, [ Analytics::class, 'create_table' ] );
+register_deactivation_hook( __FILE__, [ Analytics::class, 'clear_retention_schedule' ] );
 
 /**
  * Initialize plugin
