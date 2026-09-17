@@ -6,7 +6,7 @@
  *
  * Plugin Name:           CaptchaFox for WordPress
  * Description:           GDPR compliant bot and spam protection with CaptchaFox.
- * Version:               2.2.0
+ * Version:               2.3.0
  * Requires at least:     5.0
  * Requires PHP:          7.0
  * Author:                CaptchaFox

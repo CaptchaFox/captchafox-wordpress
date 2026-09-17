@@ -39,6 +39,7 @@ class CaptchaFoxElement extends \FluentForm\App\Services\FormBuilder\BaseFieldMa
 			'settings'       => [
 				'label'            => '',
 				'start'            => 'inherit',
+				'mode'             => 'inherit',
 				'validation_rules' => [],
 			],
 			'editor_options' => [
@@ -58,6 +59,7 @@ class CaptchaFoxElement extends \FluentForm\App\Services\FormBuilder\BaseFieldMa
 		return [
 			'label',
 			'start',
+			'mode',
 		];
 	}
 
@@ -90,6 +92,28 @@ class CaptchaFoxElement extends \FluentForm\App\Services\FormBuilder\BaseFieldMa
 					],
 				],
 			],
+			'mode'  => [
+				'template' => 'select',
+				'label'    => __( 'Display Mode', 'captchafox-for-forms' ),
+				'options'  => [
+					[
+						'value' => 'inherit',
+						'label' => __( 'Use global setting', 'captchafox-for-forms' ),
+					],
+					[
+						'value' => 'inline',
+						'label' => __( 'Inline', 'captchafox-for-forms' ),
+					],
+					[
+						'value' => 'popup',
+						'label' => __( 'Popup', 'captchafox-for-forms' ),
+					],
+					[
+						'value' => 'hidden',
+						'label' => __( 'Hidden', 'captchafox-for-forms' ),
+					],
+				],
+			],
 		];
 	}
 
@@ -115,7 +139,11 @@ class CaptchaFoxElement extends \FluentForm\App\Services\FormBuilder\BaseFieldMa
         }
 
 		$start = isset( $settings['start'] ) ? $settings['start'] : 'inherit';
-		$captcha = CaptchaFox::build_html( [ 'start' => $start ] );
+		$mode = isset( $settings['mode'] ) ? $settings['mode'] : 'inherit';
+		$captcha = CaptchaFox::build_html( [
+			'start' => $start,
+			'mode'  => $mode,
+		] );
 
 		$el = "<div class='ff-el-input--content'><div data-fluent_id='" . $form->id . "'>{$captcha}</div></div>";
         $html = "<div class='ff-el-group " . esc_attr( $container_class ) . "' >" . fluentform_sanitize_html( $label ) . "{$el}</div>";

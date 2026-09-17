@@ -24,11 +24,19 @@ jQuery(document).on(
 
 jQuery(document).on(
   'gform_load_field_settings',
-  function (_event: any, field: { type: string; captchafox_start?: string }) {
+  function (
+    _event: any,
+    field: {
+      type: string;
+      captchafox_start?: string;
+      captchafox_mode?: string;
+    },
+  ) {
     if (field.type !== 'captchafox') {
       return;
     }
 
     jQuery('#captchafox_start').val(field.captchafox_start || 'inherit');
+    jQuery('#captchafox_mode').val(field.captchafox_mode || 'inherit');
   },
 );
