@@ -48,18 +48,18 @@ class CaptchaFoxField extends GF_Field {
 
 		add_filter( 'gform_field_groups_form_editor', [ $this, 'add_to_field_groups' ] );
 		add_action( 'admin_print_footer_scripts-toplevel_page_gf_edit_forms', [ $this, 'load_scripts' ] );
-		add_action( 'gform_field_standard_settings', [ $this, 'render_start_setting' ], 10, 2 );
+		add_action( 'gform_field_standard_settings', [ $this, 'render_field_settings' ], 10, 2 );
 	}
 
 	/**
-	 * Render the "Verification Start" field setting in the form editor.
+	 * Render the CaptchaFox field settings in the form editor.
 	 *
 	 * @param int $position Settings position being rendered.
 	 * @param int $form_id  Current form id.
 	 *
 	 * @return void
 	 */
-	public function render_start_setting( $position, $form_id ) {
+	public function render_field_settings( $position, $form_id ) {
 		// Render just after the standard label/visibility settings.
 		if ( 25 !== $position ) {
 			return;
@@ -74,6 +74,17 @@ class CaptchaFoxField extends GF_Field {
 				<option value="none"><?php esc_html_e( 'On interaction', 'captchafox-for-forms' ); ?></option>
 				<option value="focus"><?php esc_html_e( 'On form focus', 'captchafox-for-forms' ); ?></option>
 				<option value="auto"><?php esc_html_e( 'Automatically', 'captchafox-for-forms' ); ?></option>
+			</select>
+		</li>
+		<li class="captchafox_mode_setting field_setting">
+			<label for="captchafox_mode" class="section_label">
+				<?php esc_html_e( 'Display Mode', 'captchafox-for-forms' ); ?>
+			</label>
+			<select id="captchafox_mode" onchange="SetFieldProperty( 'captchafox_mode', this.value );">
+				<option value="inherit"><?php esc_html_e( 'Use global setting', 'captchafox-for-forms' ); ?></option>
+				<option value="inline"><?php esc_html_e( 'Inline', 'captchafox-for-forms' ); ?></option>
+				<option value="popup"><?php esc_html_e( 'Popup', 'captchafox-for-forms' ); ?></option>
+				<option value="hidden"><?php esc_html_e( 'Hidden', 'captchafox-for-forms' ); ?></option>
 			</select>
 		</li>
 		<?php
@@ -150,6 +161,7 @@ class CaptchaFoxField extends GF_Field {
 		return [
 			'label_placement_setting',
 			'captchafox_start_setting',
+			'captchafox_mode_setting',
 			'description_setting',
 			'css_class_setting',
 		];
@@ -178,11 +190,15 @@ class CaptchaFoxField extends GF_Field {
 		}
 
 		$start = isset( $this->captchafox_start ) ? $this->captchafox_start : 'inherit';
+		$mode  = isset( $this->captchafox_mode ) ? $this->captchafox_mode : 'inherit';
 
 		return str_replace(
 			$search,
 			$search . ' id="' . $field_id . '" data-tabindex="' . $tabindex . '"',
-			CaptchaFox::build_html( [ 'start' => $start ] )
+			CaptchaFox::build_html( [
+				'start' => $start,
+				'mode'  => $mode,
+			] )
 		);
 	}
 

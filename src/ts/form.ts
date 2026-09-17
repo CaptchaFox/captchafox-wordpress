@@ -1,10 +1,24 @@
-import type {
-  Theme,
-  WidgetDisplayMode,
-  WidgetStart,
-} from '@captchafox/types';
+import type { Theme, WidgetDisplayMode, WidgetStart } from '@captchafox/types';
 
 const executeListeners = new WeakMap<HTMLElement, (event: Event) => void>();
+
+const SUBMIT_BUTTON_SELECTOR =
+  '[type="submit"], .forminator-button-submit, button.ff-btn-submit';
+
+// requestSubmit never runs the button's own click handlers, so submit through
+// a replayed click instead.
+function isClickDrivenSubmit(form: HTMLElement, submitButton: HTMLElement) {
+  if ('form' !== form.tagName.toLowerCase()) return true;
+
+  if ('submit' !== submitButton.getAttribute('type')?.toLowerCase())
+    return true;
+
+  return Boolean(
+    submitButton.classList.contains('ninja-forms-field') ||
+    submitButton.id.startsWith('gform_submit_button_') ||
+    submitButton.closest('.elementor-form'),
+  );
+}
 
 function resetFormElement(element: HTMLFormElement | HTMLElement) {
   const widgetId = element.dataset.cfWidgetId;
@@ -20,22 +34,57 @@ function resetFormWidget(formSelector: string) {
   resetFormElement(element);
 }
 
+// Ninja Forms replaces the button when it re-renders, which would otherwise
+// drop the listener.
+function bindHiddenMode(
+  form: HTMLFormElement | HTMLElement,
+  captchaSlot: HTMLDivElement,
+  widgetId: string,
+) {
+  if ('hidden' !== captchaSlot.dataset.mode) return;
+
+  const [submitButton] = form.querySelectorAll<HTMLElement>(
+    SUBMIT_BUTTON_SELECTOR,
+  );
+
+  if (!submitButton) return;
+
+  const existingListener = executeListeners.get(submitButton);
+
+  if (existingListener) {
+    submitButton.removeEventListener('click', existingListener, true);
+  }
+
+  const executeListener = (event: Event) =>
+    executeCaptcha(event, form as HTMLFormElement, widgetId, submitButton);
+
+  executeListeners.set(submitButton, executeListener);
+  submitButton.addEventListener('click', executeListener, true);
+}
+
 function initializeForms() {
   const forms = document.querySelectorAll<HTMLFormElement | HTMLElement>(
     'form, .gform_editor',
   );
 
   forms.forEach(async (form) => {
-    const [submitButton] = form.querySelectorAll<HTMLElement>(
-      '[type="submit"], .forminator-button-submit',
-    );
     const captchaSlot: HTMLDivElement | null =
       form.querySelector('.captchafox');
     const isAlreadyRendered = captchaSlot?.hasChildNodes();
     const isRendering = captchaSlot?.dataset.cfRendering === '1';
 
-    if (!captchaSlot || !window.captchafox || isAlreadyRendered || isRendering)
+    if (!captchaSlot || !window.captchafox) return;
+
+    // Nothing to render, but the submit button may be a new element.
+    if (isAlreadyRendered || isRendering) {
+      const renderedWidgetId = form.dataset.cfWidgetId;
+
+      if (renderedWidgetId) {
+        bindHiddenMode(form, captchaSlot, renderedWidgetId);
+      }
+
       return;
+    }
 
     captchaSlot.dataset.cfRendering = '1';
 
@@ -65,23 +114,7 @@ function initializeForms() {
 
     form.dataset.cfWidgetId = widgetId;
 
-    if ('hidden' !== captchaSlot.dataset.mode) {
-      return;
-    }
-
-    if (submitButton) {
-      const existingListener = executeListeners.get(submitButton);
-
-      if (existingListener) {
-        submitButton.removeEventListener('click', existingListener, true);
-      }
-
-      const executeListener = (event: Event) =>
-        executeCaptcha(event, form as HTMLFormElement, widgetId, submitButton);
-
-      executeListeners.set(submitButton, executeListener);
-      submitButton.addEventListener('click', executeListener, true);
-    }
+    bindHiddenMode(form, captchaSlot, widgetId);
   });
 }
 
@@ -91,23 +124,28 @@ async function executeCaptcha(
   widgetId: string,
   submitButton: HTMLElement,
 ) {
+  // Let the replayed click through, but keep the listener for the next attempt.
+  if ('1' === submitButton.dataset.cfSubmitting) {
+    delete submitButton.dataset.cfSubmitting;
+    return;
+  }
+
   event.preventDefault();
   event.stopPropagation();
 
   if (!form || !window.captchafox) return;
 
-  await window.captchafox.execute(widgetId);
+  try {
+    await window.captchafox.execute(widgetId);
+  } catch (error) {
+    console.error(error);
+    return;
+  }
 
-  // handle ninja forms
-  if (submitButton.classList.contains('ninja-forms-field')) {
-    const executeListener = executeListeners.get(submitButton);
-
-    if (executeListener) {
-      executeListeners.delete(submitButton);
-      submitButton.removeEventListener('click', executeListener, true);
-    }
-
+  if (isClickDrivenSubmit(form, submitButton)) {
+    submitButton.dataset.cfSubmitting = '1';
     submitButton.click();
+    delete submitButton.dataset.cfSubmitting;
     return;
   }
 
@@ -123,10 +161,8 @@ window.captchaFoxWPReset = resetFormWidget;
 
 window.captchaFoxOnLoad = initializeForms;
 
-/**
- * Inject the CaptchaFox api script. Once it loads it calls
- * window.captchaFoxOnLoad (via its onload parameter) and renders the widgets.
- */
+// Once the api script loads it calls window.captchaFoxOnLoad (via its onload
+// parameter), which renders the widgets.
 function injectApiScript() {
   if (document.getElementById('captchafox-api')) return;
 
@@ -140,10 +176,7 @@ function injectApiScript() {
   document.head.appendChild(script);
 }
 
-/**
- * When loading is delayed, load the api script only after the first user
- * interaction.
- */
+// Delayed loading injects the api script on the first user interaction.
 function setupDelayedLoading() {
   if (window.captchaFoxConfig?.delay !== '1' || window.captchafox) return;
 
