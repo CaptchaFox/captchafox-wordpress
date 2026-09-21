@@ -63,3 +63,24 @@ jQuery(document).ready(() => {
 jQuery(document).on('nfFormReady', () => {
   window.captchaFoxOnLoad();
 });
+
+// Ninja Forms re-renders after every submission: drop the spent token and
+// re-bind to the new submit button.
+jQuery(document).on('ajaxSuccess', (_event: any, _xhr: any, settings: any) => {
+  const data = typeof settings?.data === 'string' ? settings.data : '';
+
+  if (new URLSearchParams(data).get('action') !== 'nf_ajax_submit') {
+    return;
+  }
+
+  setTimeout(() => {
+    document
+      .querySelectorAll<HTMLFormElement>('form[data-cf-widget-id]')
+      .forEach((form) => {
+        const widgetId = form.dataset.cfWidgetId;
+        if (widgetId) window.captchafox?.reset(widgetId);
+      });
+
+    window.captchaFoxOnLoad();
+  }, 0);
+});

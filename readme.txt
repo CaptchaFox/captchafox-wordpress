@@ -4,7 +4,7 @@ Tags: captcha, recaptcha, spam, anti-spam, gdpr
 Requires at least: 5.0
 Tested up to: 7.1
 Requires PHP: 7.0
-Stable tag: 2.2.0
+Stable tag: 2.3.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -151,6 +151,9 @@ Once the plugin is activated, the CaptchaFox service may receive the user's IP a
 To learn more, please read the privacy policy at [captchafox.com/privacy](https://captchafox.com/privacy).
 
 == Changelog ==
+
+= 2.3.0 =
+* Add hidden mode setting to more form plugins
 
 = 2.2.0 =
 * Tested on WordPress 7.1

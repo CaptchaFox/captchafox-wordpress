@@ -567,6 +567,14 @@ class CaptchaFox {
             }
         }
 
+        if ( isset( $overrides['mode'] ) ) {
+            $mode = $overrides['mode'];
+
+            if ( 'inherit' !== $mode && '' !== $mode ) {
+                $data['mode'] = in_array( $mode, [ 'inline', 'popup', 'hidden' ], true ) ? $mode : 'inline';
+            }
+        }
+
         return $data;
     }
 

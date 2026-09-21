@@ -71,6 +71,33 @@ class CaptchaFoxField extends NF_Fields_Recaptcha {
                 ],
             ],
         ];
+
+        $this->_settings['captchafox_mode'] = [
+            'name'    => 'captchafox_mode',
+            'type'    => 'select',
+            'label'   => __( 'Display Mode', 'captchafox-for-forms' ),
+            'group'   => 'primary',
+            'width'   => 'full',
+            'value'   => 'inherit',
+            'options' => [
+                [
+                    'label' => __( 'Use global setting', 'captchafox-for-forms' ),
+                    'value' => 'inherit',
+                ],
+                [
+                    'label' => __( 'Inline', 'captchafox-for-forms' ),
+                    'value' => 'inline',
+                ],
+                [
+                    'label' => __( 'Popup', 'captchafox-for-forms' ),
+                    'value' => 'popup',
+                ],
+                [
+                    'label' => __( 'Hidden', 'captchafox-for-forms' ),
+                    'value' => 'hidden',
+                ],
+            ],
+        ];
     }
 
     /**
